@@ -1,7 +1,10 @@
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 from python_fide.clients.base_client import BaseClient
-from python_fide.constants import FIDE_SEARCH_URL
+from python_fide.constants.common import (
+    FIDE_HEADERS,
+    FIDE_SEARCH_URL
+)
 from python_fide.endpoint.search_endpoint import (
     SearchConfig,
     SearchPagination
@@ -13,16 +16,27 @@ from python_fide.parsing.search_parsing import (
     search_result_pages,
 )
 from python_fide.types import (
-    Event,
-    News,
-    Player
+    FideEvent,
+    FideNews,
+    FidePlayer
 )
 
 class FideSearchClient(BaseClient):
+    """
+    """
     def __init__(self):
-        super().__init__(fide_url=FIDE_SEARCH_URL)
+        super().__init__()
 
-    def get_player(self, first_name: str, last_name: str) -> Optional[Player]:
+        self.base_url = FIDE_SEARCH_URL
+        self.headers: Dict[str, str] = FIDE_HEADERS
+
+    def get_player(
+        self,
+        first_name: str, 
+        last_name: str
+    ) -> Optional[FidePlayer]:
+        """
+        """
         players = self.get_players(
             first_name=first_name, last_name=last_name
         )
@@ -32,7 +46,13 @@ class FideSearchClient(BaseClient):
         
         return
 
-    def get_players(self, first_name: str, last_name: str) -> List[Player]:
+    def get_players(
+        self,
+        first_name: str, 
+        last_name: str
+    ) -> List[FidePlayer]:
+        """
+        """
         combined_name_query = f'{last_name}, {first_name}'
 
         # Instantiate configuration for searching players
@@ -41,15 +61,19 @@ class FideSearchClient(BaseClient):
         )
 
         response_json = self._fide_request(
-            params=config.parameterize
+            fide_url=self.base_url,
+            params=config.parameterize,
+            headers=self.headers
         )
 
         players = search_player_parsing(response=response_json)
         return players
 
     def get_events(
-        self, query: str, limit: Optional[int] = None
-    ) -> List[Event]:
+        self,
+        query: str, 
+        limit: Optional[int] = None
+    ) -> List[FideEvent]:
         """
         """
         # Instantiate configuration for searching events
@@ -66,8 +90,12 @@ class FideSearchClient(BaseClient):
         return pagination.records
 
     def get_news(
-        self, query: str, limit: Optional[int] = None
-    ) -> List[News]:
+        self,
+        query: str, 
+        limit: Optional[int] = None
+    ) -> List[FideNews]:
+        """
+        """
         # Instantiate configuration for searching news
         config = SearchConfig(
             query=query, link='news'
@@ -87,6 +115,8 @@ class FideSearchClient(BaseClient):
         config: SearchConfig,
         parser: Callable[[dict], list]
     ) -> SearchPagination:
+        """
+        """
         search_pagination = SearchPagination(
             limit=limit
         )
@@ -96,7 +126,11 @@ class FideSearchClient(BaseClient):
                 page=search_pagination.current_page
             )
 
-            response_json = self._fide_request(params=params)
+            response_json = self._fide_request(
+                fide_url=self.base_url,
+                params=params,
+                headers=self.headers
+            )
 
             if search_pagination.overflow_pages is None:
                 search_pagination.overflow_pages = search_result_pages(
@@ -106,8 +140,11 @@ class FideSearchClient(BaseClient):
             # Parse and gather all news from response
             records = parser(response=response_json)
 
-            # Update all record and page variables (both dataclasses to be returned and
-            # number of these records that have been parsed)
-            search_pagination.update_status(records=records)
+            # Update all record and page variables
+            # (both dataclasses to be returned and number of these
+            # records that have been parsed)
+            search_pagination.update_status(
+                records=records
+            )
 
         return search_pagination

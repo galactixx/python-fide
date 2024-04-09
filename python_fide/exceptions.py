@@ -11,3 +11,10 @@ class NoResultsError(BaseError):
         super().__init__(
             message='there are no results associated with query'
         )
+
+
+class IncorrectAttrError(BaseError):
+    def __init__(self):
+        super().__init__(
+            message='attribute was not found due to incorrect or outdated mapping'
+        )
