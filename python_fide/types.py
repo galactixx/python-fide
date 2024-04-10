@@ -1,5 +1,6 @@
-from typing import Any, Literal, Optional
+from typing import Any, Dict, Literal, Optional, Union
 from datetime import datetime
+from dataclasses import dataclass
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -9,6 +10,54 @@ from python_fide.constants.common import (
     FIDE_CALENDER_URL,
     FIDE_NEWS_URL
 )
+
+@dataclass
+class URLInfo:
+    url: str
+    headers: Dict[str, str]
+
+
+class FidePlayerName(BaseModel):
+    first_name: str
+    last_name: str
+
+    @model_validator(mode='after')
+    def validate_names(self) -> 'FidePlayerName':
+        assert self.first_name.isalpha()
+        assert self.last_name.isalpha()
+
+        return self
+    
+    @property
+    def search_name(self) -> str:
+        return f'{self.last_name}, {self.first_name}'
+
+
+class FideBaseID(BaseModel):
+    entity_id: Union[str, int]
+
+    @field_validator('entity_id', mode='after')
+    @classmethod
+    def cast_to_string(cls, entity_id: Union[str, int]) -> str:
+        if isinstance(entity_id, int):
+            entity_id = str(entity_id)
+
+        assert entity_id.isdigit()
+
+        return entity_id
+    
+
+class FidePlayerID(FideBaseID):
+    pass
+
+
+class FideNewsID(FideBaseID):
+    pass
+
+
+class FideEventID(FideBaseID):
+    pass
+
 
 class FidePlayer(BaseModel):
     _name: str = Field(validation_alias='name')

@@ -12,3 +12,4 @@ class BaseConfig(ABC, BaseModel):
 
     class Config:
         populate_by_name = True
+        use_enum_values = True
