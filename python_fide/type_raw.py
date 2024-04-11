@@ -22,3 +22,39 @@ class FidePlayerRatingRaw(BaseModel):
 
     def model_post_init(self, __context: Any):
         assign_default_if_none(model=self)
+
+
+class FidePlayerGameWhiteStatsRaw(BaseModel):
+    total: Optional[int] = Field(default=0)
+    total_win: Optional[int] = Field(default=0, validation_alias='white_win_num')
+    total_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num')
+    standard: Optional[int] = Field(default=0, validation_alias='white_total_std')
+    standard_win: Optional[int] = Field(default=0, validation_alias='white_win_num_std')
+    standard_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num_std')
+    rapid: Optional[int] = Field(default=0, validation_alias='white_total_rpd')
+    rapid_win: Optional[int] = Field(default=0, validation_alias='white_win_num_rpd')
+    rapid_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num_rpd')
+    blitz: Optional[int] = Field(default=0, validation_alias='white_total_blz')
+    blitz_win: Optional[int] = Field(default=0, validation_alias='white_win_num_blz')
+    blitz_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num_blz')
+
+    def model_post_init(self, __context: Any):
+        assign_default_if_none(model=self)
+
+
+class FidePlayerGameBlackStatsRaw(BaseModel):
+    total: Optional[int] = Field(default=0)
+    total_win: Optional[int] = Field(default=0, validation_alias='black_win_num')
+    total_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num')
+    standard: Optional[int] = Field(default=0, validation_alias='black_total_std')
+    standard_win: Optional[int] = Field(default=0, validation_alias='black_win_num_std')
+    standard_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num_std')
+    rapid: Optional[int] = Field(default=0, validation_alias='black_total_rpd')
+    rapid_win: Optional[int] = Field(default=0, validation_alias='black_win_num_rpd')
+    rapid_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num_rpd')
+    blitz: Optional[int] = Field(default=0, validation_alias='black_total_blz')
+    blitz_win: Optional[int] = Field(default=0, validation_alias='black_win_num_blz')
+    blitz_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num_blz')
+
+    def model_post_init(self, __context: Any):
+        assign_default_if_none(model=self)

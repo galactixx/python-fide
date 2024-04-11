@@ -3,8 +3,7 @@ from typing import List
 from python_fide.types import (
     FidePlayer,
     FidePlayerRating,
-    FidePlayerGameStats,
-    _FidePlayerGameStatsRaw
+    FidePlayerGameStats
 )
 
 def profile_charts_parsing(
@@ -28,7 +27,7 @@ def profile_stats_parsing(response: List[dict]) -> FidePlayerGameStats:
             "expecting response to be a list with a singular dictionary"
         )
 
-    raw_stats = _FidePlayerGameStatsRaw.model_validate(
+    raw_stats = FidePlayerGameStats.from_validated_model(
         response[0]
     )
 

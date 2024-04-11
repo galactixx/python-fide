@@ -1,15 +1,15 @@
-from typing import Any, Dict, Literal, Optional, Union
+from typing import Any, Dict, Optional, Union
 from datetime import datetime
 from dataclasses import dataclass
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from python_fide.exceptions import IncorrectAttributeError
 from python_fide.utils.general import create_url
-from python_fide.utils.pydantic import assign_default_if_none
 from python_fide.type_raw import (
+    FidePlayerGameBlackStatsRaw,
+    FidePlayerGameWhiteStatsRaw,
     FidePlayerRaw,
-    FidePlayerRatingRaw
+    FidePlayerRatingRaw,
 )
 from python_fide.constants.common import (   
     FIDE_CALENDER_URL,
@@ -76,7 +76,7 @@ class FidePlayer(BaseModel):
         f'{self.first_name} {self.last_name}'
 
     @classmethod
-    def from_validated_model(cls, player: dict) -> 'FidePlayer':
+    def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayer':
         fide_player = FidePlayerRaw.model_validate(player)
 
         # Generate cleaned name variables based on raw JSON
@@ -148,7 +148,7 @@ class FidePlayerRating(BaseModel):
     def from_validated_model(
         cls,
         player: FidePlayer, 
-        rating: dict
+        rating: Dict[str, Any]
     ) -> 'FidePlayerRating':
         fide_rating = FidePlayerRatingRaw.model_validate(rating)
 
@@ -176,9 +176,9 @@ class FidePlayerRating(BaseModel):
 
 
 class FideGames(BaseModel):
-    games_total: int = Field(description='Number of total games played')
-    games_won: int = Field(description='Number of games won')
-    games_draw: int = Field(description='Number of games drawn')
+    games_total: int = Field(..., description='Number of total games played')
+    games_won: int = Field(..., description='Number of games won')
+    games_draw: int = Field(..., description='Number of games drawn')
     games_lost: int = Field(default=0, description='Number of games lost')
 
     @model_validator(mode='after')
@@ -200,73 +200,43 @@ class FidePlayerGameStats(BaseModel):
     white: FideGamesSet
     black: FideGamesSet
 
-
-class _FidePlayerGameStatsRaw(BaseModel):
-    opponent: Optional[FidePlayer] = None
-    white_total: Optional[int] = Field(default=0)
-    white_total_win: Optional[int] = Field(default=0, validation_alias='white_win_num')
-    white_total_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num')
-    white_standard: Optional[int] = Field(default=0, validation_alias='white_total_std')
-    white_standard_win: Optional[int] = Field(default=0, validation_alias='white_win_num_std')
-    white_standard_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num_std')
-    white_rapid: Optional[int] = Field(default=0, validation_alias='white_total_rpd')
-    white_rapid_win: Optional[int] = Field(default=0, validation_alias='white_win_num_rpd')
-    white_rapid_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num_rpd')
-    white_blitz: Optional[int] = Field(default=0, validation_alias='white_total_blz')
-    white_blitz_win: Optional[int] = Field(default=0, validation_alias='white_win_num_blz')
-    white_blitz_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num_blz')
-    black_total: Optional[int] = Field(default=0)
-    black_total_win: Optional[int] = Field(default=0, validation_alias='black_win_num')
-    black_total_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num')
-    black_standard: Optional[int] = Field(default=0, validation_alias='black_total_std')
-    black_standard_win: Optional[int] = Field(default=0, validation_alias='black_win_num_std')
-    black_standard_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num_std')
-    black_rapid: Optional[int] = Field(default=0, validation_alias='black_total_rpd')
-    black_rapid_win: Optional[int] = Field(default=0, validation_alias='black_win_num_rpd')
-    black_rapid_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num_rpd')
-    black_blitz: Optional[int] = Field(default=0, validation_alias='black_total_blz')
-    black_blitz_win: Optional[int] = Field(default=0, validation_alias='black_win_num_blz')
-    black_blitz_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num_blz')
-
-    def model_post_init(self, __context: Any):
-        assign_default_if_none(model=self)
-
-    def _to_fide_games(
-        self,
-        game_color: Literal['white', 'black'],
-        game_format: Literal['standard', 'rapid', 'blitz']
-    ) -> FideGames:
-        try:
-            games_total = getattr(self, f'{game_color}_{game_format}')
-            games_won = getattr(self, f'{game_color}_{game_format}_win')
-            games_draw = getattr(self, f'{game_color}_{game_format}_draw')
-        except AttributeError:
-            raise IncorrectAttributeError()
-        else:
-            return FideGames(
-                games_total=games_total, games_won=games_won, games_draw=games_draw
+    @classmethod
+    def from_validated_model(
+        cls,
+        opponent: Optional[FidePlayer], 
+        stats: Dict[str, Any]
+    ) -> 'FidePlayerGameStats':
+        
+        def decompose_raw_stats(
+            fide_stats: Union[FidePlayerGameBlackStatsRaw, FidePlayerGameWhiteStatsRaw]
+        ) -> FideGamesSet:
+            return FideGamesSet(
+                standard=FideGames(
+                    games_total=fide_stats.standard,
+                    games_won=fide_stats.standard_win, 
+                    games_draw=fide_stats.standard_draw
+                ),
+                rapid=FideGames(
+                    games_total=fide_stats.rapid,
+                    games_won=fide_stats.rapid_win, 
+                    games_draw=fide_stats.rapid_draw
+                ),
+                blitz=FideGames(
+                    games_total=fide_stats.blitz,
+                    games_won=fide_stats.blitz_win, 
+                    games_draw=fide_stats.blitz_draw
+                )
             )
 
-    def _to_fide_games_set(
-        self,
-        game_color: Literal['white', 'black']
-    ) -> FideGamesSet:
-        return FideGamesSet(
-            standard=self._to_fide_games(
-                game_color=game_color, game_format='standard'
-            ),
-            rapid=self._to_fide_games(
-                game_color=game_color, game_format='rapid'
-            ),
-            blitz=self._to_fide_games(
-                game_color=game_color, game_format='blitz'
-            ),
-        )
+        stats_white = FidePlayerGameWhiteStatsRaw.model_validate(stats)
+        stats_black = FidePlayerGameBlackStatsRaw.model_validate(stats)
 
-    def to_complete_stats(self) -> FidePlayerGameStats:
         return FidePlayerGameStats(
-            opponent=self.opponent,
-            white=self._to_fide_games_set(game_color='white'),
-            black=self._to_fide_games_set(game_color='black')
+            opponent=opponent,
+            white=decompose_raw_stats(
+                fide_stats=stats_white
+            ),
+            black=decompose_raw_stats(
+                fide_stats=stats_black
+            )
         )
-        

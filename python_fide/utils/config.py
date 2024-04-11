@@ -6,8 +6,8 @@ from python_fide.types import (
 )
 
 def parse_fide_player(
-    fide_player: Union[FidePlayer, FidePlayerID
-]) -> str:
+    fide_player: Union[FidePlayer, FidePlayerID]
+) -> str:
     if isinstance(fide_player, FidePlayer):
         return fide_player.player_id
     elif isinstance(fide_player, FidePlayerID):

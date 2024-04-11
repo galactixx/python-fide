@@ -83,6 +83,13 @@ def get_profile_game_stats(
             url_info=FIDE_STATS_INFO,
         )
 
+        # Request from API to get player JSON response
+        if isinstance(fide_player, FidePlayerID):
+            fide_player = get_fide_player(query=fide_player)
+
+            if fide_player is None:
+                raise InvalidFideIDError()
+
         game_stats = profile_stats_parsing(
             response=response
         )
