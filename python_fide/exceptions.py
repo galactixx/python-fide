@@ -13,8 +13,15 @@ class NoResultsError(BaseError):
         )
 
 
-class IncorrectAttrError(BaseError):
+class IncorrectAttributeError(BaseError):
     def __init__(self):
         super().__init__(
             message='attribute was not found due to incorrect or outdated mapping'
+        )
+
+
+class InvalidFideIDError(BaseError):
+    def __init__(self):
+        super().__init__(
+            message='fide ID is invalid and has no link to a Fide rated player'
         )

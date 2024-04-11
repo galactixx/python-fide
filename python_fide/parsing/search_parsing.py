@@ -15,7 +15,7 @@ def search_player_parsing(response: dict) -> List[FidePlayer]:
     players: List[Dict[str, str]] = response['data']
 
     for player in players:
-        fide_player = FidePlayer.model_validate(player)
+        fide_player = FidePlayer.from_validated_model(player)
         gathered_players.append(fide_player)
 
     return gathered_players

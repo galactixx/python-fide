@@ -4,8 +4,13 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from python_fide.exceptions import IncorrectAttrError
-from python_fide.utils import create_url
+from python_fide.exceptions import IncorrectAttributeError
+from python_fide.utils.general import create_url
+from python_fide.utils.pydantic import assign_default_if_none
+from python_fide.type_raw import (
+    FidePlayerRaw,
+    FidePlayerRatingRaw
+)
 from python_fide.constants.common import (   
     FIDE_CALENDER_URL,
     FIDE_NEWS_URL
@@ -60,25 +65,37 @@ class FideEventID(FideBaseID):
 
 
 class FidePlayer(BaseModel):
-    _name: str = Field(validation_alias='name')
-    player_id: str = Field(validation_alias='id')
+    first_name: str
+    last_name: str
+    player_id: str
     title: Optional[str]
     country: str
 
     @property
     def full_name(self) -> str:
-        return f'{self.first_name} {self.last_name}'
-    
-    @property
-    def first_name(self) -> str:
-        return ' '.join(
-            name.strip() for name in self._name.split(',')[1:]
+        f'{self.first_name} {self.last_name}'
+
+    @classmethod
+    def from_validated_model(cls, player: dict) -> 'FidePlayer':
+        fide_player = FidePlayerRaw.model_validate(player)
+
+        # Generate cleaned name variables based on raw JSON
+        # name output from API
+        fide_player_first_name = ' '.join(
+            name.strip() for name in fide_player.name.split(',')[1:]
+        )
+        fide_player_last_name = (
+            fide_player.name.split(',')[0].strip()
         )
 
-    @property
-    def last_name(self) -> str:
-        return self._name.split(',')[0].strip()
-    
+        return cls(
+            first_name=fide_player_first_name,
+            last_name=fide_player_last_name,
+            player_id=fide_player.player_id,
+            title=fide_player.title,
+            country=fide_player.country
+        )
+        
 
 class FideEvent(BaseModel):
     name: str = Field(validation_alias='name')
@@ -102,15 +119,17 @@ class FideNews(BaseModel):
         )
     
 
+class FideRating(BaseModel):
+    games: int
+    rating: Optional[int]
+
+
 class FidePlayerRating(BaseModel):
+    month: str
     player: FidePlayer
-    month: str = Field(validation_alias='date_2')
-    rating_standard: Optional[int] = Field(validation_alias='rating')
-    rating_rapid: Optional[int] = Field(validation_alias='rapid_rtng')
-    rating_blitz: Optional[int] = Field(validation_alias='blitz_rtng')
-    games_standard: Optional[int] = Field(validation_alias='period_games')
-    games_rapid: Optional[int] = Field(validation_alias='rapid_games')
-    games_blitz: Optional[int] = Field(validation_alias='blitz_games')
+    standard: FideRating
+    rapid: FideRating
+    blitz: FideRating
 
     @field_validator('month', mode='after')
     @classmethod
@@ -125,6 +144,32 @@ class FidePlayerRating(BaseModel):
         else:
             return month_date
     
+    @classmethod
+    def from_validated_model(
+        cls,
+        player: FidePlayer, 
+        rating: dict
+    ) -> 'FidePlayerRating':
+        fide_rating = FidePlayerRatingRaw.model_validate(rating)
+
+        standard_rating = FideRating(
+            games=fide_rating.games_standard, rating=fide_rating.rating_standard
+        )
+        rapid_rating = FideRating(
+            games=fide_rating.games_rapid, rating=fide_rating.rating_rapid
+        )
+        blitz_rating = FideRating(
+            games=fide_rating.games_blitz, rating=fide_rating.rating_blitz
+        )
+
+        return cls(
+            player=player,
+            month=fide_rating.month,
+            standard=standard_rating,
+            rapid=rapid_rating,
+            blitz=blitz_rating
+        )
+
     @property
     def month_datetime(self) -> datetime:
         return datetime.strptime(self.month, '%Y-%m-%d')
@@ -184,10 +229,7 @@ class _FidePlayerGameStatsRaw(BaseModel):
     black_blitz_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num_blz')
 
     def model_post_init(self, __context: Any):
-        for field_name, field_info in self.model_fields.items():
-            field_value = getattr(self, field_name)
-            if field_value is None:
-                setattr(self, field_name, field_info.default)
+        assign_default_if_none(model=self)
 
     def _to_fide_games(
         self,
@@ -199,7 +241,7 @@ class _FidePlayerGameStatsRaw(BaseModel):
             games_won = getattr(self, f'{game_color}_{game_format}_win')
             games_draw = getattr(self, f'{game_color}_{game_format}_draw')
         except AttributeError:
-            raise IncorrectAttrError()
+            raise IncorrectAttributeError()
         else:
             return FideGames(
                 games_total=games_total, games_won=games_won, games_draw=games_draw

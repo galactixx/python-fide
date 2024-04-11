@@ -2,7 +2,7 @@ from typing import Literal, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator
 
-from python_fide.utils import validate_limit
+from python_fide.utils.general import validate_limit
 from python_fide.endpoint.base_endpoint import BaseConfig
 from python_fide.types import (
     FideEventID,

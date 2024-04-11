@@ -1,15 +1,22 @@
 from typing import List
 
 from python_fide.types import (
+    FidePlayer,
     FidePlayerRating,
     FidePlayerGameStats,
     _FidePlayerGameStatsRaw
 )
 
-def profile_charts_parsing(response: List[dict]) -> List[FidePlayerRating]:
+def profile_charts_parsing(
+    fide_player: FidePlayer,
+    response: List[dict]
+) -> List[FidePlayerRating]:
     gathered_ratings: List[FidePlayerRating] = []
     for month_rating in response:
-        fide_rating = FidePlayerRating.model_validate(month_rating)
+        fide_rating = FidePlayerRating.from_validated_model(
+            player=fide_player,
+            rating=month_rating
+        )
         gathered_ratings.append(fide_rating)
 
     return gathered_ratings

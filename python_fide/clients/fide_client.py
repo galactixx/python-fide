@@ -1,3 +1,7 @@
+import traceback
+from types import TracebackType
+from typing import Optional
+
 import requests
 from requests import HTTPError
 from faker import Faker
@@ -14,8 +18,19 @@ class FideClient:
     def __enter__(self):
         return self
 
-    def __exit__(self):
-        return False
+    def __exit__(
+        self,
+        _exception_type: Optional[BaseException], 
+        _exception_value: Optional[BaseException], 
+        _traceback: Optional[TracebackType]
+    ):
+        if _exception_type is not None:
+            traceback.print_exception(
+                _exception_type, _exception_value, _traceback
+            )
+            return False
+
+        return True
 
     def request(
         self,

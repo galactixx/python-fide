@@ -9,36 +9,14 @@
 # print(len(events))
 # print(events[0].news_url)
 
+import prettyprinter as pp
+from python_fide.clients.profile import get_profile_rating_progress_chart
+from python_fide.types import FidePlayerID
 
-from python_fide.parsing.profile_parsing import profile_charts_parsing
+pp.install_extras(include=['dataclasses'])
 
-print(
-    profile_charts_parsing(
-        response=[
-    {
-        "date_2": "2003-Apr",
-        "id_number": None,
-        "rating": "2300",
-        "period_games": "0",
-        "rapid_rtng": None,
-        "rapid_games": None,
-        "blitz_rtng": None,
-        "blitz_games": None,
-        "name": "Magnusson, Jorgen",
-        "country": "SWE"
-    },
-    {
-        "date_2": "2003-Jul",
-        "id_number": None,
-        "rating": "2300",
-        "period_games": "0",
-        "rapid_rtng": None,
-        "rapid_games": None,
-        "blitz_rtng": None,
-        "blitz_games": None,
-        "name": "Magnusson, Jorgen",
-        "country": "SWE"
-    }
-            ]
-    )
+pp.pprint(
+    get_profile_rating_progress_chart(
+        fide_player=FidePlayerID(entity_id='1700880')
+    )[0]
 )

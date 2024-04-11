@@ -1,23 +1,69 @@
-from typing import Union
+from typing import Any, Dict, Optional, Union
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
+from python_fide.utils.config import parse_fide_player
 from python_fide.constants.periods import Period
 from python_fide.endpoint.base_endpoint import BaseConfig
+from python_fide.types import (
+    FidePlayer,
+    FidePlayerID
+)
 
 class ProfileChartsConfig(BaseConfig):
-    fide_id: Union[str, int] = Field(..., alias='event')
-    period: Period = Field(..., alias='period')
+    fide_player: Union[
+        FidePlayer, 
+        FidePlayerID
+    ] = Field(..., alias='event')
+    period: Optional[Period] = Field(..., alias='period')
+
+    @field_validator('period', mode='after')
+    def validate_period(cls, period: Optional[Period]) -> Period:
+        if period is not None:
+            period = Period.ALL_YEARS
+        return period
+
+    @field_validator('fide_player', mode='after')
+    @classmethod
+    def extract_fide_id(cls, fide_player: Union[FidePlayer, FidePlayerID]) -> str:
+        player_id = parse_fide_player(fide_player=fide_player)
+        return player_id
 
     @property
-    def parameterize(self) -> dict:
-        pass
+    def parameterize(self) -> Dict[str, Any]:
+        return self.model_dump(by_alias=True)
 
 
 class ProfileStatsConfig(BaseConfig):
-    fide_id: Union[str, int] = Field(..., alias='id1')
-    opponent_fide_id: Union[str, int] = Field(..., alias='id2')
+    fide_player: Union[
+        FidePlayer, 
+        FidePlayerID
+    ] = Field(..., alias='id1')
+    fide_player_opponent: Optional[
+        Union[FidePlayer, FidePlayerID]
+    ] = Field(..., alias='id2')
+
+    @field_validator('fide_player', mode='after')
+    @classmethod
+    def extract_fide_id(cls, fide_player: Union[FidePlayer, FidePlayerID]) -> str:
+        player_id = parse_fide_player(fide_player=fide_player)
+        return player_id
+
+    @field_validator('fide_player_opponent', mode='after')
+    @classmethod
+    def extract_fide_id_from_opponent(
+        cls,
+        fide_player_opponent: Optional[
+            Union[FidePlayer, FidePlayerID]
+        ]
+    ) -> str:
+        if fide_player_opponent is not None:
+            player_id = parse_fide_player(
+                fide_player=fide_player_opponent
+            )
+            return player_id
+        return fide_player_opponent
 
     @property
-    def parameterize(self) -> dict:
-        pass
+    def parameterize(self) -> Dict[str, Any]:
+        return self.model_dump(by_alias=True)
