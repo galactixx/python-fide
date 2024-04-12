@@ -1,6 +1,6 @@
 from typing import Callable, List, Optional, Union
 
-from python_fide.clients.fide_client import FideClient
+from python_fide.clients.fide_client import fide_request
 from python_fide.constants.common import (
     FIDE_HEADERS,
     FIDE_SEARCH_URL
@@ -50,7 +50,6 @@ def get_fide_player(
         raise TypeError(
             "not a valid search query type"
         )
-
     return
 
 
@@ -59,20 +58,19 @@ def get_fide_players(
 ) -> List[FidePlayer]:
     """
     """
-    with FideClient() as session:
-        config = SearchConfig(
-            query=query, link='player'
-        )
+    config = SearchConfig(
+        query=query, link='player'
+    )
 
-        response_json = session.request(
-            params=config.parameterize,
-            url_info=FIDE_SEARCH_INFO
-        )
+    response_json = fide_request(
+        params=config.parameterize,
+        url_info=FIDE_SEARCH_INFO
+    )
 
-        players = search_player_parsing(
-            response=response_json
-        )
-        return players
+    players = search_player_parsing(
+        response=response_json
+    )
+    return players
 
 
 def get_fide_news(
@@ -81,19 +79,17 @@ def get_fide_news(
 ) -> List[FideNews]:
     """
     """
-    with FideClient() as session:
-        config = SearchConfig(
-            query=query, link='news'
-        )
+    config = SearchConfig(
+        query=query, link='news'
+    )
 
-        pagination = _paginate(
-            session=session,
-            limit=limit,
-            config=config,
-            parser=search_news_parsing
-        )
+    pagination = _paginate(
+        limit=limit,
+        config=config,
+        parser=search_news_parsing
+    )
 
-        return pagination.records
+    return pagination.records
 
 
 def get_fide_events(
@@ -102,23 +98,20 @@ def get_fide_events(
 ) -> List[FideEvent]:
     """
     """
-    with FideClient() as session:
-        config = SearchConfig(
-            query=query, link='event'
-        )
+    config = SearchConfig(
+        query=query, link='event'
+    )
 
-        pagination = _paginate(
-            session=session,
-            limit=limit,
-            config=config,
-            parser=search_event_parsing
-        )
+    pagination = _paginate(
+        limit=limit,
+        config=config,
+        parser=search_event_parsing
+    )
 
-        return pagination.records
+    return pagination.records
 
 
 def _paginate(
-    session: FideClient,
     limit: Optional[int],
     config: SearchConfig,
     parser: Callable[[dict], list]
@@ -134,7 +127,7 @@ def _paginate(
             page=search_pagination.current_page
         )
 
-        response_json = session.request(
+        response_json = fide_request(
             params=params,
             url_info=FIDE_SEARCH_INFO
         )

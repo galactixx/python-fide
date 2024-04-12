@@ -1,7 +1,9 @@
 from typing import Any, Dict, Optional, Union
 
-from pydantic import Field, field_validator
+from pydantic import BaseModel, Field, field_validator
 
+from python_fide.constants.common import FIDE_PLAYER_DETAIL_URL
+from python_fide.utils.general import create_url
 from python_fide.utils.config import parse_fide_player
 from python_fide.constants.periods import Period
 from python_fide.endpoint.base_endpoint import BaseConfig
@@ -18,6 +20,7 @@ class ProfileChartsConfig(BaseConfig):
     period: Optional[Period] = Field(..., alias='period')
 
     @field_validator('period', mode='after')
+    @classmethod
     def validate_period(cls, period: Optional[Period]) -> Period:
         if period is not None:
             period = Period.ALL_YEARS
@@ -25,7 +28,10 @@ class ProfileChartsConfig(BaseConfig):
 
     @field_validator('fide_player', mode='after')
     @classmethod
-    def extract_fide_id(cls, fide_player: Union[FidePlayer, FidePlayerID]) -> str:
+    def extract_fide_id(
+        cls,
+        fide_player: Union[FidePlayer, FidePlayerID]
+    ) -> str:
         player_id = parse_fide_player(fide_player=fide_player)
         return player_id
 
@@ -45,7 +51,10 @@ class ProfileStatsConfig(BaseConfig):
 
     @field_validator('fide_player', mode='after')
     @classmethod
-    def extract_fide_id(cls, fide_player: Union[FidePlayer, FidePlayerID]) -> str:
+    def extract_fide_id(
+        cls,
+        fide_player: Union[FidePlayer, FidePlayerID]
+    ) -> str:
         player_id = parse_fide_player(fide_player=fide_player)
         return player_id
 
@@ -67,3 +76,26 @@ class ProfileStatsConfig(BaseConfig):
     @property
     def parameterize(self) -> Dict[str, Any]:
         return self.model_dump(by_alias=True)
+    
+
+class ProfileDetailConfig(BaseModel):
+    fide_player: Union[
+        FidePlayer, 
+        FidePlayerID
+    ]
+
+    @field_validator('fide_player', mode='after')
+    @classmethod
+    def extract_fide_id(
+        cls,
+        fide_player: Union[FidePlayer, FidePlayerID]
+    ) -> str:
+        player_id = parse_fide_player(fide_player=fide_player)
+        return player_id
+    
+    @property
+    def endpointize(self) -> str:
+        return create_url(
+            base=FIDE_PLAYER_DETAIL_URL,
+            segments=self.fide_player
+        )
