@@ -25,7 +25,7 @@ class FidePlayerBase(BaseRawModel):
         )
     
 
-class FidePlayerTopBase(BaseRawModel):
+class FideTopPlayerBase(BaseRawModel):
     ranking: int = Field(..., validation_alias='pos')
     period: str = Field(..., validation_alias='period_date')
     player_id: str = Field(..., validation_alias='id_number')

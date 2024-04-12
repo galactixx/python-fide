@@ -4,7 +4,7 @@ FIDE_SEARCH_URL = 'https://app.fide.com/api/v1/client/search?'
 # Fide Profile URLs
 FIDE_PROFILE_CHARTS_URL = 'https://ratings.fide.com/a_chart_data.phtml?'
 FIDE_PROFILE_STATS_URL = 'https://ratings.fide.com/a_data_stats.php?'
-FIDE_PLAYER_DETAIL_URL = 'https://app.fide.com/api/v1/client/players/'
+FIDE_PLAYERS_URL = 'https://app.fide.com/api/v1/client/players/'
 
 # Fide News/Events URLs
 FIDE_NEWS_URL = 'https://fide.com/news/'

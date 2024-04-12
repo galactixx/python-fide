@@ -15,7 +15,7 @@ from python_fide.types_base import (
     FidePlayerGameWhiteStatsRaw,
     FidePlayerBase,
     FidePlayerRatingRaw,
-    FidePlayerTopBase
+    FideTopPlayerBase
 )
 from python_fide.constants.common import (   
     FIDE_CALENDER_URL,
@@ -70,21 +70,22 @@ class FideEventID(FideBaseID):
     pass
 
 
-class FidePlayerTop(FidePlayerTopBase):
+class FideTopPlayer(FideTopPlayerBase):
     category: RatingCategory
     first_name: str
     last_name: str
 
     class Config:
         populate_by_name = True
+        use_enum_values = True
 
     @classmethod
     def from_validated_model(
         cls,
         player: Dict[str, Any],
         category: RatingCategory
-    ) -> 'FidePlayerTop':
-        fide_player = FidePlayerTopBase.model_validate(player)
+    ) -> 'FideTopPlayer':
+        fide_player = FideTopPlayerBase.model_validate(player)
 
         # Generate cleaned name variables based on raw JSON
         # name output from API

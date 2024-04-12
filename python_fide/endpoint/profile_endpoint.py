@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator
 
-from python_fide.constants.common import FIDE_PLAYER_DETAIL_URL
+from python_fide.constants.common import FIDE_PLAYERS_URL
 from python_fide.utils.general import create_url
 from python_fide.utils.config import parse_fide_player
 from python_fide.constants.periods import Period
@@ -96,6 +96,6 @@ class ProfileDetailConfig(BaseModel):
     @property
     def endpointize(self) -> str:
         return create_url(
-            base=FIDE_PLAYER_DETAIL_URL,
+            base=FIDE_PLAYERS_URL,
             segments=self.fide_player
         )
