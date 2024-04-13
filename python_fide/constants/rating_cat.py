@@ -3,5 +3,5 @@ from enum import Enum
 class RatingCategory(Enum):
     OPEN = 'open'
     JUNIORS = 'juniors'
-    GIRLS = 'girld'
+    GIRLS = 'girls'
     WOMEN = 'women'

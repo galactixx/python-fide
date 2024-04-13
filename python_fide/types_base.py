@@ -1,53 +1,51 @@
-from typing import Any, Literal, Optional
+from typing import Any, Literal, Optional, Tuple
 
 from pydantic import AliasChoices, BaseModel, Field
 
 from python_fide.utils.pydantic import assign_default_if_none
+from python_fide.utils.general import clean_fide_player_name
 
 class BaseRawModel(BaseModel):
     def model_post_init(self, __context: Any):
         assign_default_if_none(model=self)
 
 
-class FidePlayerBase(BaseRawModel):
-    name: str = Field(..., validation_alias='name')
-    player_id: str = Field(..., validation_alias=AliasChoices('id', 'id_number'))
-    title: Optional[str]
-    country: str
+class BasePlayer(BaseModel):
+    def get_decomposed_player_name(self) -> Tuple[str, str]:
+        return clean_fide_player_name(
+            name=getattr(self, 'name')
+        )
 
-    def set_player_name(
-        self,
-        first_name: str, 
-        last_name: str
-    ) -> None:
+    def set_player_name(self, first_name: str, last_name: str) -> None:
         setattr(
             self, 'name', f'{first_name} {last_name}'
         )
-    
+
+
+class FidePlayerBase(BasePlayer):
+    name: str = Field(..., validation_alias='name')
+    player_id: int = Field(..., validation_alias=AliasChoices('id', 'id_number'))
+    title: Optional[str]
+    country: str
+
+
+class FidePlayerBasicBase(BasePlayer):
+    name: str = Field(..., validation_alias='name')
+    player_id: int = Field(..., validation_alias='id_number')
+    country: str
+
 
 class FideTopPlayerBase(BaseRawModel):
     ranking: int = Field(..., validation_alias='pos')
     period: str = Field(..., validation_alias='period_date')
-    player_id: str = Field(..., validation_alias='id_number')
-    name: str
-    country: str
     birthday: str
     sex: Literal['M', 'F']
     rating_standard: Optional[int] = Field(default=None, validation_alias='rating')
     rating_rapid: Optional[int] = Field(default=None, validation_alias='rapid_rating')
     rating_blitz: Optional[int] = Field(default=None, validation_alias='blitz_rating')
 
-    def set_player_name(
-        self, 
-        first_name: str, 
-        last_name: str
-    ) -> None:
-        setattr(
-            self, 'name', f'{first_name} {last_name}'
-        )
 
-
-class FidePlayerDetailRaw(BaseRawModel):
+class FidePlayerDetailBase(BaseRawModel):
     sex: Literal['M', 'F']
     birth_year: str = Field(..., validation_alias='birthyear')
     rating_standard: Optional[int] = Field(..., validation_alias='standard_rating')
@@ -55,7 +53,25 @@ class FidePlayerDetailRaw(BaseRawModel):
     rating_blitz: Optional[int] = Field(..., validation_alias='blitz_rating')
 
 
-class FidePlayerRatingRaw(BaseRawModel):
+class FideEventDetailBase(BaseRawModel):
+    city: str
+    country: str
+    description: str = Field(..., validation_alias='remarks')
+    start_date: str = Field(..., validation_alias='date_start')
+    end_date: str = Field(..., validation_alias='date_end')
+    game_format: str = Field(..., validation_alias='time_control_typ')
+    tournament_type: str = Field(..., validation_alias='tournament_system')
+    time_constrol: str = Field(..., validation_alias='time_control')
+    rounds: int = Field(..., validation_alias='num_round')
+    players: int = Field(..., validation_alias='number_of_players')
+    telephone: str = Field(..., validation_alias='tel')
+    website: str
+    organizer: str
+    chief_arbiter: str
+    chief_organizer: str
+
+
+class FidePlayerRatingBase(BaseRawModel):
     month: str = Field(..., validation_alias='date_2')
     rating_standard: Optional[int] = Field(..., validation_alias='rating')
     rating_rapid: Optional[int] = Field(..., validation_alias='rapid_rtng')
@@ -65,7 +81,7 @@ class FidePlayerRatingRaw(BaseRawModel):
     games_blitz: Optional[int] = Field(default=0, validation_alias='blitz_games')
 
 
-class FidePlayerGameWhiteStatsRaw(BaseRawModel):
+class FidePlayerGameWhiteStatsBase(BaseRawModel):
     total: Optional[int] = Field(default=0)
     total_win: Optional[int] = Field(default=0, validation_alias='white_win_num')
     total_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num')
@@ -80,7 +96,7 @@ class FidePlayerGameWhiteStatsRaw(BaseRawModel):
     blitz_draw: Optional[int] = Field(default=0, validation_alias='white_draw_num_blz')
 
 
-class FidePlayerGameBlackStatsRaw(BaseRawModel):
+class FidePlayerGameBlackStatsBase(BaseRawModel):
     total: Optional[int] = Field(default=0)
     total_win: Optional[int] = Field(default=0, validation_alias='black_win_num')
     total_draw: Optional[int] = Field(default=0, validation_alias='black_draw_num')

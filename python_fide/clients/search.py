@@ -5,7 +5,7 @@ from python_fide.constants.common import (
     FIDE_HEADERS,
     FIDE_SEARCH_URL
 )
-from python_fide.endpoint.search_endpoint import (
+from python_fide.config.search_config import (
     SearchConfig,
     SearchPagination
 )

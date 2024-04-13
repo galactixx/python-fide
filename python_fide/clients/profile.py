@@ -15,16 +15,19 @@ from python_fide.types import (
 from python_fide.parsing.profile_parsing import (
     profile_charts_parsing,
     profile_detail_parsing,
+    profile_opponents_parsing,
     profile_stats_parsing
 )
 from python_fide.constants.common import (
     FIDE_PROFILE_CHARTS_URL,
     FIDE_PROFILE_STATS_URL,
+    FIDE_OPPONENTS_URL,
     FIDE_RATINGS_HEADERS
 )
-from python_fide.endpoint.profile_endpoint import (
+from python_fide.config.profile_config import (
     ProfileChartsConfig,
     ProfileDetailConfig,
+    ProfileOpponentsConfig,
     ProfileStatsConfig
 )
 
@@ -36,6 +39,10 @@ FIDE_STATS_INFO = URLInfo(
     url=FIDE_PROFILE_STATS_URL, headers=FIDE_RATINGS_HEADERS
 )
 
+FIDE_OPPONENTS_INFO = URLInfo(
+    url=FIDE_OPPONENTS_URL, headers=FIDE_RATINGS_HEADERS
+)
+
 def _consolidate_fide_player(
     fide_player: Union[FidePlayer, FidePlayerID]
 ) -> FidePlayer:
@@ -45,12 +52,33 @@ def _consolidate_fide_player(
         fide_player = get_fide_player(query=fide_player)
 
         if fide_player is None:
-            raise InvalidFideIDError()
+            raise InvalidFideIDError(
+                'fide ID is invalid and has no link to a Fide rated player'
+            )
     return fide_player
 
 
+def get_profile_opponents(
+    fide_player: Union[FidePlayer, FidePlayerID]
+) -> None:
+    """
+    """
+    config = ProfileOpponentsConfig(fide_player=fide_player)
+
+    # Request from API to get profile opponents JSON response
+    response = fide_request(
+        url_info=FIDE_OPPONENTS_INFO,
+        params=config.parameterize
+    )
+
+    # Validate and parse profile detail fields from response
+    opponents = profile_opponents_parsing(response=response)
+
+    return opponents
+
+
 def get_profile_detail(
-    fide_player: Union[FidePlayer, FidePlayerID] 
+    fide_player: Union[FidePlayer, FidePlayerID]
 ) -> Optional[FidePlayerDetail]:
     """
     """

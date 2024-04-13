@@ -6,7 +6,7 @@ from python_fide.constants.common import FIDE_PLAYERS_URL
 from python_fide.utils.general import create_url
 from python_fide.utils.config import parse_fide_player
 from python_fide.constants.periods import Period
-from python_fide.endpoint.base_endpoint import BaseConfig
+from python_fide.config.base_config import BaseConfig
 from python_fide.types import (
     FidePlayer,
     FidePlayerID
@@ -96,6 +96,25 @@ class ProfileDetailConfig(BaseModel):
     @property
     def endpointize(self) -> str:
         return create_url(
-            base=FIDE_PLAYERS_URL,
-            segments=self.fide_player
+            base=FIDE_PLAYERS_URL, segments=str(self.fide_player)
         )
+    
+
+class ProfileOpponentsConfig(BaseConfig):
+    fide_player: Union[
+        FidePlayer, 
+        FidePlayerID
+    ] = Field(..., alias='pl')
+
+    @field_validator('fide_player', mode='after')
+    @classmethod
+    def extract_fide_id(
+        cls,
+        fide_player: Union[FidePlayer, FidePlayerID]
+    ) -> str:
+        player_id = parse_fide_player(fide_player=fide_player)
+        return player_id
+    
+    @property
+    def parameterize(self) -> Dict[str, Any]:
+        return self.model_dump(by_alias=True)

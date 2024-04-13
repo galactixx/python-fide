@@ -2,10 +2,22 @@ from typing import List, Optional
 
 from python_fide.types import (
     FidePlayer,
+    FidePlayerBasic,
     FidePlayerDetail,
     FidePlayerGameStats,
     FidePlayerRating
 )
+
+def profile_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
+    """
+    """
+    gathered_players: List[FidePlayerBasic] = []
+    
+    for player in response:
+        fide_player = FidePlayerBasic.from_validated_model(player=player)
+        gathered_players.append(fide_player)
+    
+    return gathered_players
 
 def profile_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
     """

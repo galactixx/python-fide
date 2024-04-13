@@ -4,17 +4,18 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from python_fide.exceptions import InvalidFideIDError
 from python_fide.constants.rating_cat import RatingCategory
-from python_fide.utils.general import (
-    clean_fide_player_name,
-    create_url
-)
+from python_fide.utils.general import create_url
+from python_fide.utils.types_utils import from_player_model
 from python_fide.types_base import (
-    FidePlayerDetailRaw,
-    FidePlayerGameBlackStatsRaw,
-    FidePlayerGameWhiteStatsRaw,
+    FideEventDetailBase,
+    FidePlayerBasicBase,
+    FidePlayerDetailBase,
+    FidePlayerGameBlackStatsBase,
+    FidePlayerGameWhiteStatsBase,
     FidePlayerBase,
-    FidePlayerRatingRaw,
+    FidePlayerRatingBase,
     FideTopPlayerBase
 )
 from python_fide.constants.common import (   
@@ -49,11 +50,16 @@ class FideBaseID(BaseModel):
 
     @field_validator('entity_id', mode='after')
     @classmethod
-    def cast_to_string(cls, entity_id: Union[str, int]) -> str:
-        if isinstance(entity_id, int):
-            entity_id = str(entity_id)
+    def cast_to_int(cls, entity_id: Union[str, int]) -> str:
+        if isinstance(entity_id, str):
+            assert entity_id.isdigit()
 
-        assert entity_id.isdigit()
+            try:
+                entity_id = int(entity_id)
+            except ValueError:
+                raise InvalidFideIDError(
+                    "invalid Fide ID entered, must be an equivalent integer"
+                )
 
         return entity_id
     
@@ -70,39 +76,22 @@ class FideEventID(FideBaseID):
     pass
 
 
-class FideTopPlayer(FideTopPlayerBase):
-    category: RatingCategory
+class FidePlayerBasic(FidePlayerBasicBase):
     first_name: str
     last_name: str
 
     class Config:
         populate_by_name = True
-        use_enum_values = True
 
     @classmethod
-    def from_validated_model(
-        cls,
-        player: Dict[str, Any],
-        category: RatingCategory
-    ) -> 'FideTopPlayer':
-        fide_player = FideTopPlayerBase.model_validate(player)
-
-        # Generate cleaned name variables based on raw JSON
-        # name output from API
-        player_first_name, player_last_name = clean_fide_player_name(
-            name=fide_player.name
-        )
-
-        # Reset the player name attribute
-        fide_player.set_player_name(
-            first_name=player_first_name, last_name=player_last_name
+    def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerBasic':
+        first_name, last_name, model = from_player_model(
+            player=player,
+            fide_player_model=FidePlayerBasicBase,
         )
 
         return cls(
-            category=category,
-            first_name=player_first_name,
-            last_name=player_last_name,
-            **fide_player.model_dump()
+            first_name=first_name, last_name=last_name, **model
         )
 
 
@@ -115,66 +104,94 @@ class FidePlayer(FidePlayerBase):
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayer':
-        fide_player = FidePlayerBase.model_validate(player)
-
-        # Generate cleaned name variables based on raw JSON
-        # name output from API
-        player_first_name, player_last_name = clean_fide_player_name(
-            name=fide_player.name
-        )
-
-        # Reset the player name attribute
-        fide_player.set_player_name(
-            first_name=player_first_name, last_name=player_last_name
+        first_name, last_name, model = from_player_model(
+            player=player,
+            fide_player_model=FidePlayerBase,
         )
 
         return cls(
-            first_name=player_first_name,
-            last_name=player_last_name,
-            **fide_player.model_dump()
+            first_name=first_name, last_name=last_name, **model
         )
-    
 
-class FidePlayerDetail(BaseModel):
+
+class FideTopPlayer(FideTopPlayerBase):
+    player: FidePlayerBasic
+    category: RatingCategory
+
+    class Config:
+        populate_by_name = True
+        use_enum_values = True
+
+    @classmethod
+    def from_validated_model(
+        cls,
+        player: Dict[str, Any],
+        category: RatingCategory
+    ) -> 'FideTopPlayer':
+        fide_player = FidePlayerBasic.from_validated_model(player=player)
+        fide_top_player = FideTopPlayerBase.model_validate(player)
+
+        return cls(
+            player=fide_player,
+            category=category,
+            **fide_top_player.model_dump()
+        )
+
+
+class FidePlayerDetail(FidePlayerDetailBase):
     player: FidePlayer
-    sex: Literal['M', 'F']
-    birth_year: str
-    rating_standard: Optional[int]
-    rating_rapid: Optional[int]
-    rating_blitz: Optional[int]
+
+    class Config:
+        populate_by_name = True
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerDetail':
         fide_player = FidePlayer.from_validated_model(player=player)
-        fide_player_detail = FidePlayerDetailRaw.model_validate(player)
+        fide_player_detail = FidePlayerDetailBase.model_validate(player)
 
         return cls(
             player=fide_player,
             **fide_player_detail.model_dump()
         )
-
+    
 
 class FideEvent(BaseModel):
     name: str = Field(validation_alias='name')
-    event_id: str = Field(validation_alias='id')
+    event_id: int = Field(validation_alias='id')
 
     @property
     def event_url(self) -> str:
         return create_url(
-            base=FIDE_CALENDER_URL, segments=self.event_id
+            base=FIDE_CALENDER_URL, segments=str(self.event_id)
         )
 
 
 class FideNews(BaseModel):
     title: str = Field(validation_alias='name')
-    news_id: str = Field(validation_alias='id')
+    news_id: int = Field(validation_alias='id')
 
     @property
     def news_url(self) -> str:
         return create_url(
-            base=FIDE_NEWS_URL, segments=self.news_id
+            base=FIDE_NEWS_URL, segments=str(self.news_id)
         )
-    
+
+
+class FideEventDetail(FideEventDetailBase):
+    event: FideEvent
+
+    class Config:
+        populate_by_name = True
+
+    @classmethod
+    def from_validated_model(cls, event: Dict[str, Any]) -> 'FideEventDetail':
+        fide_event = FideEvent.model_validate(event)
+        fide_event_detail = FideEventDetailBase.model_validate(event)
+        return cls(
+            event=fide_event,
+            **fide_event_detail.model_dump()
+        )
+
 
 class FideRating(BaseModel):
     games: int
@@ -207,7 +224,7 @@ class FidePlayerRating(BaseModel):
         player: FidePlayer, 
         rating: Dict[str, Any]
     ) -> 'FidePlayerRating':
-        fide_rating = FidePlayerRatingRaw.model_validate(rating)
+        fide_rating = FidePlayerRatingBase.model_validate(rating)
 
         # Decompose the raw models into structured models
         standard_rating = FideRating(
@@ -268,7 +285,10 @@ class FidePlayerGameStats(BaseModel):
     ) -> 'FidePlayerGameStats':
         
         def decompose_raw_stats(
-            fide_stats: Union[FidePlayerGameBlackStatsRaw, FidePlayerGameWhiteStatsRaw]
+            fide_stats: Union[
+                FidePlayerGameBlackStatsBase,
+                FidePlayerGameWhiteStatsBase
+            ]
         ) -> FideGamesSet:
             return FideGamesSet(
                 standard=FideGames(
@@ -289,8 +309,8 @@ class FidePlayerGameStats(BaseModel):
             )
 
         # Validate both white and black models
-        stats_white = FidePlayerGameWhiteStatsRaw.model_validate(stats)
-        stats_black = FidePlayerGameBlackStatsRaw.model_validate(stats)
+        stats_white = FidePlayerGameWhiteStatsBase.model_validate(stats)
+        stats_black = FidePlayerGameBlackStatsBase.model_validate(stats)
 
         # Decompose the raw models into structured models
         stats_white_decomposed = decompose_raw_stats(

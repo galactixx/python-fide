@@ -14,7 +14,5 @@ class NoResultsError(BaseError):
 
 
 class InvalidFideIDError(BaseError):
-    def __init__(self):
-        super().__init__(
-            message='fide ID is invalid and has no link to a Fide rated player'
-        )
+    def __init__(self, message: str):
+        super().__init__(message=message)

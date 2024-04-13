@@ -1,12 +1,11 @@
 import prettyprinter as pp
-from python_fide.clients.top_players import get_top_standard_players
-from python_fide.constants.rating_cat import RatingCategory
+from python_fide.clients.event import get_event_detail
+from python_fide.types import FideEventID
 
 pp.install_extras(include=['dataclasses'])
 
 pp.pprint(
-    get_top_standard_players(
-        categories=[RatingCategory.OPEN],
-        limit=1
+    get_event_detail(
+        fide_event=FideEventID(entity_id='54155')
     )
 )
