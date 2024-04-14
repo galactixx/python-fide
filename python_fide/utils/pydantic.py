@@ -1,15 +1,22 @@
-from pydantic import BaseModel
-from pydantic_core import PydanticUndefinedType
+from typing import Any, Dict, Tuple, Union
 
-def assign_default_if_none(model: BaseModel) -> None:
+from python_fide.types_base import (
+    FidePlayerBase,
+    FidePlayerBasicBase
+)
+
+def from_player_model(
+    player: Dict[str, Any],
+    fide_player_model: Union[FidePlayerBase, FidePlayerBasicBase]
+) -> Tuple[str, str, Dict[str, Any]]:
     """
     """
-    for field_name, field_info in model.model_fields.items():
-        field_value = getattr(model, field_name)
-        if field_value is None:
-            if not isinstance(
-                field_info.default, PydanticUndefinedType
-            ):
-                setattr(
-                    model, field_name, field_info.default
-                )
+    fide_player = fide_player_model.model_validate(player)
+    first_name, last_name = fide_player.get_decomposed_player_name()
+    fide_player.set_player_name(
+        first_name=first_name, last_name=last_name
+    )
+
+    return (
+        first_name, last_name, fide_player.model_dump()
+    )

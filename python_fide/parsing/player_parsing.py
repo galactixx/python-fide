@@ -8,7 +8,7 @@ from python_fide.types import (
     FidePlayerRating
 )
 
-def profile_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
+def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
     """
     """
     gathered_players: List[FidePlayerBasic] = []
@@ -19,7 +19,7 @@ def profile_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
     
     return gathered_players
 
-def profile_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
+def player_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
     """
     """
     # This is a search by Fide ID, thus there should never be a response
@@ -37,7 +37,7 @@ def profile_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
         return fide_detail
 
 
-def profile_charts_parsing(
+def player_charts_parsing(
     fide_player: FidePlayer,
     response: List[dict]
 ) -> List[FidePlayerRating]:
@@ -54,7 +54,7 @@ def profile_charts_parsing(
     return gathered_ratings
 
 
-def profile_stats_parsing(
+def player_stats_parsing(
     fide_player: FidePlayer,
     fide_player_opponent: Optional[FidePlayer],
     response: List[dict]

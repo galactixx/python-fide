@@ -1,9 +1,11 @@
 import sys
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 from urllib.parse import urljoin
 
 def clean_fide_player_name(name: str) -> Tuple[str, str]:
+    """
+    """
     player_first_name = ' '.join(
         name.strip() for name in name.split(',')[1:]
     )
@@ -11,7 +13,12 @@ def clean_fide_player_name(name: str) -> Tuple[str, str]:
     return player_first_name, player_last_name
 
 
-def create_url(base: str, segments: str) -> str:
+def create_url(base: str, segments: Union[int, str]) -> str:
+    """
+    """
+    if isinstance(segments, int):
+        segments = str(segments)
+
     if not base.endswith('/'):
         base += '/'
 
@@ -19,6 +26,8 @@ def create_url(base: str, segments: str) -> str:
 
 
 def validate_limit(limit: Optional[int]) -> int:
+    """
+    """
     if limit is None:
         return sys.maxsize
     else:

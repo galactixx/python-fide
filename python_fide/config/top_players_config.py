@@ -5,6 +5,8 @@ from pydantic import BaseModel, field_validator
 from python_fide.constants.rating_cat import RatingCategory
 
 class TopPlayersConfig(BaseModel):
+    """
+    """
     categories: List[RatingCategory]
 
     @field_validator('categories', mode='after')

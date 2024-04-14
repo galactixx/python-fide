@@ -1,15 +1,15 @@
 from typing import Any, Dict, Literal, Optional, Union
 from datetime import datetime
-from dataclasses import dataclass
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from python_fide.exceptions import InvalidFideIDError
 from python_fide.constants.rating_cat import RatingCategory
 from python_fide.utils.general import create_url
-from python_fide.utils.types_utils import from_player_model
+from python_fide.utils.pydantic import from_player_model
 from python_fide.types_base import (
     FideEventDetailBase,
+    FideNewsDetailBase,
     FidePlayerBasicBase,
     FidePlayerDetailBase,
     FidePlayerGameBlackStatsBase,
@@ -23,10 +23,9 @@ from python_fide.constants.common import (
     FIDE_NEWS_URL
 )
 
-@dataclass
-class URLInfo:
-    url: str
-    headers: Dict[str, str]
+class ClientNotFound(BaseModel):
+    message: Literal['Not Found']
+    status: Literal[404]
 
 
 class FidePlayerName(BaseModel):
@@ -80,9 +79,6 @@ class FidePlayerBasic(FidePlayerBasicBase):
     first_name: str
     last_name: str
 
-    class Config:
-        populate_by_name = True
-
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerBasic':
         first_name, last_name, model = from_player_model(
@@ -98,9 +94,6 @@ class FidePlayerBasic(FidePlayerBasicBase):
 class FidePlayer(FidePlayerBase):
     first_name: str
     last_name: str
-
-    class Config:
-        populate_by_name = True
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayer':
@@ -119,7 +112,6 @@ class FideTopPlayer(FideTopPlayerBase):
     category: RatingCategory
 
     class Config:
-        populate_by_name = True
         use_enum_values = True
 
     @classmethod
@@ -141,9 +133,6 @@ class FideTopPlayer(FideTopPlayerBase):
 class FidePlayerDetail(FidePlayerDetailBase):
     player: FidePlayer
 
-    class Config:
-        populate_by_name = True
-
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerDetail':
         fide_player = FidePlayer.from_validated_model(player=player)
@@ -162,7 +151,7 @@ class FideEvent(BaseModel):
     @property
     def event_url(self) -> str:
         return create_url(
-            base=FIDE_CALENDER_URL, segments=str(self.event_id)
+            base=FIDE_CALENDER_URL, segments=self.event_id
         )
 
 
@@ -173,15 +162,12 @@ class FideNews(BaseModel):
     @property
     def news_url(self) -> str:
         return create_url(
-            base=FIDE_NEWS_URL, segments=str(self.news_id)
+            base=FIDE_NEWS_URL, segments=self.news_id
         )
 
 
 class FideEventDetail(FideEventDetailBase):
     event: FideEvent
-
-    class Config:
-        populate_by_name = True
 
     @classmethod
     def from_validated_model(cls, event: Dict[str, Any]) -> 'FideEventDetail':
@@ -190,6 +176,20 @@ class FideEventDetail(FideEventDetailBase):
         return cls(
             event=fide_event,
             **fide_event_detail.model_dump()
+        )
+
+
+class FideNewsDetail(FideNewsDetailBase):
+    news: FideNews
+
+    @classmethod
+    def from_validated_model(cls, news: Dict[str, Any]) -> 'FideNewsDetail':
+        fide_news = FideNews.model_validate(news)
+        fide_news_detail = FideNewsDetailBase.model_validate(news)
+
+        return cls(
+            news=fide_news,
+            **fide_news_detail.model_dump()
         )
 
 

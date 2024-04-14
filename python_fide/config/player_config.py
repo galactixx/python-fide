@@ -2,7 +2,6 @@ from typing import Any, Dict, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator
 
-from python_fide.constants.common import FIDE_PLAYERS_URL
 from python_fide.utils.general import create_url
 from python_fide.utils.config import parse_fide_player
 from python_fide.constants.periods import Period
@@ -12,7 +11,9 @@ from python_fide.types import (
     FidePlayerID
 )
 
-class ProfileChartsConfig(BaseConfig):
+class PlayerChartsConfig(BaseConfig):
+    """
+    """
     fide_player: Union[
         FidePlayer, 
         FidePlayerID
@@ -31,7 +32,7 @@ class ProfileChartsConfig(BaseConfig):
     def extract_fide_id(
         cls,
         fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> str:
+    ) -> int:
         player_id = parse_fide_player(fide_player=fide_player)
         return player_id
 
@@ -40,7 +41,9 @@ class ProfileChartsConfig(BaseConfig):
         return self.model_dump(by_alias=True)
 
 
-class ProfileStatsConfig(BaseConfig):
+class PlayerStatsConfig(BaseConfig):
+    """
+    """
     fide_player: Union[
         FidePlayer, 
         FidePlayerID
@@ -54,7 +57,7 @@ class ProfileStatsConfig(BaseConfig):
     def extract_fide_id(
         cls,
         fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> str:
+    ) -> int:
         player_id = parse_fide_player(fide_player=fide_player)
         return player_id
 
@@ -65,7 +68,7 @@ class ProfileStatsConfig(BaseConfig):
         fide_player_opponent: Optional[
             Union[FidePlayer, FidePlayerID]
         ]
-    ) -> str:
+    ) -> Optional[int]:
         if fide_player_opponent is not None:
             player_id = parse_fide_player(
                 fide_player=fide_player_opponent
@@ -78,7 +81,9 @@ class ProfileStatsConfig(BaseConfig):
         return self.model_dump(by_alias=True)
     
 
-class ProfileDetailConfig(BaseModel):
+class PlayerDetailConfig(BaseModel):
+    """
+    """
     fide_player: Union[
         FidePlayer, 
         FidePlayerID
@@ -89,18 +94,19 @@ class ProfileDetailConfig(BaseModel):
     def extract_fide_id(
         cls,
         fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> str:
+    ) -> int:
         player_id = parse_fide_player(fide_player=fide_player)
         return player_id
     
-    @property
-    def endpointize(self) -> str:
+    def endpointize(self, base_url: str) -> str:
         return create_url(
-            base=FIDE_PLAYERS_URL, segments=str(self.fide_player)
+            base=base_url, segments=self.fide_player
         )
     
 
-class ProfileOpponentsConfig(BaseConfig):
+class PlayerOpponentsConfig(BaseConfig):
+    """
+    """
     fide_player: Union[
         FidePlayer, 
         FidePlayerID
@@ -111,7 +117,7 @@ class ProfileOpponentsConfig(BaseConfig):
     def extract_fide_id(
         cls,
         fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> str:
+    ) -> int:
         player_id = parse_fide_player(fide_player=fide_player)
         return player_id
     

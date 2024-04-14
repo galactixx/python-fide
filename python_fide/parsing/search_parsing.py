@@ -7,10 +7,14 @@ from python_fide.types import (
 )
 
 def search_result_pages(response: dict) -> int:
+    """
+    """
     return response['meta']['last_page']
 
 
 def search_player_parsing(response: dict) -> List[FidePlayer]:
+    """
+    """
     gathered_players: List[FidePlayer] = []
     players: List[Dict[str, str]] = response['data']
 
@@ -22,6 +26,8 @@ def search_player_parsing(response: dict) -> List[FidePlayer]:
 
 
 def search_event_parsing(response: dict) -> List[FideEvent]:
+    """
+    """
     gathered_events: List[FideEvent] = []
     events: List[Dict[str, str]] = response['data']
 
@@ -33,6 +39,8 @@ def search_event_parsing(response: dict) -> List[FideEvent]:
 
 
 def search_news_parsing(response: dict) -> List[FideNews]:
+    """
+    """
     gathered_news_stories: List[FideNews] = []
     news_stories: List[Dict[str, str]] = response['data']
 

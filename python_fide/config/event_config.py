@@ -1,16 +1,17 @@
-from typing import Any, Dict, Union
+from typing import Union
 
 from pydantic import BaseModel, field_validator
 
 from python_fide.utils.config import parse_fide_event
-from python_fide.constants.common import FIDE_EVENTS_DETAIL_URL
 from python_fide.utils.general import create_url
 from python_fide.types import (
-    FideEvent, 
+    FideEvent,
     FideEventID
 )
 
 class EventDetailConfig(BaseModel):
+    """
+    """
     fide_event: Union[
         FideEvent, 
         FideEventID
@@ -25,8 +26,7 @@ class EventDetailConfig(BaseModel):
         news_id = parse_fide_event(fide_event=fide_event)
         return news_id
     
-    @property
-    def endpointize(self) -> str:
+    def endpointize(self, base_url: str) -> str:
         return create_url(
-            base=FIDE_EVENTS_DETAIL_URL, segments=str(self.fide_event)
+            base=base_url, segments=self.fide_event
         )

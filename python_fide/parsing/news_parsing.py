@@ -4,10 +4,10 @@ from pydantic import ValidationError
 
 from python_fide.types import (
     ClientNotFound,
-    FideEventDetail
+    FideNewsDetail
 )
 
-def event_detail_parsing(response: Dict[str, dict]) -> Optional[FideEventDetail]:
+def news_detail_parsing(response: Dict[str, dict]) -> Optional[FideNewsDetail]:
     """
     """
     # This is a search by Fide ID, thus there should never be a response
@@ -21,7 +21,7 @@ def event_detail_parsing(response: Dict[str, dict]) -> Optional[FideEventDetail]
     if no_results:
         return
     else:
-        fide_detail = FideEventDetail.from_validated_model(
-            event=response['data']
+        fide_detail = FideNewsDetail.from_validated_model(
+            news=response['data']
         )
         return fide_detail
