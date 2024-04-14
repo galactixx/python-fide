@@ -1,15 +1,18 @@
-from typing import Union
+from typing import Any, Dict, Optional, Union
 
-from pydantic import BaseModel, field_validator
-
+from pydantic import field_validator
 from python_fide.utils.config import parse_fide_event
 from python_fide.utils.general import create_url
+from python_fide.config.base_config import (
+    BaseEndpointConfig,
+    BaseParameterConfig
+)
 from python_fide.types import (
     FideEvent,
     FideEventID
 )
 
-class EventDetailConfig(BaseModel):
+class EventDetailConfig(BaseEndpointConfig):
     """
     """
     fide_event: Union[
@@ -30,3 +33,12 @@ class EventDetailConfig(BaseModel):
         return create_url(
             base=base_url, segments=self.fide_event
         )
+    
+
+class EventLatestConfig(BaseParameterConfig):
+    limit: Optional[int]
+    query: Optional[str]
+
+    @property
+    def parameterize(self) -> Dict[str, Any]:
+        return dict()

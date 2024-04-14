@@ -1,13 +1,12 @@
 import prettyprinter as pp
-from python_fide.clients.news import FideNews
-from python_fide.types import FideNewsID
+from python_fide.clients.event import FideEvents
 
 pp.install_extras(include=['dataclasses'])
 
-news_client = FideNews()
+event_client = FideEvents()
 
 pp.pprint(
-    news_client.get_news_detail(
-        fide_news=FideNewsID(entity_id='2963')
+    event_client.get_latest_events(
+        limit=1
     )
 )

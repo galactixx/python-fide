@@ -19,6 +19,7 @@ def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
     
     return gathered_players
 
+
 def player_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
     """
     """

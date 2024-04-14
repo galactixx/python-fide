@@ -1,11 +1,13 @@
-from typing import Optional
+from typing import List, Optional, TypeVar
 
 from python_fide.utils.general import validate_limit
 
-class SearchPagination:
+T = TypeVar('T')
+
+class FidePagination:
     """
     """
-    def __init__(self, limit: Optional[int]):
+    def __init__(self, limit: int):
         self._limit = validate_limit(limit=limit)
 
         # Page tracking variables
@@ -14,7 +16,7 @@ class SearchPagination:
 
         # Record tracking variables
         self._records_parsed = 0
-        self._gathered_records: list = []
+        self._gathered_records: List[T] = []
 
     @property
     def loop_continue(self) -> bool:
@@ -35,12 +37,12 @@ class SearchPagination:
         return self._current_page
 
     @property
-    def records(self) -> list:
+    def records(self) -> List[T]:
         return self._gathered_records[:self._limit]
 
-    def update_status(self, records: list) -> None:
-        self._gathered_records.extend(records)
-        self._records_parsed += len(records)
+    def update_status(self, record: T) -> None:
+        self._gathered_records.append(record)
+        self._records_parsed += 1
 
         # Update current page
         self._current_page += 1

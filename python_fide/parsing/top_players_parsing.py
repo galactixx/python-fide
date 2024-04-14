@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
 from python_fide.types import FideTopPlayer
-from python_fide.constants.rating_cat import RatingCategory
+from python_fide.enums import RatingCategory
 
 def top_standard_players_parsing(
     limit: int,

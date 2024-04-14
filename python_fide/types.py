@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from python_fide.exceptions import InvalidFideIDError
-from python_fide.constants.rating_cat import RatingCategory
+from python_fide.enums import RatingCategory
 from python_fide.utils.general import create_url
 from python_fide.utils.pydantic import from_player_model
 from python_fide.types_base import (
@@ -17,10 +17,6 @@ from python_fide.types_base import (
     FidePlayerBase,
     FidePlayerRatingBase,
     FideTopPlayerBase
-)
-from python_fide.constants.common import (   
-    FIDE_CALENDER_URL,
-    FIDE_NEWS_URL
 )
 
 class ClientNotFound(BaseModel):
@@ -49,7 +45,7 @@ class FideBaseID(BaseModel):
 
     @field_validator('entity_id', mode='after')
     @classmethod
-    def cast_to_int(cls, entity_id: Union[str, int]) -> str:
+    def cast_to_int(cls, entity_id: Union[str, int]) -> int:
         if isinstance(entity_id, str):
             assert entity_id.isdigit()
 
@@ -151,19 +147,24 @@ class FideEvent(BaseModel):
     @property
     def event_url(self) -> str:
         return create_url(
-            base=FIDE_CALENDER_URL, segments=self.event_id
+            base='https://fide.com/calendar/', segments=self.event_id
         )
 
 
-class FideNews(BaseModel):
+class FideNewsBasic(BaseModel):
     title: str = Field(validation_alias='name')
     news_id: int = Field(validation_alias='id')
 
     @property
     def news_url(self) -> str:
         return create_url(
-            base=FIDE_NEWS_URL, segments=self.news_id
+            base='https://fide.com/news/', segments=self.news_id
         )
+    
+
+class FideNews(FideNewsBasic):
+    news_type: str = Field(..., validation_alias='type')
+    posted_at: str
 
 
 class FideEventDetail(FideEventDetailBase):

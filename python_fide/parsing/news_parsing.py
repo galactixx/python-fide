@@ -1,11 +1,19 @@
-from typing import Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import ValidationError
 
 from python_fide.types import (
     ClientNotFound,
+    FideNews,
     FideNewsDetail
 )
+
+def news_latest_parsing(record: Dict[str, Any]) -> List[FideNews]:
+    """
+    """
+    fide_news = FideNews.model_validate(record)
+    return fide_news
+
 
 def news_detail_parsing(response: Dict[str, dict]) -> Optional[FideNewsDetail]:
     """

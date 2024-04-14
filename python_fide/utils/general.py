@@ -1,7 +1,12 @@
 import sys
 from typing import Optional, Tuple, Union
+import re
 
 from urllib.parse import urljoin
+
+def remove_non_digits_from_string(text: str) -> str:
+    return re.sub(r"[^\d]", "", text)
+
 
 def clean_fide_player_name(name: str) -> Tuple[str, str]:
     """

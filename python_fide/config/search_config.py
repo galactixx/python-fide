@@ -1,8 +1,8 @@
 from typing import Literal, Union
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import field_validator
 
-from python_fide.config.base_config import BaseConfig
+from python_fide.config.base_config import BaseParameterConfig
 from python_fide.types import (
     FideEventID,
     FideNewsID,
@@ -10,13 +10,7 @@ from python_fide.types import (
     FidePlayerName
 )
 
-class PaginationConfig(BaseModel):
-    """
-    """
-    page: int = Field(..., alias='page')
-
-
-class SearchConfig(BaseConfig):
+class SearchConfig(BaseParameterConfig):
     """
     """
     query: Union[
@@ -25,12 +19,12 @@ class SearchConfig(BaseConfig):
         FideNewsID,
         FidePlayerID,
         FidePlayerName
-    ] = Field(..., alias='query')
+    ]
     link: Literal[
         'player',
         'event',
         'news'
-    ] = Field(..., alias='link')
+    ]
 
     @field_validator('query', mode='after')
     @classmethod
@@ -46,7 +40,7 @@ class SearchConfig(BaseConfig):
     ) -> str:
         if isinstance(query, str):
             return query
-        if isinstance(query,
+        elif isinstance(query,
             (FideEventID, FideNewsID, FidePlayerID)
         ):
             return query.entity_id
@@ -59,14 +53,4 @@ class SearchConfig(BaseConfig):
 
     @property
     def parameterize(self) -> dict:
-        return self.model_dump(by_alias=True)
-    
-    def parameterize_with_pagination(self, page: int) -> dict:
-        pagination_config = PaginationConfig(
-            page=page
-        )
-
-        return (
-            self.model_dump(by_alias=True) |
-            pagination_config.model_dump(by_alias=True)
-        )
+        return self.model_dump()

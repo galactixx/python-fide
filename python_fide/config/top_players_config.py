@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel, field_validator
 
-from python_fide.constants.rating_cat import RatingCategory
+from python_fide.enums import RatingCategory
 
 class TopPlayersConfig(BaseModel):
     """

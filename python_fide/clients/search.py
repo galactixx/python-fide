@@ -1,6 +1,5 @@
-from typing import Callable, List, Optional, Union
+from typing import List, Optional, Union
 
-from python_fide.pagination.core_paginate import SearchPagination
 from python_fide.config.search_config import SearchConfig
 from python_fide.clients.base_client import FideClient
 from python_fide.types import (
@@ -15,8 +14,7 @@ from python_fide.types import (
 from python_fide.parsing.search_parsing import (
     search_event_parsing,
     search_news_parsing,
-    search_player_parsing,
-    search_result_pages
+    search_player_parsing
 )
 
 class FideSearch(FideClient):
@@ -39,12 +37,15 @@ class FideSearch(FideClient):
         )
 
         pagination = self._paginatize(
-            limit=limit, config=config, parser=search_event_parsing
+            limit=limit,
+            base_url=self.base_url,
+            config=config,
+            parser=search_event_parsing
         )
 
         return pagination.records
     
-    def get_news_search(
+    def get_news(
         self,
         query: Union[str, FideNewsID, FidePlayerName], 
         limit: Optional[int] = None
@@ -56,12 +57,15 @@ class FideSearch(FideClient):
         )
 
         pagination = self._paginatize(
-            limit=limit, config=config, parser=search_news_parsing
+            limit=limit,
+            base_url=self.base_url,
+            config=config,
+            parser=search_news_parsing
         )
 
         return pagination.records
     
-    def get_fide_player_profiles(
+    def get_fide_players(
         self,
         query: Union[FidePlayerID, FidePlayerName]
     ) -> List[FidePlayer]:
@@ -80,13 +84,13 @@ class FideSearch(FideClient):
         )
         return players
     
-    def get_fide_player_profile(
+    def get_fide_player(
         self,
         query: Union[FidePlayerID, FidePlayerName]
     ) -> Optional[FidePlayer]:
         """
         """
-        players = self.get_fide_player_profiles(query=query)
+        players = self.get_fide_players(query=query)
 
         if isinstance(query, FidePlayerID):
             player_gen = (
@@ -98,45 +102,5 @@ class FideSearch(FideClient):
             if len(players) == 1:
                 return players[0]
         else:
-            raise TypeError(
-                "not a valid 'query' type"
-            )
+            raise TypeError("not a valid 'query' type")
         return
-    
-    def _paginatize(
-        self,
-        limit: Optional[int],
-        config: SearchConfig,
-        parser: Callable[[dict], list]
-    ) -> SearchPagination:
-        """
-        """
-        search_pagination = SearchPagination(
-            limit=limit
-        )
-
-        while search_pagination.loop_continue:
-            params = config.parameterize_with_pagination(
-                page=search_pagination.current_page
-            )
-
-            response_json = self._fide_request(
-                fide_url=self.base_url, params=params
-            )
-
-            if search_pagination.overflow_pages is None:
-                search_pagination.overflow_pages = search_result_pages(
-                    response=response_json
-                )
-
-            # Parse and gather all news from response
-            records = parser(response=response_json)
-
-            # Update all record and page variables
-            # (both dataclasses to be returned and number of these
-            # records that have been parsed)
-            search_pagination.update_status(
-                records=records
-            )
-
-        return search_pagination

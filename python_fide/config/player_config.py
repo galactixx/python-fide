@@ -1,17 +1,20 @@
 from typing import Any, Dict, Optional, Union
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field, field_validator
 
 from python_fide.utils.general import create_url
 from python_fide.utils.config import parse_fide_player
-from python_fide.constants.periods import Period
-from python_fide.config.base_config import BaseConfig
+from python_fide.enums import Period
+from python_fide.config.base_config import (
+    BaseParameterConfig,
+    BaseEndpointConfig
+)
 from python_fide.types import (
     FidePlayer,
     FidePlayerID
 )
 
-class PlayerChartsConfig(BaseConfig):
+class PlayerChartsConfig(BaseParameterConfig):
     """
     """
     fide_player: Union[
@@ -41,7 +44,7 @@ class PlayerChartsConfig(BaseConfig):
         return self.model_dump(by_alias=True)
 
 
-class PlayerStatsConfig(BaseConfig):
+class PlayerStatsConfig(BaseParameterConfig):
     """
     """
     fide_player: Union[
@@ -81,7 +84,7 @@ class PlayerStatsConfig(BaseConfig):
         return self.model_dump(by_alias=True)
     
 
-class PlayerDetailConfig(BaseModel):
+class PlayerDetailConfig(BaseEndpointConfig):
     """
     """
     fide_player: Union[
@@ -104,7 +107,7 @@ class PlayerDetailConfig(BaseModel):
         )
     
 
-class PlayerOpponentsConfig(BaseConfig):
+class PlayerOpponentsConfig(BaseParameterConfig):
     """
     """
     fide_player: Union[

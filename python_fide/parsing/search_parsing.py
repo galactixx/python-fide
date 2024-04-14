@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from python_fide.types import (
     FideEvent,
@@ -6,46 +6,22 @@ from python_fide.types import (
     FidePlayer
 )
 
-def search_result_pages(response: dict) -> int:
+def search_player_parsing(record: Dict[str, Any]) -> List[FidePlayer]:
     """
     """
-    return response['meta']['last_page']
+    fide_player = FidePlayer.from_validated_model(player=record)
+    return fide_player
 
 
-def search_player_parsing(response: dict) -> List[FidePlayer]:
+def search_event_parsing(record: Dict[str, Any]) -> List[FideEvent]:
     """
     """
-    gathered_players: List[FidePlayer] = []
-    players: List[Dict[str, str]] = response['data']
-
-    for player in players:
-        fide_player = FidePlayer.from_validated_model(player=player)
-        gathered_players.append(fide_player)
-
-    return gathered_players
+    fide_event = FideEvent.model_validate(record)
+    return fide_event
 
 
-def search_event_parsing(response: dict) -> List[FideEvent]:
+def search_news_parsing(record: Dict[str, Any]) -> List[FideNews]:
     """
     """
-    gathered_events: List[FideEvent] = []
-    events: List[Dict[str, str]] = response['data']
-
-    for event in events:
-        fide_event = FideEvent.model_validate(event)
-        gathered_events.append(fide_event)
-
-    return gathered_events
-
-
-def search_news_parsing(response: dict) -> List[FideNews]:
-    """
-    """
-    gathered_news_stories: List[FideNews] = []
-    news_stories: List[Dict[str, str]] = response['data']
-
-    for news_story in news_stories:
-        fide_news = FideNews.model_validate(news_story)
-        gathered_news_stories.append(fide_news)
-
-    return gathered_news_stories
+    fide_news = FideNews.model_validate(record)
+    return fide_news

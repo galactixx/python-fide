@@ -1,8 +1,12 @@
-from typing import Any, List, Literal, Optional, Tuple
+from typing import Any, List, Literal, Optional, Tuple, Union
+import re
 
 from pydantic import AliasChoices, BaseModel, Field, field_validator
 
-from python_fide.utils.general import clean_fide_player_name
+from python_fide.utils.general import (
+    clean_fide_player_name,
+    remove_non_digits_from_string
+)
 
 class BaseRawModel(BaseModel):
     @field_validator('*', mode='before')
@@ -60,7 +64,7 @@ class FidePlayerDetailBase(BaseRawModel):
 
 
 class FideEventDetailBase(BaseRawModel):
-    city: str
+    city: Optional[str]
     country: str
     description: Optional[str] = Field(..., validation_alias='remarks')
     start_date: str = Field(..., validation_alias='date_start')
@@ -72,9 +76,16 @@ class FideEventDetailBase(BaseRawModel):
     players: Optional[int] = Field(..., validation_alias='number_of_players')
     telephone: Optional[str] = Field(..., validation_alias='tel')
     website: Optional[str]
-    organizer: str
+    organizer: Optional[str]
     chief_arbiter: Optional[str]
     chief_organizer: Optional[str]
+
+    @field_validator('players', 'rounds', mode='before')
+    @classmethod
+    def remove_characters(cls, value: Union[str, int]) -> str:
+        if isinstance(value, str):
+            value = remove_non_digits_from_string(text=value)
+        return value
 
 
 class FideNewsImage(BaseRawModel):

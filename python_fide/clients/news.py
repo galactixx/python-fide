@@ -1,8 +1,14 @@
-from typing import Union
+from typing import List, Optional, Union
 
 from python_fide.clients.base_client import FideClient
-from python_fide.parsing.news_parsing import news_detail_parsing
-from python_fide.config.news_config import NewsDetailConfig
+from python_fide.parsing.news_parsing import (
+    news_detail_parsing,
+    news_latest_parsing
+)
+from python_fide.config.news_config import (
+    NewsDetailConfig,
+    NewsLatestConfig
+)
 from python_fide.types import (
     FideNews,
     FideNewsDetail,
@@ -16,6 +22,24 @@ class FideNews(FideClient):
         self.base_url = (
             'https://app.fide.com/api/v1/client/news/'
         )
+
+    def get_latest_news(
+        self,
+        limit: Optional[int] = None,
+        query: Optional[str] = None
+    ) -> List[FideNews]:
+        """
+        """
+        config = NewsLatestConfig(limit=limit, query=query)
+
+        pagination = self._paginatize(
+            limit=limit,
+            base_url=self.base_url,
+            config=config,
+            parser=news_latest_parsing
+        )
+
+        return pagination.records
 
     def get_news_detail(
         self,

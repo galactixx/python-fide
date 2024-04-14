@@ -1,12 +1,18 @@
-from typing import Union
+from typing import List, Optional, Union
 
-from python_fide.parsing.event_parsing import event_detail_parsing
-from python_fide.config.event_config import EventDetailConfig
 from python_fide.clients.base_client import FideClient
+from python_fide.parsing.event_parsing import (
+    event_detail_parsing,
+    event_latest_parsing
+)
 from python_fide.types import (
     FideEvent,
     FideEventDetail,
     FideEventID,
+)
+from python_fide.config.event_config import (
+    EventDetailConfig,
+    EventLatestConfig
 )
 
 class FideEvents(FideClient):
@@ -16,6 +22,27 @@ class FideEvents(FideClient):
         self.base_url = (
             'https://app.fide.com/api/v1/client/events/'
         )
+        self.base_latest_url = (
+            'https://app.fide.com/api/v1/events/'
+        )
+
+    def get_latest_events(
+        self,
+        limit: Optional[int] = None,
+        query: Optional[str] = None
+    ) -> List[FideEvent]:
+        """
+        """
+        config = EventLatestConfig(limit=limit, query=query)
+
+        pagination = self._paginatize(
+            limit=limit,
+            base_url=self.base_latest_url,
+            config=config,
+            parser=event_latest_parsing
+        )
+
+        return pagination.records
 
     def get_event_detail(
         self,
