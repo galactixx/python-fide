@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from python_fide.exceptions import InvalidFormatError
 from python_fide.types import (
     FidePlayer,
     FidePlayerBasic,
@@ -23,19 +24,24 @@ def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
 def player_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
     """
     """
+    if not isinstance(response, list):
+        raise InvalidFormatError()
+
+    num_players_returned = len(response)
+
     # This is a search by Fide ID, thus there should never be a response
     # that has more than one item, although there can be a response with no items
-    if len(response) > 1:
-        raise ValueError(
-            "a player detail response cannot have more than one result"
-        )
-    elif len(response) == 0:
-        return
-    else:
+    if num_players_returned == 1:
         fide_detail = FidePlayerDetail.from_validated_model(
             player=response[0]
         )
         return fide_detail
+    elif num_players_returned == 0:
+        return
+    else:
+        raise InvalidFormatError(
+            "invalid format, a player detail response cannot return more than one player"
+        )
 
 
 def player_charts_parsing(
@@ -45,6 +51,7 @@ def player_charts_parsing(
     """
     """
     gathered_ratings: List[FidePlayerRating] = []
+
     for month_rating in response:
         fide_rating = FidePlayerRating.from_validated_model(
             player=fide_player,
@@ -62,17 +69,18 @@ def player_stats_parsing(
 ) -> FidePlayerGameStats:
     """
     """
-    # If a player exists in the Fide database then there should always
-    # be a non-null response returned
-    if len(response) != 1:
-        raise ValueError(
-            "expecting response to be a list with a singular dictionary"
+    num_stats_returned = len(response)
+
+    # This is a search by Fide ID, thus there should never be a response
+    # that has more than one item, although there can be a response with no items
+    if num_stats_returned == 1:
+        fide_stats = FidePlayerGameStats.from_validated_model(
+            fide_player=fide_player,
+            fide_player_opponent=fide_player_opponent,
+            stats=response[0]
         )
-
-    fide_stats = FidePlayerGameStats.from_validated_model(
-        fide_player=fide_player,
-        fide_player_opponent=fide_player_opponent,
-        stats=response[0]
-    )
-
-    return fide_stats
+        return fide_stats
+    else:
+        raise InvalidFormatError(
+            "invalid format, a stats response should always return only one set of stats"
+        )

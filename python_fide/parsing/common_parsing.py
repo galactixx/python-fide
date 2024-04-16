@@ -1,6 +1,15 @@
 from typing import Any, Dict
 
-def find_result_pages(response: Dict[str, Any]) -> int:
+from pydantic import ValidationError
+
+from python_fide.types import ClientNotFound
+
+def detect_client_error(response: Dict[str, Any]) -> bool:
     """
     """
-    return response['meta']['last_page']
+    no_results = True
+    try:
+        _ = ClientNotFound.model_validate(response)
+    except ValidationError:
+        no_results = False
+    return no_results

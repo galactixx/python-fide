@@ -4,10 +4,10 @@ import requests
 from requests import HTTPError
 from faker import Faker
 
+from python_fide.types_adapter import HolisticAdapter
 from python_fide.exceptions import NoResultsError
 from python_fide.pagination import FidePagination
 from python_fide.config.base_config import BaseParameterConfig
-from python_fide.parsing.common_parsing import find_result_pages
 
 T = TypeVar('T')
 
@@ -68,13 +68,16 @@ class FideClient(object):
                 fide_url=base_url, params=params
             )
 
-            if fide_pagination.overflow_pages is None:
-                fide_pagination.overflow_pages = find_result_pages(
-                    response=response_json
-                )
+            # Validate response using the HolisticAdapter model
+            holistic = HolisticAdapter.model_validate(response_json)
 
-            # Parse and gather all news from response
-            for record in response_json['data']:
+            # Set number of pages to paginate if not already done
+            if fide_pagination.overflow_pages is None:
+                fide_pagination.overflow_pages = holistic.meta.page_last
+
+            # Iterate through each record in main data, extracted
+            # from response, and parse/validate each record
+            for record in holistic.data:
                 parsed_record = parser(record=record)
 
                 fide_pagination.update_status(record=parsed_record)

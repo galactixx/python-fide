@@ -1,5 +1,4 @@
 from typing import Any, List, Literal, Optional, Tuple, Union
-import re
 
 from pydantic import AliasChoices, BaseModel, Field, field_validator
 
@@ -20,7 +19,7 @@ class BaseRawModel(BaseModel):
         populate_by_name = True
 
 
-class BasePlayer(BaseModel):
+class BasePlayer(BaseRawModel):
     def get_decomposed_player_name(self) -> Tuple[str, str]:
         return clean_fide_player_name(
             name=getattr(self, 'name')
@@ -65,13 +64,14 @@ class FidePlayerDetailBase(BaseRawModel):
 
 class FideEventDetailBase(BaseRawModel):
     city: Optional[str]
-    country: str
+    country: Optional[str]
     description: Optional[str] = Field(..., validation_alias='remarks')
     start_date: str = Field(..., validation_alias='date_start')
     end_date: str = Field(..., validation_alias='date_end')
     game_format: str = Field(..., validation_alias='time_control_typ')
     tournament_type: Optional[str] = Field(..., validation_alias='tournament_system')
     time_control: Optional[str] = Field(..., validation_alias='time_control')
+    time_control_desc: Optional[str] = Field(..., validation_alias='timecontrol_description')
     rounds: Optional[int] = Field(..., validation_alias='num_round')
     players: Optional[int] = Field(..., validation_alias='number_of_players')
     telephone: Optional[str] = Field(..., validation_alias='tel')

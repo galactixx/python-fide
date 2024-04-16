@@ -1,14 +1,13 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-from pydantic import ValidationError
-
+from python_fide.parsing.common_parsing import detect_client_error
+from python_fide.types_adapter import PartialAdapter
 from python_fide.types import (
-    ClientNotFound,
     FideNews,
     FideNewsDetail
 )
 
-def news_latest_parsing(record: Dict[str, Any]) -> List[FideNews]:
+def news_latest_parsing(record: Dict[str, Any]) -> FideNews:
     """
     """
     fide_news = FideNews.model_validate(record)
@@ -20,16 +19,13 @@ def news_detail_parsing(response: Dict[str, dict]) -> Optional[FideNewsDetail]:
     """
     # This is a search by Fide ID, thus there should never be a response
     # that has more than one item, although there can be a response with no items
-    no_results = True
-    try:
-        _ = ClientNotFound.model_validate(response)
-    except ValidationError:
-        no_results = False
+    no_results = detect_client_error(response=response)
 
     if no_results:
         return
     else:
+        partial_adapter = PartialAdapter.model_validate(response)
         fide_detail = FideNewsDetail.from_validated_model(
-            news=response['data']
+            news=partial_adapter.data
         )
         return fide_detail

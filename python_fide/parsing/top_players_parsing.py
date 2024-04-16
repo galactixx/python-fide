@@ -2,6 +2,7 @@ from typing import Any, Dict, List
 
 from python_fide.types import FideTopPlayer
 from python_fide.enums import RatingCategory
+from python_fide.types_adapter import TopPlayersAdapter
 
 def top_standard_players_parsing(
     limit: int,
@@ -10,11 +11,12 @@ def top_standard_players_parsing(
 ) -> List[FideTopPlayer]:
     """
     """
+    top_categories = TopPlayersAdapter.model_validate(response)
     gathered_players: List[FideTopPlayer] = []
 
     for category in categories:
         player_count = 0
-        players = iter(response[category.value])
+        players = iter(getattr(top_categories, category.value))
 
         while player_count < limit:
             try:
