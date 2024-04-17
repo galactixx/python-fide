@@ -1,13 +1,10 @@
 from typing import List, Optional, Union
 
-from requests import HTTPError
-
 from python_fide.clients.base_client import FideClient
 from python_fide.config.search_config import (
-    PlayerIDSearch,
-    PlayerNameSearch,
     SearchConfig,
-    SearchPlayerConfig
+    SearchPlayerIDConfig,
+    SearchPlayerNameConfig
 )
 from python_fide.types import (
     FideEvent, 
@@ -41,7 +38,7 @@ class FideSearch(FideClient):
     ) -> List[FideEvent]:
         """
         """
-        config = SearchConfig(
+        config = SearchConfig.from_search_object(
             query=query, link='event'
         )
 
@@ -61,7 +58,7 @@ class FideSearch(FideClient):
     ) -> List[FideNews]:
         """
         """
-        config = SearchConfig(
+        config = SearchConfig.from_search_object(
             query=query, link='news'
         )
 
@@ -80,14 +77,13 @@ class FideSearch(FideClient):
     ) -> List[FidePlayer]:
         """
         """
-        config = SearchPlayerConfig(
-            query=fide_player_id, link='player'
+        config = SearchPlayerIDConfig.from_player_id_object(
+            fide_player_id=fide_player_id, link='player'
         )
-        search: PlayerIDSearch = config.initialize_search()
 
         gathered_players: List[FidePlayer] = []
-        while not search.stop_loop:
-            config.update_query(search=search)
+        while not config.stop_loop:
+            config.update_player_id()
 
             response_json = self._fide_request_wrapped(
                 fide_url=self.base_url, params=config.parameterize
@@ -105,7 +101,7 @@ class FideSearch(FideClient):
             # If there is an overflow of players for a Fide ID, then
             # add all possible next Fide IDs to the queue
             if len(players) == _MAX_RESULTS_PLAYER:
-                search.add_ids()
+                config.add_player_ids()
 
         return gathered_players
     
@@ -115,16 +111,16 @@ class FideSearch(FideClient):
     ) -> List[FidePlayer]:
         """
         """
-        config = SearchPlayerConfig(
-            query=fide_player_name, link='player'
+        config = SearchPlayerNameConfig.from_player_name_object(
+            fide_player_name=fide_player_name, link='player'
         )
-        search: PlayerNameSearch = config.initialize_search()
 
         gathered_players: List[FidePlayer] = []
         while True:
             response_json = self._fide_request_wrapped(
                 fide_url=self.base_url, params=config.parameterize
             )
+
             if response_json is None:
                 return gathered_players
 
@@ -140,7 +136,7 @@ class FideSearch(FideClient):
             if len(players) < _MAX_RESULTS_PLAYER:
                 break
 
-            config.update_query(search=search)
+            config.update_player_name(fide_player_name=fide_player_name)
 
         gathered_players_filtered = [
             player for player in gathered_players if player == fide_player_name

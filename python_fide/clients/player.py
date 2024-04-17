@@ -55,7 +55,9 @@ class FidePlayer(FideClient):
     ) -> Optional[FidePlayerDetail]:
         """
         """
-        config = PlayerDetailConfig(fide_player=fide_player)
+        config = PlayerDetailConfig.from_player_object(
+            fide_player=fide_player
+        )
 
         # Request from API to get profile detail JSON response
         response = self._fide_request(
@@ -84,7 +86,9 @@ class FidePlayer(FideClient):
     ) -> List[FidePlayerBasic]:
         """
         """
-        config = PlayerOpponentsConfig(fide_player=fide_player)
+        config = PlayerOpponentsConfig.from_player_object(
+            fide_player=fide_player
+        )
 
         # Request from API to get player JSON response
         _ = self._consolidate_fide_player(
@@ -111,7 +115,7 @@ class FidePlayer(FideClient):
     ) -> List[FidePlayerRating]:
         """
         """
-        config = PlayerChartsConfig(
+        config = PlayerChartsConfig.from_player_object(
             fide_player=fide_player, period=period
         )
 
@@ -142,7 +146,7 @@ class FidePlayer(FideClient):
     ) -> List[FidePlayerGameStats]:
         """
         """
-        config = PlayerStatsConfig(
+        config = PlayerStatsConfig.from_player_object(
             fide_player=fide_player,
             fide_player_opponent=fide_player_opponent
         )

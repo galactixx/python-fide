@@ -17,10 +17,7 @@ from python_fide.types import (
 class PlayerChartsConfig(BaseParameterConfig):
     """
     """
-    fide_player: Union[
-        FidePlayer, 
-        FidePlayerID
-    ] = Field(..., alias='event')
+    fide_player_id: int = Field(..., alias='event')
     period: Optional[Period] = Field(..., alias='period')
 
     @field_validator('period', mode='after')
@@ -30,14 +27,16 @@ class PlayerChartsConfig(BaseParameterConfig):
             period = Period.ALL_YEARS
         return period
 
-    @field_validator('fide_player', mode='after')
     @classmethod
-    def extract_fide_id(
+    def from_player_object(
         cls,
+        period: Optional[Period],
         fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> int:
-        player_id = parse_fide_player(fide_player=fide_player)
-        return player_id
+    ) -> 'PlayerChartsConfig':
+        fide_player_id = parse_fide_player(fide_player=fide_player)
+        return cls(
+            fide_player_id=fide_player_id, period=period
+        )
 
     @property
     def parameterize(self) -> Dict[str, Any]:
@@ -47,37 +46,29 @@ class PlayerChartsConfig(BaseParameterConfig):
 class PlayerStatsConfig(BaseParameterConfig):
     """
     """
-    fide_player: Union[
-        FidePlayer, 
-        FidePlayerID
-    ] = Field(..., alias='id1')
-    fide_player_opponent: Optional[
-        Union[FidePlayer, FidePlayerID]
-    ] = Field(..., alias='id2')
+    fide_player_id: int = Field(..., alias='id1')
+    fide_player_opponent_id: Optional[int] = Field(..., alias='id2')
 
-    @field_validator('fide_player', mode='after')
     @classmethod
-    def extract_fide_id(
+    def from_player_object(
         cls,
-        fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> int:
-        player_id = parse_fide_player(fide_player=fide_player)
-        return player_id
+        fide_player: Union[FidePlayer, FidePlayerID],
+        fide_player_opponent: Optional[Union[FidePlayer, FidePlayerID]]
+    ) -> 'PlayerStatsConfig':
+        """
+        """
+        fide_player_id = parse_fide_player(fide_player=fide_player)
 
-    @field_validator('fide_player_opponent', mode='after')
-    @classmethod
-    def extract_fide_id_from_opponent(
-        cls,
-        fide_player_opponent: Optional[
-            Union[FidePlayer, FidePlayerID]
-        ]
-    ) -> Optional[int]:
-        if fide_player_opponent is not None:
-            player_id = parse_fide_player(
+        if fide_player_opponent is None:
+            fide_player_opponent_id = None
+        else:
+            fide_player_opponent_id = parse_fide_player(
                 fide_player=fide_player_opponent
             )
-            return player_id
-        return fide_player_opponent
+        return cls(
+            fide_player_id=fide_player_id,
+            fide_player_opponent_id=fide_player_opponent_id
+        )
 
     @property
     def parameterize(self) -> Dict[str, Any]:
@@ -87,42 +78,38 @@ class PlayerStatsConfig(BaseParameterConfig):
 class PlayerDetailConfig(BaseEndpointConfig):
     """
     """
-    fide_player: Union[
-        FidePlayer, 
-        FidePlayerID
-    ]
+    fide_player_id: int
 
-    @field_validator('fide_player', mode='after')
     @classmethod
-    def extract_fide_id(
+    def from_player_object(
         cls,
         fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> int:
-        player_id = parse_fide_player(fide_player=fide_player)
-        return player_id
+    ) -> 'PlayerDetailConfig':
+        fide_player_id = parse_fide_player(fide_player=fide_player)
+        return cls(
+            fide_player_id=fide_player_id
+        )
     
     def endpointize(self, base_url: str) -> str:
         return create_url(
-            base=base_url, segments=self.fide_player
+            base=base_url, segments=self.fide_player_id
         )
     
 
 class PlayerOpponentsConfig(BaseParameterConfig):
     """
     """
-    fide_player: Union[
-        FidePlayer, 
-        FidePlayerID
-    ] = Field(..., alias='pl')
+    fide_player_id: int = Field(..., alias='pl')
 
-    @field_validator('fide_player', mode='after')
     @classmethod
-    def extract_fide_id(
+    def from_player_object(
         cls,
         fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> int:
-        player_id = parse_fide_player(fide_player=fide_player)
-        return player_id
+    ) -> 'PlayerOpponentsConfig':
+        fide_player_id = parse_fide_player(fide_player=fide_player)
+        return cls(
+            fide_player_id=fide_player_id
+        )
     
     @property
     def parameterize(self) -> Dict[str, Any]:

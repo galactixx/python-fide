@@ -50,7 +50,9 @@ class FideEvents(FideClient):
     ) -> FideEventDetail:
         """
         """
-        config = EventDetailConfig(fide_event=fide_event)
+        config = EventDetailConfig.from_event_object(
+            fide_event=fide_event
+        )
 
         # Request from API to get profile detail JSON response
         response = self._fide_request(

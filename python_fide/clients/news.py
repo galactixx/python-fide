@@ -47,7 +47,9 @@ class FideNews(FideClient):
     ) -> FideNewsDetail:
         """
         """
-        config = NewsDetailConfig(fide_news=fide_news)
+        config = NewsDetailConfig.from_news_object(
+            fide_news=fide_news
+        )
 
         # Request from API to get profile detail JSON response
         response = self._fide_request(
