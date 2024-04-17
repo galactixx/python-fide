@@ -1,11 +1,10 @@
-from typing import Any, Callable, Dict, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 
 import requests
 from requests import HTTPError
 from faker import Faker
 
 from python_fide.types_adapter import HolisticAdapter
-from python_fide.exceptions import NoResultsError
 from python_fide.pagination import FidePagination
 from python_fide.config.base_config import BaseParameterConfig
 
@@ -23,28 +22,36 @@ class FideClient(object):
     ) -> Dict[str, Any]:
         """
         """
+        response = requests.get(
+            url=fide_url,
+            params=params,
+            headers={
+                "Accept": "*/*",
+                "Accept-Language": "en-US,en;q=0.9,bg;q=0.8",
+                "X-Requested-With": "XMLHttpRequest",
+                'User-Agent': self.user_agent
+            }
+        )
+        response.raise_for_status()
+        return response.json()
+    
+    def _fide_request_wrapped(
+        self,
+        fide_url: str,
+        params: Dict[str, Any] = {}
+    ) -> Optional[Dict[str, Any]]:
+        """
+        """
         try:
-            response = requests.get(
-                url=fide_url,
-                params=params,
-                headers={
-                    "Accept": "*/*",
-                    "Accept-Language": "en-US,en;q=0.9,bg;q=0.8",
-                    "X-Requested-With": "XMLHttpRequest",
-                    'User-Agent': self.user_agent
-                }
+            response_json = self._fide_request(
+                fide_url=fide_url, params=params
             )
-            response.raise_for_status()
         except HTTPError as e:
-            # For some reason when requesting with some of the search methods
-            # if there are no results the server returns a 500 error
-            # Thus, we replace with our own customized error
             if e.response.status_code == 500:
-                raise NoResultsError()
+                return
             else:
                 raise HTTPError(e)
         else:
-            response_json = response.json()
             return response_json
         
     def _paginatize(

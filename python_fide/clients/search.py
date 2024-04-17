@@ -1,7 +1,14 @@
 from typing import List, Optional, Union
 
-from python_fide.config.search_config import SearchConfig
+from requests import HTTPError
+
 from python_fide.clients.base_client import FideClient
+from python_fide.config.search_config import (
+    PlayerIDSearch,
+    PlayerNameSearch,
+    SearchConfig,
+    SearchPlayerConfig
+)
 from python_fide.types import (
     FideEvent, 
     FideEventID,
@@ -16,6 +23,8 @@ from python_fide.parsing.search_parsing import (
     search_news_parsing,
     search_player_parsing
 )
+
+_MAX_RESULTS_PLAYER = 300
 
 class FideSearch(FideClient):
     """
@@ -65,24 +74,81 @@ class FideSearch(FideClient):
 
         return pagination.records
     
-    def get_fide_players(
+    def get_fide_players_by_id(
         self,
-        query: Union[FidePlayerID, FidePlayerName]
+        fide_player_id: FidePlayerID
     ) -> List[FidePlayer]:
         """
         """
-        config = SearchConfig(
-            query=query, link='player'
+        config = SearchPlayerConfig(
+            query=fide_player_id, link='player'
+        )
+        search: PlayerIDSearch = config.initialize_search_env(
+            query_type=fide_player_id
         )
 
-        response_json = self._fide_request(
-            fide_url=self.base_url, params=config.parameterize
+        gathered_players: List[FidePlayer] = []
+        while not search.stop_loop:
+            search.update_id()
+
+            response_json = self._fide_request_wrapped(
+                fide_url=self.base_url, params=config.parameterize
+            )
+            if response_json is None:
+                continue
+
+            # Validate and parse player fields from response
+            players = search_player_parsing(
+                response=response_json
+            )            
+            gathered_players.extend(players)
+
+            # If there is an overflow of players for a Fide ID, then
+            # add all possible next Fide IDs to the queue
+            if len(players) == _MAX_RESULTS_PLAYER:
+                search.add_ids()
+
+        return gathered_players
+
+
+    def get_fide_players_by_name(
+        self,
+        fide_player_name: FidePlayerName
+    ) -> List[FidePlayer]:
+        """
+        """
+        config = SearchPlayerConfig(
+            query=fide_player_name, link='player'
+        )
+        search: PlayerNameSearch = config.initialize_search_env(
+            query_type=fide_player_name
         )
 
-        players = search_player_parsing(
-            response=response_json
-        )
-        return players
+        gathered_players: List[FidePlayer] = []
+        while True:
+            response_json = self._fide_request_wrapped(
+                fide_url=self.base_url, params=config.parameterize
+            )
+            if response_json is None:
+                return gathered_players
+
+            # Validate and parse player fields from response
+            players = search_player_parsing(
+                response=response_json
+            )
+            gathered_players.extend(players)
+
+            # If there is not an overflow of players for a Fide ID, then
+            # break out of loop and return parsed player objects
+            if len(players) < _MAX_RESULTS_PLAYER:
+                break
+
+            search.update_name()
+
+        gathered_players_filtered = [
+            player for player in gathered_players if player == fide_player_name
+        ]
+        return gathered_players_filtered
     
     def get_fide_player(
         self,
@@ -90,17 +156,34 @@ class FideSearch(FideClient):
     ) -> Optional[FidePlayer]:
         """
         """
-        players = self.get_fide_players(query=query)
-
         if isinstance(query, FidePlayerID):
-            player_gen = (
-                player for player in players
-                if query.entity_id == player.player_id
+            players = self.get_fide_players_by_id(
+                fide_player_id=query
             )
-            return next(player_gen, None)
-        elif isinstance(query, FidePlayerName):
-            if len(players) == 1:
-                return players[0]
+        elif isinstance(query, FidePlayerID):
+            players = self.get_fide_players_by_name(
+                fide_player_name=query
+            )
         else:
             raise TypeError("not a valid 'query' type")
+
+        # If query is a FidePlayerID instance, function only returns
+        # a FidePlayer object if a Fide ID can be matched exactly with one
+        # from the FidePlayerID instance
+        if isinstance(query, FidePlayerID):
+            return next(
+                (
+                    player for player in players if query == player
+                ), None
+            )
+        
+        # If query is a FidePlayerName instance, function only returns
+        # a FidePlayer object if there was one player returned from
+        # 'get_fide_players' call
+        else:
+            if len(players) == 1:
+                return players[0]
+
+        # If a singular Fide player could not be found, function
+        # returns None
         return

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -27,6 +27,19 @@ class HolisticAdapter(BaseModel):
 
 class PartialAdapter(BaseModel):
     data: List[dict]
+
+    @classmethod
+    def from_minimal_adapter(cls, response: List[dict]) -> 'PartialAdapter':
+        adapter = cls.model_validate({'data': response})
+        return adapter
+
+    @property
+    def num_observations(self) -> int:
+        return len(self.data)
+
+    @property
+    def extract(self) -> Dict[str, Any]:
+        return self.data[0]
 
 
 class TopPlayersAdapter(BaseModel):

@@ -9,14 +9,7 @@ class BaseError(Exception):
 class InvalidFideIDError(BaseError):
     def __init__(self, message: str):
         super().__init__(message=message)
-
-
-class NoResultsError(BaseError):
-    def __init__(self):
-        super().__init__(
-            message='there are no results associated with query'
-        )
-
+        
 
 class InvalidFormatError(BaseError):
     def __init__(self):

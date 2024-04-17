@@ -34,10 +34,6 @@ class FidePlayerName(BaseModel):
         assert self.last_name.isalpha()
 
         return self
-    
-    @property
-    def search_name(self) -> str:
-        return f'{self.last_name}, {self.first_name}'
 
 
 class FideBaseID(BaseModel):
@@ -73,7 +69,7 @@ class FideEventID(FideBaseID):
 
 class FidePlayerBasic(FidePlayerBasicBase):
     first_name: str
-    last_name: str
+    last_name: Optional[str]
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerBasic':
@@ -89,7 +85,29 @@ class FidePlayerBasic(FidePlayerBasicBase):
 
 class FidePlayer(FidePlayerBase):
     first_name: str
-    last_name: str
+    last_name: Optional[str]
+
+    def __eq__(
+        self,
+        player: Union['FidePlayer', FidePlayerID, FidePlayerName]
+    ) -> bool:
+        if isinstance(player, FidePlayerID):
+            return self.player_id == player.entity_id
+        elif isinstance(player, FidePlayerName):
+            return (
+                self.first_name == player.first_name and
+                self.last_name == player.last_name
+            )
+        elif isinstance(player, FidePlayer):
+            return (
+                self.first_name == player.last_name and
+                self.last_name == player.last_name and
+                self.player_id == player.player_id and
+                self.title == player.title and
+                self.country == player.country
+            )
+        else:
+            return False
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayer':

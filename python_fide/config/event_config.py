@@ -15,10 +15,7 @@ from python_fide.types import (
 class EventDetailConfig(BaseEndpointConfig):
     """
     """
-    fide_event: Union[
-        FideEvent, 
-        FideEventID
-    ]
+    fide_event: Union[FideEvent, FideEventID]
 
     @field_validator('fide_event', mode='after')
     @classmethod
