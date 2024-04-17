@@ -1,5 +1,6 @@
 from typing import Any, Deque, Dict, Literal, Union
 from collections import deque
+from abc import ABC, abstractmethod
 
 from pydantic import field_validator
 
@@ -39,24 +40,24 @@ class SearchConfig(BaseSearchConfig):
             raise TypeError("not a valid 'query' type")
     
 
-class PlayerIDSearch:
-    """
-    """
-    def __init__(
-        self,
-        query: int,
-        model: 'SearchPlayerConfig'
-    ):
-        self.model = model
-        self._fide_ids_to_parse: Deque[int] = deque([query])
+class BaseSearch(ABC):
+    @abstractmethod
+    def update_query(self) -> Union[int, str]:
+        pass
 
+
+class PlayerIDSearch(BaseSearch):
+    """
+    """
+    def __init__(self, query: FidePlayerID):
+        self._fide_ids_to_parse: Deque[int] = deque([query.entity_id])
         self.current_id: int = None
 
-    def update_id(self) -> None:
+    def update_query(self) -> int:
         """
         """
         self.current_id = self._fide_ids_to_parse.popleft()
-        self.model.query = self.current_id
+        return self.current_id
 
     def add_ids(self) -> None:
         """
@@ -70,28 +71,23 @@ class PlayerIDSearch:
         return not self._fide_ids_to_parse
 
 
-class PlayerNameSearch:
+class PlayerNameSearch(BaseSearch):
     """
     """
-    def __init__(
-        self,
-        query: str,
-        query_type: FidePlayerName,
-        model: 'SearchPlayerConfig'
-    ):
+    def __init__(self, query: FidePlayerName):
         self.query = query
-        self.query_type = query_type
-        self.model = model
         self._num_requests = 0
 
-    def update_name(self) -> None:
+    def update_query(self) -> str:
         """
         """
-        first_name_substring = self.query_type.first_name[:self._num_requests]
-        self.model.query = combine_fide_player_names(
-            first_name=first_name_substring, last_name=self.query
-        )
+        first_name_substring = self.query.first_name[:self._num_requests]
         self._num_requests += 1
+
+        updated_query = combine_fide_player_names(
+            first_name=first_name_substring, last_name=self.query.last_name
+        )
+        return updated_query
 
 
 class SearchPlayerConfig(BaseSearchConfig):
@@ -99,32 +95,18 @@ class SearchPlayerConfig(BaseSearchConfig):
     """
     query: Union[FidePlayerID, FidePlayerName]
 
-    def initialize_search_env(
-        self,
-        query_type: Union[FidePlayerID, FidePlayerName]
-    ) -> Union[PlayerIDSearch, PlayerNameSearch]:
+    def initialize_search(self) -> Union[PlayerIDSearch, PlayerNameSearch]:
         """
         """
-        if isinstance(query_type, FidePlayerID):
-            return PlayerIDSearch(
-                query=self.query, model=self
-            )
+        if isinstance(self.query, FidePlayerID):
+            return PlayerIDSearch(query=self.query)
         else:
-            return PlayerNameSearch(
-                query=self.query, query_type=query_type, model=self
-            )
+            return PlayerNameSearch(query=self.query)
 
-    @field_validator('query', mode='after')
-    @classmethod
-    def extract_query(
-        cls,
-        query: Union[FidePlayerID, FidePlayerName]
-    ) -> Union[str, int]:
+    def update_query(
+        self,
+        search: Union[PlayerIDSearch, PlayerNameSearch]
+    ) -> None:
         """
         """
-        if isinstance(query, FidePlayerID):
-            return query.entity_id
-        elif isinstance(query, FidePlayerName):
-            return query.last_name
-        else:
-            raise TypeError("not a valid 'query' type")
+        self.query = search.update_query()

@@ -7,17 +7,22 @@ from python_fide.types import (
     FidePlayer
 )
 
-def search_player_parsing(response: Dict[str, Any]) -> List[FidePlayer]:
+def search_player_parsing(
+    response: Dict[str, Any],
+    gathered_players: List[FidePlayer]
+) -> List[FidePlayer]:
     """
     """
     players = PartialAdapter.model_validate(response)
-    gathered_players: List[FidePlayer] = []
+    parsed_players: List[FidePlayer] = []
     
     for player in players.data:
         fide_player = FidePlayer.from_validated_model(player=player)
-        gathered_players.append(fide_player)
+
+        if fide_player not in gathered_players:
+            parsed_players.append(fide_player)
     
-    return gathered_players
+    return parsed_players
 
 
 def search_event_parsing(record: Dict[str, Any]) -> FideEvent:

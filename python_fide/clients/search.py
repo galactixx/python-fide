@@ -83,13 +83,11 @@ class FideSearch(FideClient):
         config = SearchPlayerConfig(
             query=fide_player_id, link='player'
         )
-        search: PlayerIDSearch = config.initialize_search_env(
-            query_type=fide_player_id
-        )
+        search: PlayerIDSearch = config.initialize_search()
 
         gathered_players: List[FidePlayer] = []
         while not search.stop_loop:
-            search.update_id()
+            config.update_query(search=search)
 
             response_json = self._fide_request_wrapped(
                 fide_url=self.base_url, params=config.parameterize
@@ -99,7 +97,8 @@ class FideSearch(FideClient):
 
             # Validate and parse player fields from response
             players = search_player_parsing(
-                response=response_json
+                response=response_json,
+                gathered_players=gathered_players
             )            
             gathered_players.extend(players)
 
@@ -109,8 +108,7 @@ class FideSearch(FideClient):
                 search.add_ids()
 
         return gathered_players
-
-
+    
     def get_fide_players_by_name(
         self,
         fide_player_name: FidePlayerName
@@ -120,9 +118,7 @@ class FideSearch(FideClient):
         config = SearchPlayerConfig(
             query=fide_player_name, link='player'
         )
-        search: PlayerNameSearch = config.initialize_search_env(
-            query_type=fide_player_name
-        )
+        search: PlayerNameSearch = config.initialize_search()
 
         gathered_players: List[FidePlayer] = []
         while True:
@@ -134,7 +130,8 @@ class FideSearch(FideClient):
 
             # Validate and parse player fields from response
             players = search_player_parsing(
-                response=response_json
+                response=response_json,
+                gathered_players=gathered_players
             )
             gathered_players.extend(players)
 
@@ -143,7 +140,7 @@ class FideSearch(FideClient):
             if len(players) < _MAX_RESULTS_PLAYER:
                 break
 
-            search.update_name()
+            config.update_query(search=search)
 
         gathered_players_filtered = [
             player for player in gathered_players if player == fide_player_name
