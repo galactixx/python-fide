@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 from python_fide.clients.base_client import FideClient
 from python_fide.enums import Period
 from python_fide.exceptions import InvalidFideIDError
-from python_fide.utils.general import create_url
+from python_fide.utils.general import build_url
 from python_fide.types import (
     FidePlayer,
     FidePlayerBasic,
@@ -25,7 +25,7 @@ from python_fide.config.player_config import (
     PlayerStatsConfig
 )
 
-class FidePlayer(FideClient):
+class FidePlayerData(FideClient):
     """
     """
     def __init__(self):
@@ -41,12 +41,14 @@ class FidePlayer(FideClient):
         """
         """
         if isinstance(fide_player, FidePlayerID):
-            fide_player = self.get_fide_player_detail(fide_player=fide_player)
+            fide_player_detail = self.get_fide_player_detail(fide_player=fide_player)
 
-            if fide_player is None:
+            if fide_player_detail is None:
                 raise InvalidFideIDError(
                     'Fide ID is invalid and has no link to a Fide rated player'
                 )
+            else:
+                return fide_player_detail.player
         return fide_player
 
     def get_fide_player_detail(
@@ -60,11 +62,8 @@ class FidePlayer(FideClient):
         )
 
         # Request from API to get profile detail JSON response
-        response = self._fide_request(
-            fide_url=config.endpointize(
-                base_url=self.base_url_detail
-            )
-        )
+        fide_url = config.endpointize(base_url=self.base_url_detail)
+        response = self._fide_request(fide_url=fide_url)
 
         # Validate and parse profile detail fields from response
         player_detail = player_detail_parsing(
@@ -75,7 +74,7 @@ class FidePlayer(FideClient):
         # Fide ID passed in as an argument, then return None
         if (
             player_detail is not None and
-            player_detail.player.player_id != config.fide_player
+            player_detail.player.player_id != config.fide_player_id
         ):
             return
         return player_detail
@@ -96,7 +95,7 @@ class FidePlayer(FideClient):
         )
 
         # Request from API to get profile opponents JSON response
-        fide_url = create_url(
+        fide_url = build_url(
             base=self.base_url, segments='a_data_opponents.php?'
         )
         response = self._fide_request(
@@ -125,7 +124,7 @@ class FidePlayer(FideClient):
         )
 
         # Request from API to get charts JSON response
-        fide_url = create_url(
+        fide_url = build_url(
             base=self.base_url, segments='a_chart_data.phtml?'
         )
         response = self._fide_request(
@@ -161,7 +160,7 @@ class FidePlayer(FideClient):
         )
 
         # Request from API to get game stats JSON response
-        fide_url = create_url(
+        fide_url = build_url(
             base=self.base_url, segments='a_data_stats.php?'
         )
         response = self._fide_request(

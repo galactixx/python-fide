@@ -44,7 +44,7 @@ class FideNews(FideClient):
     def get_news_detail(
         self,
         fide_news: Union[FideNews, FideNewsID]
-    ) -> FideNewsDetail:
+    ) -> Optional[FideNewsDetail]:
         """
         """
         config = NewsDetailConfig.from_news_object(
@@ -52,11 +52,8 @@ class FideNews(FideClient):
         )
 
         # Request from API to get profile detail JSON response
-        response = self._fide_request(
-            fide_url=config.endpointize(
-                base_url=self.base_url
-            )
-        )
+        fide_url = config.endpointize(base_url=self.base_url)
+        response = self._fide_request(fide_url=fide_url)
 
         # Validate and parse profile detail fields from response
         player_detail = news_detail_parsing(
@@ -67,7 +64,7 @@ class FideNews(FideClient):
         # Fide ID passed in as an argument, then return None
         if (
             player_detail is not None and
-            player_detail.news.news_id != config.fide_news
+            player_detail.news.news_id != config.fide_news_id
         ):
             return
         return player_detail

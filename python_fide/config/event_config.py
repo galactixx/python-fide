@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, Union
 
-from python_fide.utils.general import create_url
+from python_fide.utils.general import build_url
 from python_fide.config.base_config import (
     BaseEndpointConfig,
     BaseParameterConfig
@@ -28,11 +28,11 @@ class EventDetailConfig(BaseEndpointConfig):
             return cls(fide_event_id=fide_event.entity_id)
         else:
             raise ValueError(
-                "not a valid 'fide_event' type"
+                f"{type(fide_event)} not a valid 'fide_event' type"
             )
     
     def endpointize(self, base_url: str) -> str:
-        return create_url(
+        return build_url(
             base=base_url, segments=self.fide_event_id
         )
     

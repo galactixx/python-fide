@@ -136,7 +136,7 @@ class FideSearch(FideClient):
             if len(players) < _MAX_RESULTS_PLAYER:
                 break
 
-            config.update_player_name(fide_player_name=fide_player_name)
+            config.update_player_name()
 
         gathered_players_filtered = [
             player for player in gathered_players if player == fide_player_name
@@ -166,7 +166,7 @@ class FideSearch(FideClient):
         if isinstance(query, FidePlayerID):
             return next(
                 (
-                    player for player in players if query == player
+                    player for player in players if player == query
                 ), None
             )
         

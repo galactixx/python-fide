@@ -45,6 +45,7 @@ class SearchPlayerNameConfig(BaseSearchConfig):
     """
     """
     fide_player_name: str = Field(..., alias='query')
+    fide_player_type: FidePlayerName = Field(..., exclude=True)
 
     def model_post_init(self, __context: Any) -> None:
         self.__num_requests: int = 0
@@ -56,17 +57,22 @@ class SearchPlayerNameConfig(BaseSearchConfig):
         """
         """
         return cls(
-            link=link, fide_player_name=fide_player_name.last_name,
+            link=link,
+            fide_player_name=fide_player_name.last_name,
+            fide_player_type=fide_player_name
         )
 
-    def update_player_name(self, fide_player_name: FidePlayerName) -> None:
+    def update_player_name(self) -> None:
         """
         """
-        first_name_substring = fide_player_name.first_name[:self.__num_requests]
+        first_name_substring = (
+            self.fide_player_type.first_name[:self.__num_requests]
+        )
         self.__num_requests += 1
 
         self.fide_player_name = combine_fide_player_names(
-            first_name=first_name_substring, last_name=self.fide_player_name
+            first_name=first_name_substring,
+            last_name=self.fide_player_type.last_name
         )
 
     @property

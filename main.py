@@ -1,26 +1,15 @@
 import prettyprinter as pp
-from python_fide.clients.search import FideSearch
+from python_fide.clients.top_players import FideTopPlayer
 from python_fide.types import FidePlayerName, FidePlayerID
+from python_fide.enums import RatingCategory
 
 pp.install_extras(include=['dataclasses'])
 
-client = FideSearch()
+client = FideTopPlayer()
 
-players = client.get_fide_players_by_id(
-    fide_player_id=FidePlayerID(entity_id='1022')
+players = client.get_top_standard_players(
+    limit=2,
+    categories=[RatingCategory.OPEN]
 )
 
-pp.pprint(
-    players
-)
-print(len(players))
-
-
-# players = client.get_fide_players_by_name(
-#     fide_player_name=FidePlayerName(first_name='John', last_name='Smith')
-# )
-
-# pp.pprint(
-#     players
-# )
-# print(len(players))
+print(players)

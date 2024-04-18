@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, Union
 
-from python_fide.utils.general import create_url
+from python_fide.utils.general import build_url
 from python_fide.config.base_config import (
     BaseEndpointConfig,
     BaseParameterConfig
@@ -28,11 +28,11 @@ class NewsDetailConfig(BaseEndpointConfig):
             return cls(fide_news_id=fide_news.entity_id)
         else:
             raise ValueError(
-                "not a valid 'fide_news' type"
+                f"{type(fide_news)} not a valid 'fide_news' type"
             )
     
     def endpointize(self, base_url: str) -> str:
-        return create_url(
+        return build_url(
             base=base_url, segments=self.fide_news_id
         )
     

@@ -136,7 +136,7 @@ class FidePlayerRatingBase(BaseRawModel):
 
 
 class FidePlayerGameWhiteStatsBase(BaseRawModel):
-    total: Optional[int]
+    total: Optional[int] = Field(..., validation_alias='white_total')
     total_win: Optional[int] = Field(..., validation_alias='white_win_num')
     total_draw: Optional[int] = Field(..., validation_alias='white_draw_num')
     standard: Optional[int] = Field(..., validation_alias='white_total_std')
@@ -156,7 +156,7 @@ class FidePlayerGameWhiteStatsBase(BaseRawModel):
 
 
 class FidePlayerGameBlackStatsBase(BaseRawModel):
-    total: Optional[int]
+    total: Optional[int] = Field(..., validation_alias='black_total')
     total_win: Optional[int] = Field(..., validation_alias='black_win_num')
     total_draw: Optional[int] = Field(..., validation_alias='black_draw_num')
     standard: Optional[int] = Field(..., validation_alias='black_total_std')

@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional, Union
 
 from pydantic import Field, field_validator
 
-from python_fide.utils.general import create_url
+from python_fide.utils.general import build_url
 from python_fide.utils.config import parse_fide_player
 from python_fide.enums import Period
 from python_fide.config.base_config import (
@@ -23,7 +23,9 @@ class PlayerChartsConfig(BaseParameterConfig):
     @field_validator('period', mode='after')
     @classmethod
     def validate_period(cls, period: Optional[Period]) -> Period:
-        if period is not None:
+        """
+        """
+        if period is None:
             period = Period.ALL_YEARS
         return period
 
@@ -33,6 +35,8 @@ class PlayerChartsConfig(BaseParameterConfig):
         period: Optional[Period],
         fide_player: Union[FidePlayer, FidePlayerID]
     ) -> 'PlayerChartsConfig':
+        """
+        """
         fide_player_id = parse_fide_player(fide_player=fide_player)
         return cls(
             fide_player_id=fide_player_id, period=period
@@ -40,6 +44,8 @@ class PlayerChartsConfig(BaseParameterConfig):
 
     @property
     def parameterize(self) -> Dict[str, Any]:
+        """
+        """
         return self.model_dump(by_alias=True)
 
 
@@ -72,6 +78,8 @@ class PlayerStatsConfig(BaseParameterConfig):
 
     @property
     def parameterize(self) -> Dict[str, Any]:
+        """
+        """
         return self.model_dump(by_alias=True)
     
 
@@ -91,7 +99,7 @@ class PlayerDetailConfig(BaseEndpointConfig):
         )
     
     def endpointize(self, base_url: str) -> str:
-        return create_url(
+        return build_url(
             base=base_url, segments=self.fide_player_id
         )
     

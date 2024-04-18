@@ -51,7 +51,7 @@ def clean_fide_player_name(name: str) -> Tuple[str, str]:
     return first_name, last_name
 
 
-def create_url(base: str, segments: Union[int, str]) -> str:
+def build_url(base: str, segments: Union[int, str]) -> str:
     """
     """
     if isinstance(segments, int):

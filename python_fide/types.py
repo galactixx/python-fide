@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from python_fide.exceptions import InvalidFideIDError
 from python_fide.enums import RatingCategory
-from python_fide.utils.general import create_url
+from python_fide.utils.general import build_url
 from python_fide.utils.pydantic import from_player_model
 from python_fide.types_base import (
     FideEventDetailBase,
@@ -44,6 +44,7 @@ class FideBaseID(BaseModel):
     def cast_to_int(cls, entity_id: Union[str, int]) -> int:
         if isinstance(entity_id, str):
             assert entity_id.isdigit()
+            assert not entity_id.startswith('0')
 
             try:
                 entity_id = int(entity_id)
@@ -164,7 +165,7 @@ class FideEvent(BaseModel):
 
     @property
     def event_url(self) -> str:
-        return create_url(
+        return build_url(
             base='https://fide.com/calendar/', segments=self.event_id
         )
 
@@ -175,7 +176,7 @@ class FideNewsBasic(BaseModel):
 
     @property
     def news_url(self) -> str:
-        return create_url(
+        return build_url(
             base='https://fide.com/news/', segments=self.news_id
         )
     
@@ -340,8 +341,8 @@ class FidePlayerGameStats(BaseModel):
         )
 
         return FidePlayerGameStats(
-            opponent=fide_player,
-            fide_player_opponent=fide_player_opponent,
+            player=fide_player,
+            opponent=fide_player_opponent,
             white=stats_white_decomposed,
             black=stats_black_decomposed
         )

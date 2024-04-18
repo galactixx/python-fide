@@ -47,7 +47,7 @@ class FideEvents(FideClient):
     def get_event_detail(
         self,
         fide_event: Union[FideEvent, FideEventID]
-    ) -> FideEventDetail:
+    ) -> Optional[FideEventDetail]:
         """
         """
         config = EventDetailConfig.from_event_object(
@@ -55,11 +55,8 @@ class FideEvents(FideClient):
         )
 
         # Request from API to get profile detail JSON response
-        response = self._fide_request(
-            fide_url=config.endpointize(
-                base_url=self.base_url
-            )
-        )
+        fide_url = config.endpointize(base_url=self.base_url)
+        response = self._fide_request(fide_url=fide_url)
 
         # Validate and parse profile detail fields from response
         player_detail = event_detail_parsing(
@@ -70,7 +67,7 @@ class FideEvents(FideClient):
         # Fide ID passed in as an argument, then return None
         if (
             player_detail is not None and
-            player_detail.event.event_id != config.fide_event
+            player_detail.event.event_id != config.fide_event_id
         ):
             return
         return player_detail
