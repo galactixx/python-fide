@@ -1,14 +1,19 @@
-from typing import Any, Dict, Optional, Union
+from typing import Optional, Union
 
 from python_fide.utils.general import build_url
 from python_fide.config.base_config import (
     BaseEndpointConfig,
-    BaseParameterConfig
+    ParameterNullConfig
 )
 from python_fide.types.core import (
     FideNews,
     FideNewsID
 )
+
+class NewsLatestConfig(ParameterNullConfig):
+    limit: Optional[int]
+    query: Optional[str]
+
 
 class NewsDetailConfig(BaseEndpointConfig):
     """
@@ -35,12 +40,3 @@ class NewsDetailConfig(BaseEndpointConfig):
         return build_url(
             base=base_url, segments=self.fide_news_id
         )
-    
-
-class NewsLatestConfig(BaseParameterConfig):
-    limit: Optional[int]
-    query: Optional[str]
-
-    @property
-    def parameterize(self) -> Dict[str, Any]:
-        return dict()

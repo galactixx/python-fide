@@ -4,7 +4,7 @@ from collections import deque
 from pydantic import Field
 
 from python_fide.utils.general import combine_fide_player_names
-from python_fide.config.base_config import BaseParameterConfig
+from python_fide.config.base_config import ParameterConfig
 from python_fide.types.core import (
     FideEventID,
     FideNewsID,
@@ -12,20 +12,20 @@ from python_fide.types.core import (
     FidePlayerName
 )
 
-class BaseSearchConfig(BaseParameterConfig):
+class BaseSearchConfig(ParameterConfig):
     link: Literal['event', 'news', 'player']
 
 
 class SearchConfig(BaseSearchConfig):
     """
     """
-    query: Union[str, int]
+    search_query: Union[str, int] = Field(..., validation_alias='query')
 
     @classmethod
     def from_search_object(
         cls,
         link: Literal['event', 'news'],
-        query: Union[str, int]
+        query: Union[str, FideEventID, FideNewsID]
     ) -> 'SearchConfig':
         """
         """
@@ -35,10 +35,6 @@ class SearchConfig(BaseSearchConfig):
             return cls(query=query.entity_id, link=link)
         else:
             raise TypeError("not a valid 'query' type")
-        
-    @property
-    def parameterize(self) -> Dict[str, Any]:
-        return self.model_dump()
 
 
 class SearchPlayerNameConfig(BaseSearchConfig):

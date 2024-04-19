@@ -34,6 +34,24 @@ class BaseParameterConfig(ABC, BaseModel):
         use_enum_values = True
 
 
+class ParameterAliasConfig(BaseParameterConfig):
+    @property
+    def parameterize(self) -> Dict[str, Any]:
+        return self.model_dump(by_alias=True)
+
+
+class ParameterConfig(BaseParameterConfig):
+    @property
+    def parameterize(self) -> Dict[str, Any]:
+        return self.model_dump()
+
+
+class ParameterNullConfig(BaseParameterConfig):
+    @property
+    def parameterize(self) -> Dict[str, Any]:
+        return dict()
+
+
 class BaseEndpointConfig(ABC, BaseModel):
     """
     """

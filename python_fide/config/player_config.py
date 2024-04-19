@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 from typing_extensions import Annotated
 
 from pydantic import Field, field_validator
@@ -11,8 +11,8 @@ from python_fide.utils.config import (
     parse_fide_player_optional
 )
 from python_fide.config.base_config import (
-    BaseParameterConfig,
-    BaseEndpointConfig
+    BaseEndpointConfig,
+    ParameterAliasConfig
 )
 
 FideID = Annotated[int, BeforeValidator(parse_fide_player)]
@@ -20,7 +20,13 @@ FideIDOptional = Annotated[
     Optional[int], BeforeValidator(parse_fide_player_optional)
 ]
 
-class PlayerChartsConfig(BaseParameterConfig):
+class PlayerOpponentsConfig(ParameterAliasConfig):
+    """
+    """
+    fide_player_id: FideID = Field(..., alias='pl')
+
+
+class PlayerChartsConfig(ParameterAliasConfig):
     """
     """
     fide_player_id: FideID = Field(..., alias='event')
@@ -35,24 +41,12 @@ class PlayerChartsConfig(BaseParameterConfig):
             period = Period.ALL_YEARS
         return period
 
-    @property
-    def parameterize(self) -> Dict[str, Any]:
-        """
-        """
-        return self.model_dump(by_alias=True)
 
-
-class PlayerStatsConfig(BaseParameterConfig):
+class PlayerStatsConfig(ParameterAliasConfig):
     """
     """
     fide_player_id: FideID = Field(..., alias='id1')
     fide_player_opponent_id: FideIDOptional = Field(..., alias='id2')
-
-    @property
-    def parameterize(self) -> Dict[str, Any]:
-        """
-        """
-        return self.model_dump(by_alias=True)
     
 
 class PlayerDetailConfig(BaseEndpointConfig):
@@ -66,15 +60,3 @@ class PlayerDetailConfig(BaseEndpointConfig):
         return build_url(
             base=base_url, segments=self.fide_player_id
         )
-    
-
-class PlayerOpponentsConfig(BaseParameterConfig):
-    """
-    """
-    fide_player_id: FideID = Field(..., alias='pl')
-    
-    @property
-    def parameterize(self) -> Dict[str, Any]:
-        """
-        """
-        return self.model_dump(by_alias=True)
