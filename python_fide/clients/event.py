@@ -1,10 +1,7 @@
 from typing import List, Optional, Union
 
-from python_fide.clients.base_client import FideClient
-from python_fide.parsing.event_parsing import (
-    event_detail_parsing,
-    event_latest_parsing
-)
+from python_fide.clients.base_client import FideClientWithPagination
+from python_fide.parsing.event_parsing import event_detail_parsing
 from python_fide.types.core import (
     FideEvent,
     FideEventDetail,
@@ -15,7 +12,7 @@ from python_fide.config.event_config import (
     EventLatestConfig
 )
 
-class FideEvents(FideClient):
+class FideEventsClient(FideClientWithPagination):
     """
     """
     def __init__(self):
@@ -39,7 +36,7 @@ class FideEvents(FideClient):
             limit=limit,
             base_url=self.base_latest_url,
             config=config,
-            parser=event_latest_parsing
+            fide_type=FideEventDetail
         )
 
         return pagination.records

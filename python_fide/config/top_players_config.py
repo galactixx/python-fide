@@ -19,4 +19,5 @@ class TopPlayersConfig(BaseModel):
         """
         if categories is None:
             return [category for category in RatingCategory]
-        return list(set(categories))
+        else:
+            return list(set(categories))

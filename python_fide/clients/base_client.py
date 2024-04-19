@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Dict, Optional
 
 import requests
 from requests import HTTPError
@@ -6,9 +6,8 @@ from faker import Faker
 
 from python_fide.types.adapters import HolisticAdapter
 from python_fide.pagination import FidePagination
+from python_fide.types.base import BaseRecordValidatorModel
 from python_fide.config.base_config import BaseParameterConfig
-
-T = TypeVar('T')
 
 class FideClient(object):
     """
@@ -54,12 +53,16 @@ class FideClient(object):
         else:
             return response_json
         
+
+class FideClientWithPagination(FideClient):
+    """
+    """
     def _paginatize(
         self,
         limit: int,
         base_url: str,
         config: BaseParameterConfig,
-        parser: Callable[[Dict[str, Any]], T]
+        fide_type: BaseRecordValidatorModel
     ) -> FidePagination:
         """
         """
@@ -85,7 +88,7 @@ class FideClient(object):
             # Iterate through each record in main data, extracted
             # from response, and parse/validate each record
             for record in holistic.data:
-                parsed_record = parser(record=record)
+                parsed_record = fide_type.from_validated_model(record=record)
 
                 fide_pagination.update_status(record=parsed_record)
                 if not fide_pagination.loop_continue:

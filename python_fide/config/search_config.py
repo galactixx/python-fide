@@ -19,20 +19,22 @@ class BaseSearchConfig(ParameterAliasConfig):
 class SearchConfig(BaseSearchConfig):
     """
     """
-    search_query: Union[str, int] = Field(..., validation_alias='query')
+    search_query: Union[str, int] = Field(..., alias='query')
 
     @classmethod
     def from_search_object(
         cls,
         link: Literal['event', 'news'],
-        query: Union[str, FideEventID, FideNewsID]
+        search_query: Union[str, FideEventID, FideNewsID]
     ) -> 'SearchConfig':
         """
         """
-        if isinstance(query, str):
-            return cls(query=query, link=link)
-        elif isinstance(query, (FideEventID, FideNewsID)):
-            return cls(query=query.entity_id, link=link)
+        if isinstance(search_query, str):
+            return cls(search_query=search_query, link=link)
+        elif isinstance(search_query, (FideEventID, FideNewsID)):
+            return cls(
+                search_query=search_query.entity_id, link=link
+            )
         else:
             raise TypeError("not a valid 'query' type")
 

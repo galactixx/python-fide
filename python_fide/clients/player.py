@@ -25,7 +25,7 @@ from python_fide.config.player_config import (
     PlayerStatsConfig
 )
 
-class FidePlayerData(FideClient):
+class FidePlayerClient(FideClient):
     """
     """
     def __init__(self):

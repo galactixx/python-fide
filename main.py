@@ -1,5 +1,5 @@
 import prettyprinter as pp
-from python_fide.clients.player import FidePlayerData
+from python_fide.clients.search import FideSearchClient
 from python_fide.enums import RatingCategory
 from python_fide.types.core import (
     FideEvent,
@@ -10,10 +10,10 @@ from python_fide.types.core import (
 
 pp.install_extras(include=['dataclasses'])
 
-client = FidePlayerData()
+client = FideSearchClient()
 
-entity = client.get_fide_player_detail(
-    fide_player=FidePlayerID(entity_id='1700880')
+entity = client.get_news(
+    query='Candidates', limit=1
 )
 
 print(entity)

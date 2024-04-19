@@ -1,6 +1,7 @@
 from typing import List, Optional, Union
 
-from python_fide.clients.base_client import FideClient
+from python_fide.clients.base_client import FideClientWithPagination
+from python_fide.parsing.search_parsing import search_player_parsing
 from python_fide.config.search_config import (
     SearchConfig,
     SearchPlayerIDConfig,
@@ -10,20 +11,15 @@ from python_fide.types.core import (
     FideEvent, 
     FideEventID,
     FidePlayerName,
-    FideNews,
+    FideNewsBasic,
     FideNewsID,
     FidePlayer,
     FidePlayerID
 )
-from python_fide.parsing.search_parsing import (
-    search_event_parsing,
-    search_news_parsing,
-    search_player_parsing
-)
 
 _MAX_RESULTS_PLAYER = 300
 
-class FideSearch(FideClient):
+class FideSearchClient(FideClientWithPagination):
     """
     """
     def __init__(self):
@@ -39,14 +35,14 @@ class FideSearch(FideClient):
         """
         """
         config = SearchConfig.from_search_object(
-            query=query, link='event'
+            search_query=query, link='event'
         )
 
         pagination = self._paginatize(
             limit=limit,
             base_url=self.base_url,
             config=config,
-            parser=search_event_parsing
+            fide_type=FideEvent
         )
 
         return pagination.records
@@ -55,18 +51,18 @@ class FideSearch(FideClient):
         self,
         query: Union[str, FideNewsID, FidePlayerName], 
         limit: Optional[int] = None
-    ) -> List[FideNews]:
+    ) -> List[FideNewsBasic]:
         """
         """
         config = SearchConfig.from_search_object(
-            query=query, link='news'
+            search_query=query, link='news'
         )
 
         pagination = self._paginatize(
             limit=limit,
-            base_url=self.base_url,
+            base_url=self.base_url, 
             config=config,
-            parser=search_news_parsing
+            fide_type=FideNewsBasic
         )
 
         return pagination.records

@@ -6,7 +6,7 @@ from python_fide.config.top_players_config import TopPlayersConfig
 from python_fide.parsing.top_players_parsing import top_standard_players_parsing
 from python_fide.types.core import FideTopPlayer
 
-class FideTopPlayer(FideClient):
+class FideTopPlayersClient(FideClient):
     """
     """
     def __init__(self):

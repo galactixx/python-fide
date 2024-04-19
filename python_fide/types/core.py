@@ -12,6 +12,7 @@ from python_fide.types.annotated import (
     DateYearMonth
 )
 from python_fide.types.base import (
+    BaseRecordValidatorModel,
     FideEventDetailBase,
     FideNewsDetailBase,
     FidePlayerBasicBase,
@@ -143,9 +144,7 @@ class FideTopPlayer(FideTopPlayerBase):
         fide_top_player = FideTopPlayerBase.model_validate(player)
 
         return cls(
-            player=fide_player,
-            category=category,
-            **fide_top_player.model_dump()
+            player=fide_player, category=category, **fide_top_player.model_dump()
         )
 
 
@@ -163,7 +162,7 @@ class FidePlayerDetail(FidePlayerDetailBase):
         )
     
 
-class FideEvent(BaseModel):
+class FideEvent(BaseRecordValidatorModel):
     name: str = Field(validation_alias='name')
     event_id: int = Field(validation_alias='id')
 
@@ -172,11 +171,15 @@ class FideEvent(BaseModel):
         return build_url(
             base='https://fide.com/calendar/', segments=self.event_id
         )
+    
+    @classmethod
+    def from_validated_model(cls, record: Dict[str, Any]) -> 'FideEvent':
+        return FideEvent.model_validate(record)
 
 
-class FideNewsBasic(BaseModel):
-    title: str = Field(validation_alias='name')
-    news_id: int = Field(validation_alias='id')
+class FideNewsBasic(BaseRecordValidatorModel):
+    title: str = Field(..., validation_alias='name')
+    news_id: int = Field(..., validation_alias='id')
 
     @property
     def news_url(self) -> str:
@@ -184,22 +187,28 @@ class FideNewsBasic(BaseModel):
             base='https://fide.com/news/', segments=self.news_id
         )
     
+    @classmethod
+    def from_validated_model(cls, record: Dict[str, Any]) -> 'FideNewsBasic':
+        return FideNewsBasic.model_validate(record)
+    
 
 class FideNews(FideNewsBasic):
-    news_type: str = Field(..., validation_alias='type')
     posted_at: DateTime
 
+    @classmethod
+    def from_validated_model(cls, record: Dict[str, Any]) -> 'FideNews':
+        return FideNews.model_validate(record)
 
-class FideEventDetail(FideEventDetailBase):
+
+class FideEventDetail(BaseRecordValidatorModel, FideEventDetailBase):
     event: FideEvent
 
     @classmethod
-    def from_validated_model(cls, event: Dict[str, Any]) -> 'FideEventDetail':
-        fide_event = FideEvent.model_validate(event)
-        fide_event_detail = FideEventDetailBase.model_validate(event)
+    def from_validated_model(cls, record: Dict[str, Any]) -> 'FideEventDetail':
+        fide_event = FideEvent.model_validate(record)
+        fide_event_detail = FideEventDetailBase.model_validate(record)
         return cls(
-            event=fide_event,
-            **fide_event_detail.model_dump()
+            event=fide_event, **fide_event_detail.model_dump()
         )
 
 

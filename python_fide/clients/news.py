@@ -1,10 +1,7 @@
 from typing import List, Optional, Union
 
-from python_fide.clients.base_client import FideClient
-from python_fide.parsing.news_parsing import (
-    news_detail_parsing,
-    news_latest_parsing
-)
+from python_fide.clients.base_client import FideClientWithPagination
+from python_fide.parsing.news_parsing import news_detail_parsing
 from python_fide.config.news_config import (
     NewsDetailConfig,
     NewsLatestConfig
@@ -15,7 +12,7 @@ from python_fide.types.core import (
     FideNewsID
 )
 
-class FideNews(FideClient):
+class FideNewsClient(FideClientWithPagination):
     """
     """
     def __init__(self):
@@ -36,7 +33,7 @@ class FideNews(FideClient):
             limit=limit,
             base_url=self.base_url,
             config=config,
-            parser=news_latest_parsing
+            fide_type=FideNews
         )
 
         return pagination.records

@@ -1,4 +1,5 @@
-from typing import Any, List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from abc import ABC, abstractmethod
 
 from pydantic import AliasChoices, BaseModel, Field, field_validator, HttpUrl
 
@@ -12,10 +13,17 @@ from python_fide.utils.general import (
     remove_non_digits_from_string
 )
 
+class BaseRecordValidatorModel(ABC, BaseModel):
+    @classmethod
+    @abstractmethod
+    def from_validated_model(cls, record: Dict[str, Any]) -> None:
+        pass
+
+
 class BaseRawModel(BaseModel):
     @field_validator('*', mode='before')
     @classmethod
-    def remove_null_strings(cls, value: Any) -> Any:
+    def remove_null_strings(cls, value: Union[str, int]) -> Optional[Union[str, int]]:
         if value == "":
             return None
         return value
@@ -80,7 +88,7 @@ class FideEventDetailBase(BaseRawModel):
     rounds: Optional[int] = Field(..., validation_alias='num_round')
     players: Optional[int] = Field(..., validation_alias='number_of_players')
     telephone: Optional[str] = Field(..., validation_alias='tel')
-    website: Optional[HttpUrl]
+    website: Optional[str]
     organizer: Optional[str]
     chief_arbiter: Optional[str]
     chief_organizer: Optional[str]
@@ -118,7 +126,6 @@ class FideNewsDetailBase(BaseRawModel):
     topic: FideNewsTopic
     category: FideNewsCategory
     contents: List[FideNewsContent]
-    posted_at: DateTime
     created_at: DateTime
     updated_at: DateTime
 
