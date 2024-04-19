@@ -1,10 +1,10 @@
-from typing import Any, Deque, Dict, Literal, Union
+from typing import Any, Deque, Literal, Union
 from collections import deque
 
 from pydantic import Field
 
 from python_fide.utils.general import combine_fide_player_names
-from python_fide.config.base_config import ParameterConfig
+from python_fide.config.base_config import ParameterAliasConfig
 from python_fide.types.core import (
     FideEventID,
     FideNewsID,
@@ -12,7 +12,7 @@ from python_fide.types.core import (
     FidePlayerName
 )
 
-class BaseSearchConfig(ParameterConfig):
+class BaseSearchConfig(ParameterAliasConfig):
     link: Literal['event', 'news', 'player']
 
 
@@ -71,10 +71,6 @@ class SearchPlayerNameConfig(BaseSearchConfig):
             last_name=self.fide_player_type.last_name
         )
 
-    @property
-    def parameterize(self) -> Dict[str, Any]:
-        return self.model_dump(by_alias=True)
-
 
 class SearchPlayerIDConfig(BaseSearchConfig):
     """
@@ -111,7 +107,3 @@ class SearchPlayerIDConfig(BaseSearchConfig):
         return cls(
             link=link, fide_player_id=fide_player_id.entity_id
         )
-    
-    @property
-    def parameterize(self) -> Dict[str, Any]:
-        return self.model_dump(by_alias=True)
