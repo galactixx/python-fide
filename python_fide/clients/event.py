@@ -30,7 +30,7 @@ class FideEvents(FideClient):
         self,
         limit: Optional[int] = None,
         query: Optional[str] = None
-    ) -> List[FideEvent]:
+    ) -> List[FideEventDetail]:
         """
         """
         config = EventLatestConfig(limit=limit, query=query)

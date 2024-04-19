@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 
 class _MetaAdapter(BaseModel):
     page_current: int = Field(..., validation_alias='current_page')
@@ -13,10 +13,10 @@ class _MetaAdapter(BaseModel):
 
 
 class _LinksAdapter(BaseModel):
-    first_link: str = Field(..., validation_alias='first')
-    last_link: str = Field(..., validation_alias='last')
-    prev_link: Optional[str] = Field(..., validation_alias='prev')
-    next_link: Optional[str] = Field(..., validation_alias='next')
+    first_link: HttpUrl = Field(..., validation_alias='first')
+    last_link: HttpUrl = Field(..., validation_alias='last')
+    prev_link: Optional[HttpUrl] = Field(..., validation_alias='prev')
+    next_link: Optional[HttpUrl] = Field(..., validation_alias='next')
 
 
 class HolisticAdapter(BaseModel):
@@ -25,11 +25,15 @@ class HolisticAdapter(BaseModel):
     meta: _MetaAdapter
 
 
-class PartialAdapter(BaseModel):
+class PartialDictAdapter(BaseModel):
+    data: Dict[str, Any]
+
+
+class PartialListAdapter(BaseModel):
     data: List[dict]
 
     @classmethod
-    def from_minimal_adapter(cls, response: List[dict]) -> 'PartialAdapter':
+    def from_minimal_adapter(cls, response: List[dict]) -> 'PartialListAdapter':
         adapter = cls.model_validate({'data': response})
         return adapter
 

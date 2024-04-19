@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from python_fide.exceptions import InvalidFormatError
-from python_fide.types_adapter import PartialAdapter
+from python_fide.types_adapter import PartialListAdapter
 from python_fide.types import (
     FidePlayer,
     FidePlayerBasic,
@@ -13,7 +13,7 @@ from python_fide.types import (
 def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
     """
     """
-    players = PartialAdapter.from_minimal_adapter(response=response)
+    players = PartialListAdapter.from_minimal_adapter(response=response)
     gathered_players: List[FidePlayerBasic] = []
     
     for player in players.data:
@@ -26,7 +26,7 @@ def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
 def player_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
     """
     """
-    players = PartialAdapter.from_minimal_adapter(response=response)
+    players = PartialListAdapter.from_minimal_adapter(response=response)
 
     # This is a search by Fide ID, thus there should never be a response
     # that has more than one item, although there can be a response with no items
@@ -49,7 +49,7 @@ def player_charts_parsing(
 ) -> List[FidePlayerRating]:
     """
     """
-    ratings = PartialAdapter.from_minimal_adapter(response=response)
+    ratings = PartialListAdapter.from_minimal_adapter(response=response)
     gathered_ratings: List[FidePlayerRating] = []
 
     for month_rating in ratings.data:
@@ -69,7 +69,7 @@ def player_stats_parsing(
 ) -> FidePlayerGameStats:
     """
     """
-    player_stats = PartialAdapter.from_minimal_adapter(response=response)
+    player_stats = PartialListAdapter.from_minimal_adapter(response=response)
 
     # This is a search by Fide ID, thus there should never be a response
     # that has more than one item, although there can be a response with no items

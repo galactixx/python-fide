@@ -5,8 +5,11 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from python_fide.exceptions import InvalidFideIDError
 from python_fide.enums import RatingCategory
-from python_fide.utils.general import build_url
 from python_fide.utils.pydantic import from_player_model
+from python_fide.utils.general import (
+    build_url,
+    validate_date_format
+)
 from python_fide.types_base import (
     FideEventDetailBase,
     FideNewsDetailBase,
@@ -128,6 +131,7 @@ class FideTopPlayer(FideTopPlayerBase):
 
     class Config:
         use_enum_values = True
+        run_validators = False
 
     @classmethod
     def from_validated_model(
@@ -147,6 +151,9 @@ class FideTopPlayer(FideTopPlayerBase):
 
 class FidePlayerDetail(FidePlayerDetailBase):
     player: FidePlayer
+
+    class Config:
+        run_validators = False
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerDetail':
@@ -185,9 +192,19 @@ class FideNews(FideNewsBasic):
     news_type: str = Field(..., validation_alias='type')
     posted_at: str
 
+    @field_validator('posted_at', mode='after')
+    @classmethod
+    def validate_date_format(cls, date: str) -> Optional[str]:
+        return validate_date_format(
+            date=date, date_format='%Y-%m-%d %H:%M:%S'
+        )
+
 
 class FideEventDetail(FideEventDetailBase):
     event: FideEvent
+
+    class Config:
+        run_validators = False
 
     @classmethod
     def from_validated_model(cls, event: Dict[str, Any]) -> 'FideEventDetail':
@@ -201,6 +218,9 @@ class FideEventDetail(FideEventDetailBase):
 
 class FideNewsDetail(FideNewsDetailBase):
     news: FideNews
+
+    class Config:
+        run_validators = False
 
     @classmethod
     def from_validated_model(cls, news: Dict[str, Any]) -> 'FideNewsDetail':
@@ -228,15 +248,8 @@ class FidePlayerRating(BaseModel):
     @field_validator('month', mode='after')
     @classmethod
     def validate_month(cls, month: str) -> str:
-        try:
-            month_reformatted = datetime.strptime(month, '%Y-%b')
-            month_date = datetime.strftime(month_reformatted, '%Y-%m-%d')
-        except ValueError:
-            raise ValueError(
-                "'month' argument does not have expected date format '%Y-%b'"
-            )
-        else:
-            return month_date
+        validated_date = validate_date_format(date=month, date_format='%Y-%b')
+        return validated_date
     
     @classmethod
     def from_validated_model(
@@ -303,6 +316,8 @@ class FidePlayerGameStats(BaseModel):
         fide_player_opponent: Optional[FidePlayer], 
         stats: Dict[str, Any]
     ) -> 'FidePlayerGameStats':
+        """
+        """
         
         def decompose_raw_stats(
             fide_stats: Union[
@@ -310,6 +325,8 @@ class FidePlayerGameStats(BaseModel):
                 FidePlayerGameWhiteStatsBase
             ]
         ) -> FideGamesSet:
+            """
+            """
             return FideGamesSet(
                 standard=FideGames(
                     games_total=fide_stats.standard,

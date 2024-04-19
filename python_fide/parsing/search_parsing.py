@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 
-from python_fide.types_adapter import PartialAdapter
+from python_fide.types_adapter import PartialListAdapter
 from python_fide.types import (
     FideEvent,
     FideNews,
@@ -13,7 +13,7 @@ def search_player_parsing(
 ) -> List[FidePlayer]:
     """
     """
-    players = PartialAdapter.model_validate(response)
+    players = PartialListAdapter.model_validate(response)
     parsed_players: List[FidePlayer] = []
     
     for player in players.data:

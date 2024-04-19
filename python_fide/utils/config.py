@@ -1,10 +1,6 @@
 from typing import Union
 
 from python_fide.types import (
-    FideEvent,
-    FideEventID,
-    FideNews,
-    FideNewsID,
     FidePlayer,
     FidePlayerID
 )
