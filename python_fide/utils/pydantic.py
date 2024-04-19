@@ -1,13 +1,10 @@
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Tuple
 
-from python_fide.types.base import (
-    FidePlayerBase,
-    FidePlayerBasicBase
-)
+from python_fide.types.base import BasePlayer
 
 def from_player_model(
     player: Dict[str, Any],
-    fide_player_model: Union[FidePlayerBase, FidePlayerBasicBase]
+    fide_player_model: BasePlayer
 ) -> Tuple[str, str, Dict[str, Any]]:
     """
     """

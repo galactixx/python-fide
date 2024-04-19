@@ -1,5 +1,4 @@
 from typing import Any, Dict, Literal, Optional, Union
-from datetime import datetime
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -157,8 +156,7 @@ class FidePlayerDetail(FidePlayerDetailBase):
         fide_player_detail = FidePlayerDetailBase.model_validate(player)
 
         return cls(
-            player=fide_player,
-            **fide_player_detail.model_dump()
+            player=fide_player, **fide_player_detail.model_dump()
         )
     
 
@@ -221,8 +219,7 @@ class FideNewsDetail(FideNewsDetailBase):
         fide_news_detail = FideNewsDetailBase.model_validate(news)
 
         return cls(
-            news=fide_news,
-            **fide_news_detail.model_dump()
+            news=fide_news, **fide_news_detail.model_dump()
         )
 
 
@@ -264,11 +261,6 @@ class FidePlayerRating(BaseModel):
             rapid=rapid_rating,
             blitz=blitz_rating
         )
-
-    @property
-    def month_datetime(self) -> Optional[datetime]:
-        if self.month is not None:
-            return datetime.strptime(self.month, '%Y-%m-%d')
 
 
 class FideGames(BaseModel):

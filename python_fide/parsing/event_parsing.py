@@ -16,6 +16,6 @@ def event_detail_parsing(response: Dict[str, dict]) -> Optional[FideEventDetail]
     else:
         partial_adapter = PartialDictAdapter.model_validate(response)
         fide_detail = FideEventDetail.from_validated_model(
-            event=partial_adapter.data
+            record=partial_adapter.data
         )
         return fide_detail

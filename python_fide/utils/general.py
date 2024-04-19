@@ -1,6 +1,5 @@
 import sys
 from typing import List, Optional, Tuple, Union
-import re
 from datetime import datetime
 
 from urllib.parse import urljoin
@@ -15,12 +14,6 @@ def validate_date_format(date: str, date_format: str) -> Optional[str]:
         month_date = None
     finally:
         return month_date
-
-
-def remove_non_digits_from_string(text: str) -> str:
-    """
-    """
-    return re.sub(r"[^\d]", "", text)
 
 
 def join_strings_by_space(strings: List[str]) -> str:

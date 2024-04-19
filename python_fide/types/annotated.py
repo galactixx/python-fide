@@ -1,30 +1,66 @@
 from typing_extensions import Annotated
+from typing import Optional, Union
+from datetime import datetime, date
 
-from pydantic.functional_validators import AfterValidator
+from pydantic import BaseModel
+from pydantic.functional_validators import BeforeValidator
 
 from python_fide.utils.general import validate_date_format
 
-def validate_date_year_month(date: str) -> str:
-    """"""
-    return validate_date_format(date=date, date_format='%Y-%b')
+class Date(BaseModel):
+    """
+    """
+    date_iso: Optional[str]
+    date_original: str
+    date_original_format: str
+
+    @property
+    def as_date(self) -> Optional[date]:
+        datetime_as_date = self.as_datetime
+        return datetime_as_date.date() if datetime_as_date is not None else None 
+
+    @property
+    def as_datetime(self) -> Optional[datetime]:
+        return datetime.strptime(self.date_iso, '%Y-%m-%d') if self.date_iso is not None else None
+    
+    @classmethod
+    def from_date_format(cls, date: str, date_format: str) -> 'Date':
+        date_iso = validate_date_format(date=date, date_format=date_format)
+        return cls(
+            date_iso=date_iso, date_original=date, date_original_format=date_format
+        )
 
 
-def validate_date_iso(date: str) -> str:
-    """"""
-    return validate_date_format(date=date, date_format='%Y-%m-%d')
+def _isinstance_date(func):
+    def inner(date: Union[str, dict]) -> Date:
+        if not isinstance(date, dict):
+            return func(date=date)
+        else:
+            return Date(**date)
+    return inner
 
 
-def validate_date_year(year: str) -> str:
-    """"""
-    return validate_date_format(date=year, date_format='%Y')
+@_isinstance_date
+def validate_date_year_month(date: Union[str, dict]) -> Date:
+    return Date.from_date_format(date=date, date_format='%Y-%b')
 
 
-def validate_datetime(date: str) -> str:
-    """"""
-    return validate_date_format(date=date, date_format='%Y-%m-%d %H:%M:%S')
+@_isinstance_date
+def validate_date_iso(date: Union[str, dict]) -> Date:
+    return Date.from_date_format(date=date, date_format='%Y-%m-%d')
 
 
-DateISO = Annotated[str, AfterValidator(validate_date_iso)]
-DateYear = Annotated[str, AfterValidator(validate_date_year)]
-DateTime = Annotated[str, AfterValidator(validate_datetime)]
-DateYearMonth = Annotated[str, AfterValidator(validate_date_year_month)]
+@_isinstance_date
+def validate_date_year(date: Union[str, dict]) -> Date:
+    return Date.from_date_format(date=date, date_format='%Y')
+
+
+@_isinstance_date
+def validate_datetime(date: Union[str, dict]) -> Date:
+    return Date.from_date_format(date=date, date_format='%Y-%m-%d %H:%M:%S')
+
+
+DateISO = Annotated[Date, BeforeValidator(validate_date_iso)]
+DateYear = Annotated[Date, BeforeValidator(validate_date_year)]
+DateTime = Annotated[Date, BeforeValidator(validate_datetime)]
+DateYearMonth = Annotated[Date, BeforeValidator(validate_date_year_month)]

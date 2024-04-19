@@ -3,14 +3,11 @@ from abc import ABC, abstractmethod
 
 from pydantic import AliasChoices, BaseModel, Field, field_validator, HttpUrl
 
+from python_fide.utils.general import clean_fide_player_name
 from python_fide.types.annotated import (
     DateISO,
     DateTime,
     DateYear
-)
-from python_fide.utils.general import (
-    clean_fide_player_name,
-    remove_non_digits_from_string
 )
 
 class BaseRecordValidatorModel(ABC, BaseModel):
@@ -34,9 +31,7 @@ class BaseRawModel(BaseModel):
 
 class BasePlayer(BaseRawModel):
     def get_decomposed_player_name(self) -> Tuple[str, str]:
-        return clean_fide_player_name(
-            name=getattr(self, 'name')
-        )
+        return clean_fide_player_name(name=getattr(self, 'name'))
 
     def set_player_name(self, first_name: str, last_name: str) -> None:
         setattr(
@@ -85,20 +80,13 @@ class FideEventDetailBase(BaseRawModel):
     tournament_type: Optional[str] = Field(..., validation_alias='tournament_system')
     time_control: Optional[str] = Field(..., validation_alias='time_control')
     time_control_desc: Optional[str] = Field(..., validation_alias='timecontrol_description')
-    rounds: Optional[int] = Field(..., validation_alias='num_round')
-    players: Optional[int] = Field(..., validation_alias='number_of_players')
+    rounds: Optional[str] = Field(..., validation_alias='num_round')
+    players: Optional[str] = Field(..., validation_alias='number_of_players')
     telephone: Optional[str] = Field(..., validation_alias='tel')
     website: Optional[str]
     organizer: Optional[str]
     chief_arbiter: Optional[str]
     chief_organizer: Optional[str]
-
-    @field_validator('players', 'rounds', mode='before')
-    @classmethod
-    def remove_characters(cls, value: Union[str, int]) -> int:
-        if isinstance(value, str):
-            return remove_non_digits_from_string(text=value)
-        return value
 
 
 class FideNewsImage(BaseRawModel):
