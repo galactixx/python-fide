@@ -5,7 +5,7 @@ from pydantic import Field
 
 from python_fide.utils.general import combine_fide_player_names
 from python_fide.config.base_config import BaseParameterConfig
-from python_fide.types import (
+from python_fide.types.core import (
     FideEventID,
     FideNewsID,
     FidePlayerID,

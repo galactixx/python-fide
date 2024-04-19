@@ -1,6 +1,6 @@
 from typing import Any, Dict, Tuple, Union
 
-from python_fide.types_base import (
+from python_fide.types.base import (
     FidePlayerBase,
     FidePlayerBasicBase
 )

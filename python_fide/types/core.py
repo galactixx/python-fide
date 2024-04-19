@@ -6,11 +6,12 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from python_fide.exceptions import InvalidFideIDError
 from python_fide.enums import RatingCategory
 from python_fide.utils.pydantic import from_player_model
-from python_fide.utils.general import (
-    build_url,
-    validate_date_format
+from python_fide.utils.general import build_url
+from python_fide.types.annotated import (
+    DateTime,
+    DateYearMonth
 )
-from python_fide.types_base import (
+from python_fide.types.base import (
     FideEventDetailBase,
     FideNewsDetailBase,
     FidePlayerBasicBase,
@@ -131,7 +132,6 @@ class FideTopPlayer(FideTopPlayerBase):
 
     class Config:
         use_enum_values = True
-        run_validators = False
 
     @classmethod
     def from_validated_model(
@@ -151,9 +151,6 @@ class FideTopPlayer(FideTopPlayerBase):
 
 class FidePlayerDetail(FidePlayerDetailBase):
     player: FidePlayer
-
-    class Config:
-        run_validators = False
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerDetail':
@@ -190,21 +187,11 @@ class FideNewsBasic(BaseModel):
 
 class FideNews(FideNewsBasic):
     news_type: str = Field(..., validation_alias='type')
-    posted_at: str
-
-    @field_validator('posted_at', mode='after')
-    @classmethod
-    def validate_date_format(cls, date: str) -> Optional[str]:
-        return validate_date_format(
-            date=date, date_format='%Y-%m-%d %H:%M:%S'
-        )
+    posted_at: DateTime
 
 
 class FideEventDetail(FideEventDetailBase):
     event: FideEvent
-
-    class Config:
-        run_validators = False
 
     @classmethod
     def from_validated_model(cls, event: Dict[str, Any]) -> 'FideEventDetail':
@@ -218,9 +205,6 @@ class FideEventDetail(FideEventDetailBase):
 
 class FideNewsDetail(FideNewsDetailBase):
     news: FideNews
-
-    class Config:
-        run_validators = False
 
     @classmethod
     def from_validated_model(cls, news: Dict[str, Any]) -> 'FideNewsDetail':
@@ -239,17 +223,11 @@ class FideRating(BaseModel):
 
 
 class FidePlayerRating(BaseModel):
-    month: str
+    month: DateYearMonth
     player: FidePlayer
     standard: FideRating
     rapid: FideRating
     blitz: FideRating
-
-    @field_validator('month', mode='after')
-    @classmethod
-    def validate_month(cls, month: str) -> str:
-        validated_date = validate_date_format(date=month, date_format='%Y-%b')
-        return validated_date
     
     @classmethod
     def from_validated_model(
@@ -279,8 +257,9 @@ class FidePlayerRating(BaseModel):
         )
 
     @property
-    def month_datetime(self) -> datetime:
-        return datetime.strptime(self.month, '%Y-%m-%d')
+    def month_datetime(self) -> Optional[datetime]:
+        if self.month is not None:
+            return datetime.strptime(self.month, '%Y-%m-%d')
 
 
 class FideGames(BaseModel):

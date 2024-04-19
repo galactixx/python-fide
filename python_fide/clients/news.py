@@ -9,7 +9,7 @@ from python_fide.config.news_config import (
     NewsDetailConfig,
     NewsLatestConfig
 )
-from python_fide.types import (
+from python_fide.types.core import (
     FideNews,
     FideNewsDetail,
     FideNewsID

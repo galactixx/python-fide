@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from pydantic import ValidationError
 
-from python_fide.types import ClientNotFound
+from python_fide.types.core import ClientNotFound
 
 def detect_client_error(response: Dict[str, Any]) -> bool:
     """

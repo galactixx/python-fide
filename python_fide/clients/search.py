@@ -6,7 +6,7 @@ from python_fide.config.search_config import (
     SearchPlayerIDConfig,
     SearchPlayerNameConfig
 )
-from python_fide.types import (
+from python_fide.types.core import (
     FideEvent, 
     FideEventID,
     FidePlayerName,

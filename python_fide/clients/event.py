@@ -5,7 +5,7 @@ from python_fide.parsing.event_parsing import (
     event_detail_parsing,
     event_latest_parsing
 )
-from python_fide.types import (
+from python_fide.types.core import (
     FideEvent,
     FideEventDetail,
     FideEventID,

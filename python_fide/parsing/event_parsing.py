@@ -1,14 +1,13 @@
 from typing import Any, Dict, Optional
 
 from python_fide.parsing.common_parsing import detect_client_error
-from python_fide.types import FideEventDetail
-from python_fide.types_adapter import PartialDictAdapter
+from python_fide.types.core import FideEventDetail
+from python_fide.types.adapters import PartialDictAdapter
 
 def event_latest_parsing(record: Dict[str, Any]) -> FideEventDetail:
     """
     """
-    fide_event = FideEventDetail.from_validated_model(record)
-    return fide_event
+    return FideEventDetail.from_validated_model(record)
 
 
 def event_detail_parsing(response: Dict[str, dict]) -> Optional[FideEventDetail]:

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
-from python_fide.types_adapter import PartialListAdapter
-from python_fide.types import (
+from python_fide.types.adapters import PartialListAdapter
+from python_fide.types.core import (
     FideEvent,
     FideNews,
     FidePlayer
@@ -28,12 +28,10 @@ def search_player_parsing(
 def search_event_parsing(record: Dict[str, Any]) -> FideEvent:
     """
     """
-    fide_event = FideEvent.model_validate(record)
-    return fide_event
+    return FideEvent.model_validate(record)
 
 
 def search_news_parsing(record: Dict[str, Any]) -> FideNews:
     """
     """
-    fide_news = FideNews.model_validate(record)
-    return fide_news
+    return FideNews.model_validate(record)

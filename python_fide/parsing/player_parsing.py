@@ -1,8 +1,8 @@
 from typing import List, Optional
 
 from python_fide.exceptions import InvalidFormatError
-from python_fide.types_adapter import PartialListAdapter
-from python_fide.types import (
+from python_fide.types.adapters import PartialListAdapter
+from python_fide.types.core import (
     FidePlayer,
     FidePlayerBasic,
     FidePlayerDetail,

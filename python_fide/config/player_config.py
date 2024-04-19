@@ -1,23 +1,29 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
+from typing_extensions import Annotated
 
 from pydantic import Field, field_validator
+from pydantic.functional_validators import BeforeValidator
 
 from python_fide.utils.general import build_url
-from python_fide.utils.config import parse_fide_player
 from python_fide.enums import Period
+from python_fide.utils.config import (
+    parse_fide_player,
+    parse_fide_player_optional
+)
 from python_fide.config.base_config import (
     BaseParameterConfig,
     BaseEndpointConfig
 )
-from python_fide.types import (
-    FidePlayer,
-    FidePlayerID
-)
+
+FideID = Annotated[int, BeforeValidator(parse_fide_player)]
+FideIDOptional = Annotated[
+    Optional[int], BeforeValidator(parse_fide_player_optional)
+]
 
 class PlayerChartsConfig(BaseParameterConfig):
     """
     """
-    fide_player_id: int = Field(..., alias='event')
+    fide_player_id: FideID = Field(..., alias='event')
     period: Optional[Period] = Field(..., alias='period')
 
     @field_validator('period', mode='after')
@@ -29,19 +35,6 @@ class PlayerChartsConfig(BaseParameterConfig):
             period = Period.ALL_YEARS
         return period
 
-    @classmethod
-    def from_player_object(
-        cls,
-        period: Optional[Period],
-        fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> 'PlayerChartsConfig':
-        """
-        """
-        fide_player_id = parse_fide_player(fide_player=fide_player)
-        return cls(
-            fide_player_id=fide_player_id, period=period
-        )
-
     @property
     def parameterize(self) -> Dict[str, Any]:
         """
@@ -52,29 +45,8 @@ class PlayerChartsConfig(BaseParameterConfig):
 class PlayerStatsConfig(BaseParameterConfig):
     """
     """
-    fide_player_id: int = Field(..., alias='id1')
-    fide_player_opponent_id: Optional[int] = Field(..., alias='id2')
-
-    @classmethod
-    def from_player_object(
-        cls,
-        fide_player: Union[FidePlayer, FidePlayerID],
-        fide_player_opponent: Optional[Union[FidePlayer, FidePlayerID]]
-    ) -> 'PlayerStatsConfig':
-        """
-        """
-        fide_player_id = parse_fide_player(fide_player=fide_player)
-
-        if fide_player_opponent is None:
-            fide_player_opponent_id = None
-        else:
-            fide_player_opponent_id = parse_fide_player(
-                fide_player=fide_player_opponent
-            )
-        return cls(
-            fide_player_id=fide_player_id,
-            fide_player_opponent_id=fide_player_opponent_id
-        )
+    fide_player_id: FideID = Field(..., alias='id1')
+    fide_player_opponent_id: FideIDOptional = Field(..., alias='id2')
 
     @property
     def parameterize(self) -> Dict[str, Any]:
@@ -86,19 +58,11 @@ class PlayerStatsConfig(BaseParameterConfig):
 class PlayerDetailConfig(BaseEndpointConfig):
     """
     """
-    fide_player_id: int
-
-    @classmethod
-    def from_player_object(
-        cls,
-        fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> 'PlayerDetailConfig':
-        fide_player_id = parse_fide_player(fide_player=fide_player)
-        return cls(
-            fide_player_id=fide_player_id
-        )
+    fide_player_id: FideID
     
     def endpointize(self, base_url: str) -> str:
+        """
+        """
         return build_url(
             base=base_url, segments=self.fide_player_id
         )
@@ -107,18 +71,10 @@ class PlayerDetailConfig(BaseEndpointConfig):
 class PlayerOpponentsConfig(BaseParameterConfig):
     """
     """
-    fide_player_id: int = Field(..., alias='pl')
-
-    @classmethod
-    def from_player_object(
-        cls,
-        fide_player: Union[FidePlayer, FidePlayerID]
-    ) -> 'PlayerOpponentsConfig':
-        fide_player_id = parse_fide_player(fide_player=fide_player)
-        return cls(
-            fide_player_id=fide_player_id
-        )
+    fide_player_id: FideID = Field(..., alias='pl')
     
     @property
     def parameterize(self) -> Dict[str, Any]:
+        """
+        """
         return self.model_dump(by_alias=True)

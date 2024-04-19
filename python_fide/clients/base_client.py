@@ -4,7 +4,7 @@ import requests
 from requests import HTTPError
 from faker import Faker
 
-from python_fide.types_adapter import HolisticAdapter
+from python_fide.types.adapters import HolisticAdapter
 from python_fide.pagination import FidePagination
 from python_fide.config.base_config import BaseParameterConfig
 

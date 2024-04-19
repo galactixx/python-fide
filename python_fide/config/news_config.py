@@ -5,7 +5,7 @@ from python_fide.config.base_config import (
     BaseEndpointConfig,
     BaseParameterConfig
 )
-from python_fide.types import (
+from python_fide.types.core import (
     FideNews,
     FideNewsID
 )

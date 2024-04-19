@@ -2,10 +2,14 @@ from typing import Any, List, Literal, Optional, Tuple, Union
 
 from pydantic import AliasChoices, BaseModel, Field, field_validator, HttpUrl
 
+from python_fide.types.annotated import (
+    DateISO,
+    DateTime,
+    DateYear
+)
 from python_fide.utils.general import (
     clean_fide_player_name,
-    remove_non_digits_from_string,
-    validate_date_format
+    remove_non_digits_from_string
 )
 
 class BaseRawModel(BaseModel):
@@ -18,7 +22,6 @@ class BaseRawModel(BaseModel):
 
     class Config:
         populate_by_name = True
-        run_validators = True
 
 
 class BasePlayer(BaseRawModel):
@@ -48,42 +51,28 @@ class FidePlayerBasicBase(BasePlayer):
 
 class FideTopPlayerBase(BaseRawModel):
     ranking: int = Field(..., validation_alias='pos')
-    period: str = Field(..., validation_alias='period_date')
-    birthday: str
+    period: DateISO = Field(..., validation_alias='period_date')
+    birthday: DateISO
     sex: Literal['M', 'F']
     rating_standard: Optional[int] = Field(..., validation_alias='rating')
     rating_rapid: Optional[int] = Field(..., validation_alias='rapid_rating')
     rating_blitz: Optional[int] = Field(..., validation_alias='blitz_rating')
 
-    @field_validator('birthday', 'period', mode='after')
-    @classmethod
-    def validate_date_format(cls, date: str) -> Optional[str]:
-        if cls.Config.run_validators:
-            return validate_date_format(date=date, date_format='%Y-%m-%d')
-        return date
-
 
 class FidePlayerDetailBase(BaseRawModel):
     sex: Literal['M', 'F']
-    birth_year: str = Field(..., validation_alias='birthyear')
+    birth_year: DateYear = Field(..., validation_alias='birthyear')
     rating_standard: Optional[int] = Field(..., validation_alias='standard_rating')
     rating_rapid: Optional[int] = Field(..., validation_alias='rapid_rating')
     rating_blitz: Optional[int] = Field(..., validation_alias='blitz_rating')
-
-    @field_validator('birth_year',  mode='after')
-    @classmethod
-    def validate_date_format(cls, date: str) -> Optional[str]:
-        if cls.Config.run_validators:
-            return validate_date_format(date=date, date_format='%Y')
-        return date
 
 
 class FideEventDetailBase(BaseRawModel):
     city: Optional[str]
     country: Optional[str]
     description: Optional[str] = Field(..., validation_alias='remarks')
-    start_date: Optional[str] = Field(..., validation_alias='date_start')
-    end_date: Optional[str] = Field(..., validation_alias='date_end')
+    start_date: Optional[DateTime] = Field(..., validation_alias='date_start')
+    end_date: Optional[DateTime] = Field(..., validation_alias='date_end')
     game_format: str = Field(..., validation_alias='time_control_typ')
     tournament_type: Optional[str] = Field(..., validation_alias='tournament_system')
     time_control: Optional[str] = Field(..., validation_alias='time_control')
@@ -98,20 +87,10 @@ class FideEventDetailBase(BaseRawModel):
 
     @field_validator('players', 'rounds', mode='before')
     @classmethod
-    def remove_characters(cls, value: Union[str, int]) -> str:
-        if cls.Config.run_validators:
-            if isinstance(value, str):
-                return remove_non_digits_from_string(text=value)
+    def remove_characters(cls, value: Union[str, int]) -> int:
+        if isinstance(value, str):
+            return remove_non_digits_from_string(text=value)
         return value
-
-    @field_validator('start_date', 'end_date', mode='after')
-    @classmethod
-    def validate_date_format(cls, date: str) -> Optional[str]:
-        if cls.Config.run_validators:
-            return validate_date_format(
-                date=date, date_format='%Y-%m-%d %H:%M:%S'
-            )
-        return date
 
 
 class FideNewsImage(BaseRawModel):
@@ -139,20 +118,9 @@ class FideNewsDetailBase(BaseRawModel):
     topic: FideNewsTopic
     category: FideNewsCategory
     contents: List[FideNewsContent]
-    posted_at: str
-    created_at: str
-    updated_at: str
-
-    @field_validator(
-        'posted_at', 'created_at', 'updated_at', mode='after'
-    )
-    @classmethod
-    def validate_date_format(cls, date: str) -> Optional[str]:
-        if cls.Config.run_validators:
-            return validate_date_format(
-                date=date, date_format='%Y-%m-%d %H:%M:%S'
-            )
-        return date
+    posted_at: DateTime
+    created_at: DateTime
+    updated_at: DateTime
 
 
 class FidePlayerRatingBase(BaseRawModel):

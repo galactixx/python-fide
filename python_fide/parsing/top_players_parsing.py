@@ -1,8 +1,8 @@
 from typing import Any, Dict, List
 
-from python_fide.types import FideTopPlayer
+from python_fide.types.core import FideTopPlayer
 from python_fide.enums import RatingCategory
-from python_fide.types_adapter import TopPlayersAdapter
+from python_fide.types.adapters import TopPlayersAdapter
 
 def top_standard_players_parsing(
     limit: int,

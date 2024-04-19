@@ -1,6 +1,6 @@
-from typing import Union
+from typing import Optional, Union
 
-from python_fide.types import (
+from python_fide.types.core import (
     FidePlayer,
     FidePlayerID
 )
@@ -18,3 +18,14 @@ def parse_fide_player(
         raise ValueError(
             "not a valid 'fide_player' type"
         )
+    
+
+def parse_fide_player_optional(
+    fide_player: Optional[Union[FidePlayer, FidePlayerID]]
+) -> str:
+    """
+    """
+    if fide_player is not None:
+        return parse_fide_player(fide_player=fide_player)
+    else:
+        return

@@ -1,8 +1,8 @@
 from typing import Any, Dict, Optional
 
 from python_fide.parsing.common_parsing import detect_client_error
-from python_fide.types_adapter import PartialDictAdapter
-from python_fide.types import (
+from python_fide.types.adapters import PartialDictAdapter
+from python_fide.types.core import (
     FideNews,
     FideNewsDetail
 )
@@ -10,8 +10,7 @@ from python_fide.types import (
 def news_latest_parsing(record: Dict[str, Any]) -> FideNews:
     """
     """
-    fide_news = FideNews.model_validate(record)
-    return fide_news
+    return FideNews.model_validate(record)
 
 
 def news_detail_parsing(response: Dict[str, dict]) -> Optional[FideNewsDetail]:

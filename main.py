@@ -1,7 +1,7 @@
 import prettyprinter as pp
-from python_fide.clients.event import FideEvents
+from python_fide.clients.player import FidePlayerData
 from python_fide.enums import RatingCategory
-from python_fide.types import (
+from python_fide.types.core import (
     FideEvent,
     FideEventID,
     FidePlayerName,
@@ -10,10 +10,10 @@ from python_fide.types import (
 
 pp.install_extras(include=['dataclasses'])
 
-client = FideEvents()
+client = FidePlayerData()
 
-event = client.get_event_detail(
-    fide_event=FideEventID(entity_id='24687')
+entity = client.get_fide_player_detail(
+    fide_player=FidePlayerID(entity_id='1700880')
 )
 
-print(event)
+print(entity)

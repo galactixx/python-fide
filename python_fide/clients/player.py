@@ -4,7 +4,7 @@ from python_fide.clients.base_client import FideClient
 from python_fide.enums import Period
 from python_fide.exceptions import InvalidFideIDError
 from python_fide.utils.general import build_url
-from python_fide.types import (
+from python_fide.types.core import (
     FidePlayer,
     FidePlayerBasic,
     FidePlayerDetail,
@@ -57,9 +57,7 @@ class FidePlayerData(FideClient):
     ) -> Optional[FidePlayerDetail]:
         """
         """
-        config = PlayerDetailConfig.from_player_object(
-            fide_player=fide_player
-        )
+        config = PlayerDetailConfig(fide_player_id=fide_player)
 
         # Request from API to get profile detail JSON response
         fide_url = config.endpointize(base_url=self.base_url_detail)
@@ -85,9 +83,7 @@ class FidePlayerData(FideClient):
     ) -> List[FidePlayerBasic]:
         """
         """
-        config = PlayerOpponentsConfig.from_player_object(
-            fide_player=fide_player
-        )
+        config = PlayerOpponentsConfig(fide_player_id=fide_player)
 
         # Request from API to get player JSON response
         _ = self._consolidate_fide_player(
@@ -114,8 +110,8 @@ class FidePlayerData(FideClient):
     ) -> List[FidePlayerRating]:
         """
         """
-        config = PlayerChartsConfig.from_player_object(
-            fide_player=fide_player, period=period
+        config = PlayerChartsConfig(
+            fide_player_id=fide_player, period=period
         )
 
         # Request from API to get player JSON response
@@ -145,8 +141,8 @@ class FidePlayerData(FideClient):
     ) -> List[FidePlayerGameStats]:
         """
         """
-        config = PlayerStatsConfig.from_player_object(
-            fide_player=fide_player,
+        config = PlayerStatsConfig(
+            fide_player_id=fide_player,
             fide_player_opponent=fide_player_opponent
         )
 
