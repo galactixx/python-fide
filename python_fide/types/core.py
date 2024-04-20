@@ -41,9 +41,9 @@ class FidePlayerName(BaseModel):
 
 
 class FideBaseID(BaseModel):
-    entity_id: Union[str, int]
+    entity_id: Union[int]
 
-    @field_validator('entity_id', mode='after')
+    @field_validator('entity_id', mode='before')
     @classmethod
     def cast_to_int(cls, entity_id: Union[str, int]) -> int:
         if isinstance(entity_id, str):
@@ -51,11 +51,13 @@ class FideBaseID(BaseModel):
             assert not entity_id.startswith('0')
 
             try:
-                entity_id = int(entity_id)
+                entity_id_cast = int(entity_id)
             except ValueError:
                 raise InvalidFideIDError(
                     "invalid Fide ID entered, must be an equivalent integer"
                 )
+            else:
+                return entity_id_cast
 
         return entity_id
     
@@ -91,28 +93,6 @@ class FidePlayerBasic(FidePlayerBasicBase):
 class FidePlayer(FidePlayerBase):
     first_name: str
     last_name: Optional[str]
-
-    def __eq__(
-        self,
-        player: Union['FidePlayer', FidePlayerID, FidePlayerName]
-    ) -> bool:
-        if isinstance(player, FidePlayerID):
-            return self.player_id == player.entity_id
-        elif isinstance(player, FidePlayerName):
-            return (
-                self.first_name == player.first_name and
-                self.last_name == player.last_name
-            )
-        elif isinstance(player, FidePlayer):
-            return (
-                self.first_name == player.last_name and
-                self.last_name == player.last_name and
-                self.player_id == player.player_id and
-                self.title == player.title and
-                self.country == player.country
-            )
-        else:
-            return False
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayer':
@@ -161,8 +141,8 @@ class FidePlayerDetail(FidePlayerDetailBase):
     
 
 class FideEvent(BaseRecordValidatorModel):
-    name: str = Field(validation_alias='name')
-    event_id: int = Field(validation_alias='id')
+    name: str = Field(..., validation_alias='name')
+    event_id: int = Field(..., validation_alias='id')
 
     @property
     def event_url(self) -> str:

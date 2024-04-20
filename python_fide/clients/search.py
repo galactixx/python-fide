@@ -89,8 +89,7 @@ class FideSearchClient(FideClientWithPagination):
 
             # Validate and parse player fields from response
             players = search_player_parsing(
-                response=response_json,
-                gathered_players=gathered_players
+                response=response_json, gathered_players=gathered_players
             )            
             gathered_players.extend(players)
 
@@ -122,8 +121,7 @@ class FideSearchClient(FideClientWithPagination):
 
             # Validate and parse player fields from response
             players = search_player_parsing(
-                response=response_json,
-                gathered_players=gathered_players
+                response=response_json, gathered_players=gathered_players
             )
             gathered_players.extend(players)
 
@@ -135,7 +133,10 @@ class FideSearchClient(FideClientWithPagination):
             config.update_player_name()
 
         gathered_players_filtered = [
-            player for player in gathered_players if player == fide_player_name
+            player for player in gathered_players if (
+                player.first_name == fide_player_name.first_name and
+                player.last_name == fide_player_name.last_name
+            )
         ]
         return gathered_players_filtered
     
@@ -146,24 +147,18 @@ class FideSearchClient(FideClientWithPagination):
         """
         """
         if isinstance(query, FidePlayerID):
-            players = self.get_fide_players_by_id(
-                fide_player_id=query
-            )
+            players = self.get_fide_players_by_id(fide_player_id=query)
         elif isinstance(query, FidePlayerID):
-            players = self.get_fide_players_by_name(
-                fide_player_name=query
-            )
+            players = self.get_fide_players_by_name(fide_player_name=query)
         else:
-            raise TypeError("not a valid 'query' type")
+            raise TypeError(f"{type(query)} not a valid 'query' type")
 
         # If query is a FidePlayerID instance, function only returns
         # a FidePlayer object if a Fide ID can be matched exactly with one
         # from the FidePlayerID instance
         if isinstance(query, FidePlayerID):
             return next(
-                (
-                    player for player in players if player == query
-                ), None
+                (player for player in players if player.player_id == query.entity_id), None
             )
         
         # If query is a FidePlayerName instance, function only returns

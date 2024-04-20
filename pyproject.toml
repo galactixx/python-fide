@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "python-fide"
+version = "0.1.0"
+description = "Methods to Facilitate Analysis of Fide Ratings"
+authors = ["galactixx"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.31.0"
+Faker = "^24.11.0"
+pydantic = "^2.7.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

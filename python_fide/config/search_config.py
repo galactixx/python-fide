@@ -36,7 +36,7 @@ class SearchConfig(BaseSearchConfig):
                 search_query=search_query.entity_id, link=link
             )
         else:
-            raise TypeError("not a valid 'query' type")
+            raise TypeError(f"{type(search_query)} not a valid 'query' type")
 
 
 class SearchPlayerNameConfig(BaseSearchConfig):

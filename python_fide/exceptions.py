@@ -15,7 +15,6 @@ class InvalidFormatError(BaseError):
     def __init__(self):
         super().__init__(
             message=(
-                "The data parser encountered an error. Please ensure "
-                "the data adheres to the expected schema."
+                "The data parser encountered an error. Please ensure the data adheres to the expected schema."
             )
         )

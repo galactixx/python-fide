@@ -1,7 +1,6 @@
 import sys
 from typing import List, Optional, Tuple, Union
 from datetime import datetime
-
 from urllib.parse import urljoin
 
 def validate_date_format(date: str, date_format: str) -> Optional[str]:
@@ -28,6 +27,8 @@ def combine_fide_player_names(first_name: str, last_name: str) -> str:
     return f'{last_name}, {first_name}'
 
 
+## NEED TO FINE-TUNE TO CHANGE LOGIC TO ONLY SPLIT UP LAST AND FIRST NAME IF A COMMA EXISTS, OTHERWISE PUT
+## ALL IN FIRST NAME
 def parse_fide_player_name(name: str, split_char: str) -> Tuple[str, Optional[str]]:
     """
     """
