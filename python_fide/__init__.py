@@ -8,6 +8,12 @@ from python_fide.exceptions import (
     InvalidFideIDError,
     InvalidFormatError
 )
+from python_fide.types.base import (
+    FideNewsCategory,
+    FideNewsContent,
+    FideNewsImage,
+    FideNewsTopic
+)
 from python_fide.types.core import (
     FideEvent,
     FideEventDetail,
@@ -56,6 +62,10 @@ __all__ = [
     'FidePlayerRating',
     'FideRating',
     'FideTopPlayer',
+    'FideNewsCategory',
+    'FideNewsContent',
+    'FideNewsImage',
+    'FideNewsTopic',
     'InvalidFideIDError',
     'InvalidFormatError'
 ]

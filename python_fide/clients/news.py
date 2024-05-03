@@ -16,9 +16,7 @@ class FideNewsClient(FideClientWithPagination):
     """
     """
     def __init__(self):
-        self.base_url = (
-            'https://app.fide.com/api/v1/client/news/'
-        )
+        self.base_url = 'https://app.fide.com/api/v1/client/news/'
 
     def get_latest_news(
         self,
@@ -44,18 +42,14 @@ class FideNewsClient(FideClientWithPagination):
     ) -> Optional[FideNewsDetail]:
         """
         """
-        config = NewsDetailConfig.from_news_object(
-            fide_news=fide_news
-        )
+        config = NewsDetailConfig.from_news_object(fide_news=fide_news)
 
         # Request from API to get profile detail JSON response
         fide_url = config.endpointize(base_url=self.base_url)
         response = self._fide_request(fide_url=fide_url)
 
         # Validate and parse profile detail fields from response
-        player_detail = news_detail_parsing(
-            response=response
-        )
+        player_detail = news_detail_parsing(response=response)
 
         # If the ID from the found Fide news does not match the
         # Fide ID passed in as an argument, then return None

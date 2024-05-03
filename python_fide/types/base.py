@@ -1,7 +1,22 @@
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 from abc import ABC, abstractmethod
+from typing import (
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union
+)
 
-from pydantic import AliasChoices, BaseModel, Field, field_validator, HttpUrl
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field, 
+    field_validator, 
+    HttpUrl
+)
 
 from python_fide.utils.general import clean_fide_player_name
 from python_fide.types.annotated import (
@@ -10,14 +25,9 @@ from python_fide.types.annotated import (
     DateYear
 )
 
-class BaseRecordValidatorModel(ABC, BaseModel):
-    @classmethod
-    @abstractmethod
-    def from_validated_model(cls, record: Dict[str, Any]) -> None:
-        pass
-
-
 class BaseRawModel(BaseModel):
+    model_config = ConfigDict(populate_by_name=True, use_enum_values=True)
+
     @field_validator('*', mode='before')
     @classmethod
     def remove_null_strings(cls, value: Union[str, int]) -> Optional[Union[str, int]]:
@@ -25,8 +35,12 @@ class BaseRawModel(BaseModel):
             return None
         return value
 
-    class Config:
-        populate_by_name = True
+
+class BaseRecordValidatorModel(ABC, BaseRawModel):
+    @classmethod
+    @abstractmethod
+    def from_validated_model(cls, record: Dict[str, Any]) -> None:
+        pass
 
 
 class BasePlayer(BaseRawModel):
@@ -73,7 +87,6 @@ class FidePlayerDetailBase(BaseRawModel):
 class FideEventDetailBase(BaseRawModel):
     city: Optional[str]
     country: Optional[str]
-    description: Optional[str] = Field(..., validation_alias='remarks')
     start_date: Optional[DateTime] = Field(..., validation_alias='date_start')
     end_date: Optional[DateTime] = Field(..., validation_alias='date_end')
     game_format: str = Field(..., validation_alias='time_control_typ')

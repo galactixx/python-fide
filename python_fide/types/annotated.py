@@ -32,11 +32,13 @@ class Date(BaseModel):
 
 
 def _isinstance_date(func):
-    def inner(date: Union[str, dict]) -> Date:
+    def inner(date: Union[str, dict, Date]) -> Date:
         if isinstance(date, str):
             return func(date=date)
         elif isinstance(date, dict):
             return Date(**date)
+        elif isinstance(date, Date):
+            return date
         else:
             raise TypeError(
                 f"{type(date)} not a valid type, expecting a str or dict"

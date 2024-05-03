@@ -23,9 +23,7 @@ class FideSearchClient(FideClientWithPagination):
     """
     """
     def __init__(self):
-        self.base_url = (
-            'https://app.fide.com/api/v1/client/search?'
-        )
+        self.base_url = 'https://app.fide.com/api/v1/client/search?'
 
     def get_events(
         self,

@@ -30,9 +30,7 @@ class FidePlayerClient(FideClient):
     """
     def __init__(self):
         self.base_url = 'https://ratings.fide.com/'
-        self.base_url_detail = (
-            'https://app.fide.com/api/v1/client/players/'
-        )
+        self.base_url_detail = 'https://app.fide.com/api/v1/client/players/'
 
     def _consolidate_fide_player(
         self,
@@ -64,9 +62,7 @@ class FidePlayerClient(FideClient):
         response = self._fide_request(fide_url=fide_url)
 
         # Validate and parse profile detail fields from response
-        player_detail = player_detail_parsing(
-            response=response
-        )
+        player_detail = player_detail_parsing(response=response)
 
         # If the ID from the found Fide player does not match the
         # Fide ID passed in as an argument, then return None
@@ -86,9 +82,7 @@ class FidePlayerClient(FideClient):
         config = PlayerOpponentsConfig(fide_player_id=fide_player)
 
         # Request from API to get player JSON response
-        _ = self._consolidate_fide_player(
-            fide_player=fide_player
-        )
+        _ = self._consolidate_fide_player(fide_player=fide_player)
 
         # Request from API to get profile opponents JSON response
         fide_url = build_url(
@@ -115,9 +109,7 @@ class FidePlayerClient(FideClient):
         )
 
         # Request from API to get player JSON response
-        fide_player = self._consolidate_fide_player(
-            fide_player=fide_player
-        )
+        fide_player = self._consolidate_fide_player(fide_player=fide_player)
 
         # Request from API to get charts JSON response
         fide_url = build_url(
@@ -129,8 +121,7 @@ class FidePlayerClient(FideClient):
 
         # Validate and parse ratings chart fields from response
         rating_charts = player_charts_parsing(
-            fide_player=fide_player,
-            response=response
+            fide_player=fide_player, response=response
         )
         return rating_charts
 
@@ -148,9 +139,7 @@ class FidePlayerClient(FideClient):
 
         # Retrieve the player structure for both the player
         # and the opponent
-        fide_player = self._consolidate_fide_player(
-            fide_player=fide_player
-        )
+        fide_player = self._consolidate_fide_player(fide_player=fide_player)
         fide_player_opponent = self._consolidate_fide_player(
             fide_player=fide_player_opponent
         )

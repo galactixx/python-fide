@@ -10,9 +10,7 @@ class FideTopPlayersClient(FideClient):
     """
     """
     def __init__(self):
-        self.base_url = (
-            'https://app.fide.com/api/v1/client/players/'
-        )
+        self.base_url = 'https://app.fide.com/api/v1/client/players/'
 
     def get_top_standard_players(
         self,
@@ -24,15 +22,11 @@ class FideTopPlayersClient(FideClient):
         config = TopPlayersConfig(categories=categories)
 
         # Request from API to get players JSON response
-        response = self._fide_request(
-            fide_url=self.base_url
-        )
+        response = self._fide_request(fide_url=self.base_url)
 
         # Validate and parse player fields from response
         top_players = top_standard_players_parsing(
-            limit=limit,
-            response=response,
-            categories=config.categories
+            limit=limit, response=response, categories=config.categories
         )
 
         return top_players

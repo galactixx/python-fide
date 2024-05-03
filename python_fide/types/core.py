@@ -41,14 +41,19 @@ class FidePlayerName(BaseModel):
 
 
 class FideBaseID(BaseModel):
-    entity_id: Union[int]
+    entity_id: Union[str, int]
 
     @field_validator('entity_id', mode='before')
     @classmethod
     def cast_to_int(cls, entity_id: Union[str, int]) -> int:
         if isinstance(entity_id, str):
-            assert entity_id.isdigit()
-            assert not entity_id.startswith('0')
+            if not entity_id.isdigit():
+                raise InvalidFideIDError(
+                    "invalid Fide ID entered, must be an integer (as str in int type)"
+                )
+            
+            if entity_id.startswith('0'):
+                raise InvalidFideIDError("invalid Fide ID entered, cannot start with a zero")
 
             try:
                 entity_id_cast = int(entity_id)
@@ -109,9 +114,6 @@ class FidePlayer(FidePlayerBase):
 class FideTopPlayer(FideTopPlayerBase):
     player: FidePlayerBasic
     category: RatingCategory
-
-    class Config:
-        use_enum_values = True
 
     @classmethod
     def from_validated_model(

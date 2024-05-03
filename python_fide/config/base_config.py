@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class PaginationConfig(BaseModel):
     """
@@ -12,6 +12,8 @@ class PaginationConfig(BaseModel):
 class BaseParameterConfig(ABC, BaseModel):
     """
     """
+    model_config = ConfigDict(populate_by_name=True, use_enum_values=True)
+
     @property
     @abstractmethod
     def parameterize(self) -> Dict[str, Any]:
@@ -28,10 +30,6 @@ class BaseParameterConfig(ABC, BaseModel):
         return (
             parameters | pagination_config.model_dump()
         )
-
-    class Config:
-        populate_by_name = True
-        use_enum_values = True
 
 
 class ParameterAliasConfig(BaseParameterConfig):

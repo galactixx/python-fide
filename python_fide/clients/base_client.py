@@ -73,10 +73,7 @@ class FideClientWithPagination(FideClient):
                 page=fide_pagination.current_page,
                 parameters=config.parameterize
             )
-
-            response_json = self._fide_request(
-                fide_url=base_url, params=params
-            )
+            response_json = self._fide_request(fide_url=base_url, params=params)
 
             # Validate response using the HolisticAdapter model
             holistic = HolisticAdapter.model_validate(response_json)
