@@ -1,0 +1,28 @@
+[
+    {
+        "white_total": "976",
+        "white_win_num": "508",
+        "white_draw_num": "373",
+        "black_total": "964",
+        "black_win_num": "338",
+        "black_draw_num": "513",
+        "white_total_std": "537",
+        "white_win_num_std": "258",
+        "white_draw_num_std": "238",
+        "black_total_std": "524",
+        "black_win_num_std": "131",
+        "black_draw_num_std": "345",
+        "white_total_rpd": "172",
+        "white_win_num_rpd": "93",
+        "white_draw_num_rpd": "61",
+        "black_total_rpd": "170",
+        "black_win_num_rpd": "70",
+        "black_draw_num_rpd": "78",
+        "white_total_blz": "266",
+        "white_win_num_blz": "156",
+        "white_draw_num_blz": "74",
+        "black_total_blz": "269",
+        "black_win_num_blz": "137",
+        "black_draw_num_blz": "89"
+    }
+]

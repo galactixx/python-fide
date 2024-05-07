@@ -1,0 +1,38 @@
+[
+    {
+        "date_2": "2024-Jan",
+        "id_number": "1503014",
+        "rating": "2830",
+        "period_games": "0",
+        "rapid_rtng": "2823",
+        "rapid_games": "43",
+        "blitz_rtng": "2886",
+        "blitz_games": "21",
+        "name": "Carlsen, Magnus",
+        "country": "NOR"
+    },
+    {
+        "date_2": "2024-Feb",
+        "id_number": "1503014",
+        "rating": "2830",
+        "period_games": "0",
+        "rapid_rtng": "2823",
+        "rapid_games": "0",
+        "blitz_rtng": "2886",
+        "blitz_games": "0",
+        "name": "Carlsen, Magnus",
+        "country": "NOR"
+    },
+    {
+        "date_2": "2024-Mar",
+        "id_number": "1503014",
+        "rating": "2830",
+        "period_games": "0",
+        "rapid_rtng": "2823",
+        "rapid_games": "0",
+        "blitz_rtng": "2886",
+        "blitz_games": "0",
+        "name": "Carlsen, Magnus",
+        "country": "NOR"
+    }
+]

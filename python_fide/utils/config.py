@@ -7,7 +7,7 @@ from python_fide.types.core import (
 
 def parse_fide_player(
     fide_player: Union[FidePlayer, FidePlayerID]
-) -> str:
+) -> int:
     """
     """
     if isinstance(fide_player, FidePlayer):
@@ -22,7 +22,7 @@ def parse_fide_player(
 
 def parse_fide_player_optional(
     fide_player: Optional[Union[FidePlayer, FidePlayerID]]
-) -> str:
+) -> Optional[int]:
     """
     """
     if fide_player is not None:

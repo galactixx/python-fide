@@ -46,7 +46,7 @@ class PlayerStatsConfig(ParameterAliasConfig):
     """
     """
     fide_player_id: FideID = Field(..., alias='id1')
-    fide_player_opponent_id: FideIDOptional = Field(..., alias='id2')
+    fide_player_opponent_id: FideIDOptional = Field(default=None, alias='id2')
     
 
 class PlayerDetailConfig(BaseEndpointConfig):

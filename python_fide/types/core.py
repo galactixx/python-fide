@@ -41,7 +41,7 @@ class FidePlayerName(BaseModel):
 
 
 class FideBaseID(BaseModel):
-    entity_id: Union[str, int]
+    entity_id: int
 
     @field_validator('entity_id', mode='before')
     @classmethod

@@ -129,7 +129,7 @@ class FidePlayerClient(FideClient):
         self,
         fide_player: Union[FidePlayer, FidePlayerID],
         fide_player_opponent: Union[FidePlayer, FidePlayerID] = None
-    ) -> List[FidePlayerGameStats]:
+    ) -> FidePlayerGameStats:
         """
         """
         config = PlayerStatsConfig(

@@ -8,6 +8,10 @@ from python_fide.exceptions import (
     InvalidFideIDError,
     InvalidFormatError
 )
+from python_fide.enums import (
+    Period,
+    RatingCategory
+)
 from python_fide.types.base import (
     FideNewsCategory,
     FideNewsContent,
@@ -67,5 +71,7 @@ __all__ = [
     'FideNewsImage',
     'FideNewsTopic',
     'InvalidFideIDError',
-    'InvalidFormatError'
+    'InvalidFormatError',
+    'Period',
+    'RatingCategory'
 ]
