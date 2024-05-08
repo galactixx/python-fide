@@ -1,0 +1,207 @@
+{
+    "data": [
+      {
+        "name": "RENETIL Open Chess Championship 2019",
+        "title": null,
+        "id": 48689,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/48689"
+      },
+      {
+        "name": "1-th Hilton CHESS",
+        "title": null,
+        "id": 48697,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/48697"
+      },
+      {
+        "name": "26th International Chess Festival “Lviv Tradition 2019”",
+        "title": null,
+        "id": 48700,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/48700"
+      },
+      {
+        "name": "Tradate Chess Festival",
+        "title": null,
+        "id": 48702,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/48702"
+      },
+      {
+        "name": "5° Chess Festival di Agrigento - Trofeo Vigata",
+        "title": null,
+        "id": 48703,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/48703"
+      },
+      {
+        "name": "XIV. Baranya International Chess Festival Harkany Thermal Hotel",
+        "title": null,
+        "id": 48706,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/48706"
+      },
+      {
+        "name": "III. Premium International Chess Festival Budapest",
+        "title": null,
+        "id": 48707,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/48707"
+      },
+      {
+        "name": " African Games Chess Championships 2019",
+        "title": null,
+        "id": 48712,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/48712"
+      },
+      {
+        "name": "Kumaripati Open FIDE Rapid Rating Chess Tournament",
+        "title": null,
+        "id": 46175,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/46175"
+      },
+      {
+        "name": "26th Abudhabi International Chess Festival(Blitz)",
+        "title": null,
+        "id": 46413,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/46413"
+      },
+      {
+        "name": "Chess League_blitz",
+        "title": null,
+        "id": 46712,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/46712"
+      },
+      {
+        "name": "Zabasajja Memorial Rapid Chess Championship",
+        "title": null,
+        "id": 20812,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/20812"
+      },
+      {
+        "name": "Algerian Individual Chess Championship 2019 Final",
+        "title": null,
+        "id": 46897,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/46897"
+      },
+      {
+        "name": "Algerian Women Chess Championship 2019 Final",
+        "title": null,
+        "id": 46898,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/46898"
+      },
+      {
+        "name": "Harraz Chess Rapid 2",
+        "title": null,
+        "id": 47163,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/47163"
+      },
+      {
+        "name": "Kineshma chess 2019",
+        "title": null,
+        "id": 47175,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/47175"
+      },
+      {
+        "name": "36th Blitz Chess Square 2019",
+        "title": null,
+        "id": 47435,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/47435"
+      },
+      {
+        "name": "1ST CCK-CANON CARLSEN KASPAROV OPEN STANDARD FIDE RATED STANDARD CHESS TOURNAMENT",
+        "title": null,
+        "id": 47539,
+        "preview": "",
+        "thumbnail": {
+          "id": 89,
+          "seo": {
+            "title": "",
+            "alt": ""
+          },
+          "thumb_url": "https://app.fide.com/upload/89/conversions/8c7dd922ad47494fc02c388e12c00eac-thumb.jpg",
+          "original_url": "https://app.fide.com/upload/89/8c7dd922ad47494fc02c388e12c00eac."
+        },
+        "table": "event",
+        "slug": "/calendar/47539"
+      },
+      {
+        "name": "Chess Academy Rapid-1 Aug 2019",
+        "title": null,
+        "id": 47754,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/47754"
+      },
+      {
+        "name": "National Youth Chess Championship 2019 U14",
+        "title": null,
+        "id": 47930,
+        "preview": null,
+        "thumbnail": null,
+        "table": "event",
+        "slug": "/calendar/47930"
+      }
+    ],
+    "links": {
+      "first": "https://app.fide.com/api/v1/client/search?page=1",
+      "last": "https://app.fide.com/api/v1/client/search?page=194",
+      "prev": null,
+      "next": "https://app.fide.com/api/v1/client/search?page=2"
+    },
+    "meta": {
+      "current_page": 1,
+      "from": 1,
+      "last_page": 194,
+      "path": "https://app.fide.com/api/v1/client/search",
+      "per_page": 20,
+      "to": 20,
+      "total": 3875
+    }
+  }

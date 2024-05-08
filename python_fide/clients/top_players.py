@@ -14,19 +14,19 @@ class FideTopPlayersClient(FideClient):
 
     def get_top_standard_players(
         self,
-        limit: int = 10,
+        limit: Optional[int] = None,
         categories: Optional[List[RatingCategory]] = None
     ) -> List[FideTopPlayer]:
         """
         """
-        config = TopPlayersConfig(categories=categories)
+        config = TopPlayersConfig(limit=limit, categories=categories)
 
         # Request from API to get players JSON response
         response = self._fide_request(fide_url=self.base_url)
 
         # Validate and parse player fields from response
         top_players = top_standard_players_parsing(
-            limit=limit, response=response, categories=config.categories
+            limit=config.limit, response=response, categories=config.categories
         )
 
         return top_players

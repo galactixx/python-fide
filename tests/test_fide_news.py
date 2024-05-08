@@ -18,91 +18,80 @@ from python_fide import (
 from python_fide.parsing.news_parsing import news_detail_parsing
 from tests.utils import (
     load_json_file,
-    mock_request
+    MockedResponse
 )
 
 fide_news_client = FideNewsClient()
 
-FIDE_NEWS_CANDIDATES_ONE = FideNews(
-    title='FIDE Candidates: Race for first wide open as second half begins',
-    news_id=2970,
-    posted_at=Date(
-        date_iso='2024-04-14', date_original='2024-04-14 05:37:05', date_original_format='%Y-%m-%d %H:%M:%S'
-    )
-)
-FIDE_NEWS_CANDIDATES_TWO = FideNews(
-    title='Four in the race for first in FIDE Candidates; Tan solely on top in Women’s event',
-    news_id=2981,
-    posted_at=Date(
-        date_iso='2024-04-19', date_original='2024-04-19 05:23:57', date_original_format='%Y-%m-%d %H:%M:%S'
-    )
-)
-
-def _mock_request_news_candidates_one(*args, **kwargs):
-    response = load_json_file(filename='fide_news_candidates_one.json')
-    return mock_request(response=response)
-
-
-def _mock_request_news_candidates_two(*args, **kwargs):
-    response = load_json_file(filename='fide_news_candidates_two.json')
-    return mock_request(response=response)
-
-
-def _assert_news_candidates_one(news_detail: FideNewsDetail) -> None:
-    """
-    """
-    assert news_detail.news == FIDE_NEWS_CANDIDATES_ONE
-    assert news_detail.topic == FideNewsTopic(topic_id=20, topic_name='Candidates')
-    assert news_detail.category == FideNewsCategory(category_id=1, category_name='Chess news')
-    assert news_detail.contents == [
+FIDE_NEWS_DETAIL_CANDIDATES_ONE = FideNewsDetail(
+    topic=FideNewsTopic(topic_id=20, topic_name='Candidates'),
+    category=FideNewsCategory(category_id=1, category_name='Chess news'),
+    contents=[
         FideNewsContent(
             content="After the rest day, the second half of the FIDE Candidates kicked off on April 13...",
             images=list()
         )
-    ]
-    assert news_detail.created_at == Date(
+    ],
+    created_at=Date(
         date_iso='2024-04-14', date_original='2024-04-14 05:49:27', date_original_format='%Y-%m-%d %H:%M:%S'
+    ),
+    updated_at=Date(
+        date_iso='2024-04-14', date_original='2024-04-14 05:49:27', date_original_format='%Y-%m-%d %H:%M:%S'
+    ),
+    news=FideNews(
+        title='FIDE Candidates: Race for first wide open as second half begins',
+        news_id=2970,
+        posted_at=Date(
+            date_iso='2024-04-14', date_original='2024-04-14 05:37:05', date_original_format='%Y-%m-%d %H:%M:%S'
+        )
     )
+)
 
-
-def _assert_news_candidates_two(news_detail: FideNewsDetail) -> None:
-    """
-    """
-    assert news_detail.news == FIDE_NEWS_CANDIDATES_TWO
-    assert news_detail.topic == FideNewsTopic(topic_id=20, topic_name='Candidates')
-    assert news_detail.category == FideNewsCategory(category_id=1, category_name='Chess news')
-    assert news_detail.contents == [
+FIDE_NEWS_DETAIL_CANDIDATES_TWO = FideNewsDetail(
+    topic=FideNewsTopic(topic_id=20, topic_name='Candidates'),
+    category=FideNewsCategory(category_id=1, category_name='Chess news'),
+    contents=[
         FideNewsContent(
             content='The FIDE Candidates Tournament is getting more and more exciting with each and every passing day...',
             images=list()
         )
-    ]
-    assert news_detail.created_at == Date(
+    ],
+    created_at=Date(
         date_iso='2024-04-19', date_original='2024-04-19 05:41:42', date_original_format='%Y-%m-%d %H:%M:%S'
+    ),
+    updated_at=Date(
+        date_iso='2024-04-19', date_original='2024-04-19 05:41:42', date_original_format='%Y-%m-%d %H:%M:%S'
+    ),
+    news=FideNews(
+        title='Four in the race for first in FIDE Candidates; Tan solely on top in Women’s event',
+        news_id=2981,
+        posted_at=Date(
+            date_iso='2024-04-19', date_original='2024-04-19 05:23:57', date_original_format='%Y-%m-%d %H:%M:%S'
+        )
     )
-
+)
 
 def test_news_detail_parsing() -> None:
     """
     """
     fide_response_one: Dict[str, Any] = load_json_file(filename='fide_news_candidates_one.json')
     news_detail: FideNewsDetail = news_detail_parsing(response=fide_response_one)
-    _assert_news_candidates_one(news_detail=news_detail)
+    assert news_detail == FIDE_NEWS_DETAIL_CANDIDATES_ONE
 
     fide_response_two: Dict[str, Any] = load_json_file(filename='fide_news_candidates_two.json')
     news_detail: FideNewsDetail = news_detail_parsing(response=fide_response_two)
-    _assert_news_candidates_two(news_detail=news_detail)
+    assert news_detail == FIDE_NEWS_DETAIL_CANDIDATES_TWO
 
 
 @pytest.mark.parametrize(
     'fide_news', [
         FideNewsID(entity_id='2970'),
         FideNewsID(entity_id=2970),
-        FIDE_NEWS_CANDIDATES_ONE
+        FIDE_NEWS_DETAIL_CANDIDATES_ONE.news
     ]
 )
 @mock.patch(
-    'requests.get', side_effect=_mock_request_news_candidates_one, autospec=True
+    'requests.get', side_effect=MockedResponse(filename='fide_news_candidates_one.json').mock_response, autospec=True
 )
 def test_news_mock_detail_candidates_one(_, fide_news: Union[FideNews, FideNewsID]) -> None:
     """
@@ -110,18 +99,18 @@ def test_news_mock_detail_candidates_one(_, fide_news: Union[FideNews, FideNewsI
     news_detail: FideNewsDetail = fide_news_client.get_news_detail(
         fide_news=fide_news
     )
-    _assert_news_candidates_one(news_detail=news_detail)
+    assert news_detail == FIDE_NEWS_DETAIL_CANDIDATES_ONE
 
 
 @pytest.mark.parametrize(
     'fide_news', [
         FideNewsID(entity_id='2981'),
         FideNewsID(entity_id=2981),
-        FIDE_NEWS_CANDIDATES_TWO
+        FIDE_NEWS_DETAIL_CANDIDATES_TWO.news
     ]
 )
 @mock.patch(
-    'requests.get', side_effect=_mock_request_news_candidates_two, autospec=True
+    'requests.get', side_effect=MockedResponse(filename='fide_news_candidates_two.json').mock_response, autospec=True
 )
 def test_news_mock_detail_candidates_two(_, fide_news: Union[FideNews, FideNewsID]) -> None:
     """
@@ -129,7 +118,7 @@ def test_news_mock_detail_candidates_two(_, fide_news: Union[FideNews, FideNewsI
     news_detail: FideNewsDetail = fide_news_client.get_news_detail(
         fide_news=fide_news
     )
-    _assert_news_candidates_two(news_detail=news_detail)
+    assert news_detail == FIDE_NEWS_DETAIL_CANDIDATES_TWO
 
 
 @pytest.mark.parametrize(

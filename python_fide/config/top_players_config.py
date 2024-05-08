@@ -7,9 +7,17 @@ from python_fide.enums import RatingCategory
 class TopPlayersConfig(BaseModel):
     """
     """
-    categories: Optional[List[RatingCategory]]
+    limit: int
+    categories: List[RatingCategory]
 
-    @field_validator('categories', mode='after')
+    @field_validator('limit', mode='before')
+    @classmethod
+    def validate_limit(cls, limit: Optional[int]) -> int:
+        """
+        """
+        return limit or 10
+
+    @field_validator('categories', mode='before')
     @classmethod
     def extract_categories(
         cls,
