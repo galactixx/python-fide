@@ -27,6 +27,8 @@ from python_fide.config.player_config import (
 
 class FidePlayerClient(FideClient):
     """
+    A Fide player client to pull all player specific data from the Fide API. Provides methods
+    to pull a players' detail, opponents, historical month ratings, and complete game stats. 
     """
     def __init__(self):
         self.base_url = 'https://ratings.fide.com/'
@@ -37,6 +39,16 @@ class FidePlayerClient(FideClient):
         fide_player: Union[FidePlayer, FidePlayerID]
     ) -> FidePlayer:
         """
+        A private method to a Fide player ID passed in is valid. If a FidePlayer object
+        is passed, then this is immediately returned. Otherwise if a FidePlayerID
+        object is passed, then Fide ID is validated, player data is retrieved, and a
+        FidePlayer object is returned.
+
+        Args:
+            fide_player (FidePlayer | FidePlayerID): A FidePlayer or FidePlayerID object.
+
+        Returns:
+            FidePlayer: A FidePlayer object.
         """
         if isinstance(fide_player, FidePlayerID):
             fide_player_detail = self.get_fide_player_detail(fide_player=fide_player)
@@ -54,6 +66,16 @@ class FidePlayerClient(FideClient):
         fide_player: Union[FidePlayer, FidePlayerID]
     ) -> Optional[FidePlayerDetail]:
         """
+        Given a FidePlayer or FidePlayerID object, will return a FidePlayerDetail object
+        containing further detail for a player. If the ID included does not link to a valid Fide
+        player ID, then None is returned.
+        
+        Args:
+            fide_player (FidePlayer | FidePlayerID): A FidePlayer or FidePlayerID object.
+
+        Returns:
+            FidePlayerDetail | None: A FidePlayerDetail object or if the Fide player
+                ID is invalid, None.
         """
         config = PlayerDetailConfig(fide_player_id=fide_player)
 
@@ -78,6 +100,20 @@ class FidePlayerClient(FideClient):
         fide_player: Union[FidePlayer, FidePlayerID]
     ) -> List[FidePlayerBasic]:
         """
+        Given a FidePlayer or FidePlayerID object, will return a list of FidePlayerBasic objects
+        each representing an opponent (another Fide player) that the player has faced during
+        their chess career.
+         
+        The data retrieved through this endpoint not only provides a comprehensive account of
+        the history of a specific Fide player, but can be used to filter the data returned
+        from the game stats endpoint.
+
+        Args:
+            fide_player (FidePlayer | FidePlayerID): A FidePlayer or FidePlayerID object.
+
+        Returns:
+            List[FidePlayerBasic]: A list of FidePlayerBasic objects each representing an
+                opponent the player in question has faced.
         """
         config = PlayerOpponentsConfig(fide_player_id=fide_player)
 
@@ -103,6 +139,23 @@ class FidePlayerClient(FideClient):
         period: Optional[Period] = None
     ) -> List[FidePlayerRating]:
         """
+        Given a FidePlayer or FidePlayerID object, will return a list of FidePlayerRating
+        objects each representing a set of ratings (standard, rapid, and blitz) for a specific
+        month. Also included with each format is the number of games played in that month.
+
+        A period can also be included, which will filter the ratings based on period of time
+        (in years). Using the Period data type, options available are ONE_YEAR, TWO_YEARS,
+        THREE_YEARS, FIVE_YEARS, and ALL_YEARS. If no period is specified, then it defaults
+        to ALL_YEARS.
+        
+        Args:
+            fide_player (FidePlayer | FidePlayerID): A FidePlayer or FidePlayerID object.
+            period (Period | None): An enum which allows filtering of the ratings data by
+                period of time.
+
+        Returns:
+            List[FidePlayerRating]: A list of FidePlayerRating objects, each reprsenting
+                a set of ratings for a specific month.
         """
         config = PlayerChartsConfig(
             fide_player_id=fide_player, period=period
@@ -128,17 +181,32 @@ class FidePlayerClient(FideClient):
     def get_fide_player_game_stats(
         self,
         fide_player: Union[FidePlayer, FidePlayerID],
-        fide_player_opponent: Union[FidePlayer, FidePlayerID] = None
+        fide_player_opponent: Optional[Union[FidePlayer, FidePlayerID]] = None
     ) -> FidePlayerGameStats:
         """
+        Given a FidePlayer or FidePlayerID object, will return a FidePlayerGameStats
+        object representing the entire game history for a specific player. This includes
+        the number of games won, drawn, and lost when playing for white and black pieces.
+
+        Another FidePlayer or FidePlayerID object can be passed for the 'fide_player_opponent'
+        parameter, which will filter the data to represent the game stats when facing this
+        opponent. If no argument is passed then it will return the entire game history.
+
+        Args:
+            fide_player (FidePlayer | FidePlayerID): A FidePlayer or FidePlayerID object.
+            fide_player_opponent (FidePlayer | FidePlayerID | None): A FidePlayer or FidePlayerID
+                object. Can also be None if the entire game history should be returned.
+
+        Returns:
+            FidePlayerGameStats: A FidePlayerGameStats object consisting of game statistics
+                for the given Fide player.
         """
         config = PlayerStatsConfig(
             fide_player_id=fide_player,
             fide_player_opponent=fide_player_opponent
         )
 
-        # Retrieve the player structure for both the player
-        # and the opponent
+        # Retrieve the player structure for both the player and the opponent
         fide_player = self._consolidate_fide_player(fide_player=fide_player)
         fide_player_opponent = self._consolidate_fide_player(
             fide_player=fide_player_opponent

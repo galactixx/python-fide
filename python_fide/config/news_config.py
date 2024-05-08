@@ -12,7 +12,6 @@ from python_fide.types.core import (
 
 class NewsLatestConfig(ParameterNullConfig):
     limit: Optional[int]
-    query: Optional[str]
 
 
 class NewsDetailConfig(BaseEndpointConfig):

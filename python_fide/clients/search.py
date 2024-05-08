@@ -17,20 +17,33 @@ from python_fide.types.core import (
     FidePlayerID
 )
 
+# The maximum results returned from the player search endpoint
 _MAX_RESULTS_PLAYER = 300
 
 class FideSearchClient(FideClientWithPagination):
     """
+    A Fide search client which provides methods to perform a lexical search
+    through all players, events, and news.
     """
     def __init__(self):
         self.base_url = 'https://app.fide.com/api/v1/client/search?'
 
     def get_events(
         self,
-        query: Union[str, FideEventID, FidePlayerName], 
+        query: Union[str, FideEventID], 
         limit: Optional[int] = None
     ) -> List[FideEvent]:
         """
+        Given a query, being a string or FideEventID object, will return a list
+        of FideEvent objects that represent events associated with the query.
+
+        Args:
+            query (str | FideEventID): A string query or FideEventID object.
+            limit (int | None): An integer of the maximum number of events to parse
+                and return.
+
+        Returns:
+            List[FideEvent]: A list of FideEvent objects.
         """
         config = SearchConfig.from_search_object(
             search_query=query, link='event'
@@ -38,7 +51,7 @@ class FideSearchClient(FideClientWithPagination):
 
         pagination = self._paginatize(
             limit=limit,
-            base_url=self.base_url,
+            fide_url=self.base_url,
             config=config,
             fide_type=FideEvent
         )
@@ -47,10 +60,21 @@ class FideSearchClient(FideClientWithPagination):
     
     def get_news(
         self,
-        query: Union[str, FideNewsID, FidePlayerName], 
+        query: Union[str, FideNewsID], 
         limit: Optional[int] = None
     ) -> List[FideNewsBasic]:
         """
+        Given a query, being a string or FideNewsID object, will return a list
+        of FideNewsBasic objects that represent news associated associated with the query. A
+        FideNewsBasic object is a mariginally less detailed version of the FideNews object.
+
+        Args:
+            query (str | FideNewsID): A string query or FideNewsID object.
+            limit (int | None): An integer of the maximum number of news stories to parse
+                and return.
+
+        Returns:
+            List[FideNewsBasic]: A list of FideNewsBasic objects.
         """
         config = SearchConfig.from_search_object(
             search_query=query, link='news'
@@ -58,7 +82,7 @@ class FideSearchClient(FideClientWithPagination):
 
         pagination = self._paginatize(
             limit=limit,
-            base_url=self.base_url, 
+            fide_url=self.base_url, 
             config=config,
             fide_type=FideNewsBasic
         )
@@ -70,6 +94,18 @@ class FideSearchClient(FideClientWithPagination):
         fide_player_id: FidePlayerID
     ) -> List[FidePlayer]:
         """
+        Given a FidePlayerID object, will return all Fide players whose Fide ID starts
+        with the ID passed. For example, if 'FidePlayerID(entityid=1503014)' is passed,
+        then a list of only one FidePlayer will be returned since this ID corresponds to
+        a single player. On the other hand, if 'FidePlayerID(entityid=150)' is passed, then
+        a list of FidePlayers will be returned, corresponding with all players whose
+        Fide ID starts with 150. 
+        
+        Args:
+            fide_player_id (FidePlayerID): A FidePlayerID object, containing the Fide ID.
+
+        Returns:
+            List[FidePlayer]: A list of FidePlayer objects.
         """
         config = SearchPlayerIDConfig.from_player_id_object(
             fide_player_id=fide_player_id, link='player'
@@ -103,6 +139,15 @@ class FideSearchClient(FideClientWithPagination):
         fide_player_name: FidePlayerName
     ) -> List[FidePlayer]:
         """
+        Given a FidePlayerName object, will return all Fide players whose name matches the
+        first/last name passed.
+        
+        Args:
+            fide_player_name (FidePlayerName): A FidePlayerName object containing the first
+                and last name of the player.
+
+        Returns:
+            List[FidePlayer]: A list of FidePlayer objects.
         """
         config = SearchPlayerNameConfig.from_player_name_object(
             fide_player_name=fide_player_name, link='player'
@@ -143,6 +188,15 @@ class FideSearchClient(FideClientWithPagination):
         query: Union[FidePlayerID, FidePlayerName]
     ) -> Optional[FidePlayer]:
         """
+        Given a FidePlayerID or FidePlayerName object, will return a singular FidePlayer
+        object only if a match could be found based on Fide ID, or there was only one
+        player found through the search. If neither are true, then None is returned.
+                
+        Args:
+            query (FidePlayerID | FidePlayerName): A FidePlayerID or FidePlayerName object.
+
+        Returns:
+            List[FidePlayer]: A list of FidePlayer objects.
         """
         if isinstance(query, FidePlayerID):
             players = self.get_fide_players_by_id(fide_player_id=query)

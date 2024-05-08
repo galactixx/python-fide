@@ -12,7 +12,6 @@ from python_fide.types.core import (
 
 class EventLatestConfig(ParameterNullConfig):
     limit: Optional[int]
-    query: Optional[str]
 
 
 class EventDetailConfig(BaseEndpointConfig):
