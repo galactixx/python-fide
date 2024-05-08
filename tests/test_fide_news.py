@@ -91,7 +91,9 @@ def test_news_detail_parsing() -> None:
     ]
 )
 @mock.patch(
-    'requests.get', side_effect=MockedResponse(filename='fide_news_candidates_one.json').mock_response, autospec=True
+    target='requests.get',
+    side_effect=MockedResponse(filename='fide_news_candidates_one.json').mock_response,
+    autospec=True
 )
 def test_news_mock_detail_candidates_one(_, fide_news: Union[FideNews, FideNewsID]) -> None:
     """
@@ -110,7 +112,9 @@ def test_news_mock_detail_candidates_one(_, fide_news: Union[FideNews, FideNewsI
     ]
 )
 @mock.patch(
-    'requests.get', side_effect=MockedResponse(filename='fide_news_candidates_two.json').mock_response, autospec=True
+    target='requests.get',
+    side_effect=MockedResponse(filename='fide_news_candidates_two.json').mock_response,
+    autospec=True
 )
 def test_news_mock_detail_candidates_two(_, fide_news: Union[FideNews, FideNewsID]) -> None:
     """

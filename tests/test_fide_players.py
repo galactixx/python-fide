@@ -82,7 +82,9 @@ def test_player_detail_parsing() -> None:
     ]
 )
 @mock.patch(
-    'requests.get', side_effect=MockedResponse(filename='fide_player_carlsen.json').mock_response, autospec=True
+    target='requests.get',
+    side_effect=MockedResponse(filename='fide_player_carlsen.json').mock_response,
+    autospec=True
 )
 def test_player_mock_detail_carslen(_, fide_player: Union[FidePlayer, FidePlayerID]) -> None:
     """
@@ -101,7 +103,9 @@ def test_player_mock_detail_carslen(_, fide_player: Union[FidePlayer, FidePlayer
     ]
 )
 @mock.patch(
-    'requests.get', side_effect=MockedResponse(filename='fide_player_nakamura.json').mock_response, autospec=True
+    target='requests.get',
+    side_effect=MockedResponse(filename='fide_player_nakamura.json').mock_response,
+    autospec=True
 )
 def test_player_mock_detail_nakamura(_, fide_player: Union[FidePlayer, FidePlayerID]) -> None:
     """
@@ -113,7 +117,9 @@ def test_player_mock_detail_nakamura(_, fide_player: Union[FidePlayer, FidePlaye
 
 
 @mock.patch(
-    'requests.get', side_effect=MockedResponse(filename='fide_opponents.json').mock_response, autospec=True
+    target='requests.get',
+    side_effect=MockedResponse(filename='fide_opponents.json').mock_response,
+    autospec=True
 )
 def test_player_mock_opponents(_) -> None:
     """
@@ -150,7 +156,9 @@ def test_player_mock_opponents(_) -> None:
 
 
 @mock.patch(
-    'requests.get', side_effect=MockedResponse(filename='fide_rating_chart.json').mock_response, autospec=True
+    target='requests.get',
+    side_effect=MockedResponse(filename='fide_rating_chart.json').mock_response,
+    autospec=True
 )
 def test_player_mock_rating_progress_chart(_) -> None:
     """
@@ -194,7 +202,9 @@ def test_player_mock_rating_progress_chart(_) -> None:
 
 
 @mock.patch(
-    'requests.get', side_effect=MockedResponse(filename='fide_game_stats.json').mock_response, autospec=True
+    target='requests.get',
+    side_effect=MockedResponse(filename='fide_game_stats.json').mock_response,
+    autospec=True
 )
 def test_player_mock_game_stats(_) -> None:
     """

@@ -48,7 +48,9 @@ def _category_count(players: List[FideTopPlayer], category: RatingCategory) -> i
     ]
 )
 @mock.patch(
-    'requests.get', side_effect=MockedResponse(filename='fide_top_players.json').mock_response, autospec=True
+    target='requests.get',
+    side_effect=MockedResponse(filename='fide_top_players.json').mock_response,
+    autospec=True
 )
 def test_top_players(_, test_case: CaseTopPlayers) -> None:
     """
