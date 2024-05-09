@@ -1,14 +1,12 @@
 from typing import List, Optional, TypeVar
 
-from python_fide.utils.general import validate_limit
-
 T = TypeVar('T')
 
 class FidePagination:
     """
     """
     def __init__(self, limit: int):
-        self._limit = validate_limit(limit=limit)
+        self._limit = limit
 
         # Page tracking variables
         self._current_page = 1

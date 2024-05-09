@@ -55,7 +55,7 @@ def _category_count(players: List[FideTopPlayer], category: RatingCategory) -> i
 def test_top_players(_, test_case: CaseTopPlayers) -> None:
     """
     """
-    top_players = fide_top_player_client.get_top_standard_players(
+    top_players = fide_top_player_client.get_top_ten_standard_rankings(
         limit=test_case.limit, categories=test_case.categories
     )
 

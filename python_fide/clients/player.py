@@ -39,10 +39,10 @@ class FidePlayerClient(FideClient):
         fide_player: Union[FidePlayer, FidePlayerID]
     ) -> FidePlayer:
         """
-        A private method to a Fide player ID passed in is valid. If a FidePlayer object
-        is passed, then this is immediately returned. Otherwise if a FidePlayerID
-        object is passed, then Fide ID is validated, player data is retrieved, and a
-        FidePlayer object is returned.
+        A private method to ensure a Fide player ID passed in is valid. If a
+        FidePlayer object is passed, then this is immediately returned. Otherwise
+        if a FidePlayerID object is passed, then the Fide ID is validated, player
+        data is retrieved, and a FidePlayer object is returned.
 
         Args:
             fide_player (FidePlayer | FidePlayerID): A FidePlayer or FidePlayerID object.

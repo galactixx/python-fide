@@ -1,4 +1,3 @@
-import sys
 from typing import List, Optional, Tuple, Union
 from datetime import datetime
 from urllib.parse import urljoin
@@ -68,14 +67,3 @@ def build_url(base: str, segments: Union[int, str]) -> str:
         base += '/'
 
     return urljoin(base=base, url=segments)
-
-
-def validate_limit(limit: Optional[int]) -> int:
-    """
-    """
-    if limit is None:
-        return sys.maxsize
-    else:
-        assert isinstance(limit, int)
-        assert limit > 0
-        return limit

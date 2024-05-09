@@ -22,28 +22,45 @@ FideIDOptional = Annotated[
 
 class PlayerOpponentsConfig(ParameterAliasConfig):
     """
+    Simple configuration for the opponents endpoint from the FidePlayerClient.
+
+    Args:
+        fide_player_id (FideID): An integer representing the Fide ID for a player.
     """
     fide_player_id: FideID = Field(..., alias='pl')
 
 
 class PlayerChartsConfig(ParameterAliasConfig):
     """
+    Simple configuration for the ratings charts endpoint from the FidePlayerClient.
+
+    Args:
+        fide_player_id (FideID): An integer representing the Fide ID for a player.
+        period (Period): An enum which allows filtering of the ratings data by
+            period of time.
     """
     fide_player_id: FideID = Field(..., alias='event')
-    period: Optional[Period] = Field(..., alias='period')
+    period: Period = Field(..., alias='period')
 
-    @field_validator('period', mode='after')
+    @field_validator('period', mode='before')
     @classmethod
     def validate_period(cls, period: Optional[Period]) -> Period:
-        """
-        """
+        """Validation for period parameter."""
         if period is None:
-            period = Period.ALL_YEARS
-        return period
+            return Period.ALL_YEARS
+        else:
+            return period
 
 
 class PlayerStatsConfig(ParameterAliasConfig):
     """
+    Simple configuration for the game stats endpoint from the FidePlayerClient.
+
+    Args:
+        fide_player_id (FideID): An integer representing the Fide ID for a player.
+        fide_player_opponent (FideIDOptional): An integer representing
+            the Fide ID for a player. Can also be None if the entire game history should
+            be returned.
     """
     fide_player_id: FideID = Field(..., alias='id1')
     fide_player_opponent_id: FideIDOptional = Field(default=None, alias='id2')
@@ -51,12 +68,15 @@ class PlayerStatsConfig(ParameterAliasConfig):
 
 class PlayerDetailConfig(BaseEndpointConfig):
     """
+    Simple configuration for the player detail endpoint from the FidePlayerClient.
+
+    Args:
+        fide_player_id (FideID): An integer representing the Fide ID for a player.
     """
     fide_player_id: FideID
     
     def endpointize(self, base_url: str) -> str:
-        """
-        """
+        """Build the player detail endpoint."""
         return build_url(
             base=base_url, segments=self.fide_player_id
         )
