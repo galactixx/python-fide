@@ -6,7 +6,7 @@ from faker import Faker
 
 from python_fide.types.adapters import HolisticAdapter
 from python_fide.pagination import FidePagination
-from python_fide.types.base import BaseRecordValidatorModel
+from python_fide.types.base import BaseRecordPaginationModel
 from python_fide.config.base_config import BaseParameterConfig
 
 class FideClient(object):
@@ -82,7 +82,7 @@ class FideClientWithPagination(FideClient):
         limit: int,
         fide_url: str,
         config: BaseParameterConfig,
-        fide_type: BaseRecordValidatorModel
+        fide_type: BaseRecordPaginationModel
     ) -> FidePagination:
         """
         A private method to run pagination for the Fide news and events API endpoints.
@@ -91,7 +91,7 @@ class FideClientWithPagination(FideClient):
             limit (int): The maximum number of records to pull from endpoint.
             fide_url (str): A string URL representing a Fide API endpoint.
             config (BaseParameterConfig): A BaseParameterConfig instance used to create the params to include in the request.
-            fide_type (BaseRecordValidatorModel): A BaseRecordValidatorModel instance defining the pydantic model used to
+            fide_type (BaseRecordPaginationModel): A BaseRecordPaginationModel instance defining the pydantic model used to
                 validate and structure the API response.
 
         Returns:

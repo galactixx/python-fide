@@ -12,6 +12,14 @@ from python_fide.types.core import (
 
 def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
     """
+    Logic to parse the response returned from the opponents endpoint.
+
+    Args:
+        response (List[dict]): A list of dictionaries each representing a Fide player.
+
+    Returns:
+        List[FidePlayerBasic]: A list of FidePlayerBasic objects each representing an
+            opponent the player in question has faced.
     """
     players = PartialListAdapter.from_minimal_adapter(response=response)
     gathered_players: List[FidePlayerBasic] = []
@@ -25,6 +33,15 @@ def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
 
 def player_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
     """
+    Logic to parse the response returned from the player detail endpoint.
+
+    Args:
+        response (List[dict]): A list of dictionaries. In this case, if the Fide
+            ID is valid, there should only be one dictionary in the list.
+
+    Returns:
+        FidePlayerDetail | None: A FidePlayerDetail object or if the Fide player
+            ID is invalid, None.
     """
     players = PartialListAdapter.from_minimal_adapter(response=response)
 
@@ -44,18 +61,26 @@ def player_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
 
 
 def player_charts_parsing(
-    fide_player: FidePlayer,
-    response: List[dict]
+    fide_player: FidePlayer, response: List[dict]
 ) -> List[FidePlayerRating]:
     """
+    Logic to parse the response returned from the player ratings endpoint.
+
+    Args:
+        fide_player (FidePlayer): A FidePlayer object.
+        response (List[dict]): A list of dictionaries each representing a set of
+            ratings for a specific month.
+
+    Returns:
+        List[FidePlayerRating]: A list of FidePlayerRating objects, each reprsenting
+            a set of ratings for a specific month.
     """
     ratings = PartialListAdapter.from_minimal_adapter(response=response)
     gathered_ratings: List[FidePlayerRating] = []
 
     for month_rating in ratings.data:
         fide_rating = FidePlayerRating.from_validated_model(
-            player=fide_player,
-            rating=month_rating
+            player=fide_player, rating=month_rating
         )
         gathered_ratings.append(fide_rating)
 
@@ -68,6 +93,18 @@ def player_stats_parsing(
     response: List[dict]
 ) -> FidePlayerGameStats:
     """
+    Logic to parse the response returned from the game stats endpoint.
+
+    Args:
+        fide_player (FidePlayer): A FidePlayer object representing the player in question.
+        fide_player_opponent (FidePlayer | None): A FidePlayer object representing the opponent,
+            otherwise None.
+        response (List[dict]): A list of dictionaries. In this case, there should only
+            ever be one dictionary in the list.
+
+    Returns:
+        FidePlayerGameStats: A FidePlayerGameStats object consisting of game statistics
+            for the given Fide player.
     """
     player_stats = PartialListAdapter.from_minimal_adapter(response=response)
 

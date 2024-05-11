@@ -10,6 +10,17 @@ def top_standard_players_parsing(
     categories: List[RatingCategory]
 ) -> List[FideTopPlayer]:
     """
+    Logic to parse the response returned from the top players endpoint.
+
+    Args:
+        limit (int): An integer of the maximum number of events to parse.
+        response (Dict[str, Any]): A dictionary representation of the JSON response.
+        categories (List[RatingCategory] | None): A list of RatingCategory values each
+            representing a chess category (OPEN, WOMEN, JUNIORS, GIRLS)
+
+    Returns:
+        List[FideTopPlayer]: A list of FideTopPlayer objects, each representing a player from
+            the top ten standard rating rankings.
     """
     top_categories = TopPlayersAdapter.model_validate(response)
     gathered_players: List[FideTopPlayer] = []

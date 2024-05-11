@@ -1,39 +1,68 @@
-from typing import Any, Dict, Literal, Optional, Union
+from typing import (
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional, 
+    Union
+)
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    Field, 
+    field_validator,
+    model_validator
+)
 
 from python_fide.exceptions import InvalidFideIDError
 from python_fide.enums import RatingCategory
 from python_fide.utils.pydantic import from_player_model
 from python_fide.utils.general import build_url
 from python_fide.types.annotated import (
+    DateISO,
     DateTime,
+    DateYear,
     DateYearMonth
 )
 from python_fide.types.base import (
-    BaseRecordValidatorModel,
-    FideEventDetailBase,
-    FideNewsDetailBase,
-    FidePlayerBasicBase,
-    FidePlayerDetailBase,
-    FidePlayerGameBlackStatsBase,
-    FidePlayerGameWhiteStatsBase,
-    FidePlayerBase,
-    FidePlayerRatingBase,
-    FideTopPlayerBase
+    BaseRecordPaginationModel,
+    FideEventDetailRaw,
+    FideNewsCategory,
+    FideNewsContent,
+    FideNewsDetailRaw,
+    FideNewsTopic,
+    FidePlayerBasicRaw,
+    FidePlayerDetailRaw,
+    FidePlayerGameBlackStatsRaw,
+    FidePlayerGameWhiteStatsRaw,
+    FidePlayerRaw,
+    FidePlayerRatingRaw,
+    FideTopPlayerRaw
 )
 
 class ClientNotFound(BaseModel):
+    """Model for an error JSON response."""
     message: Literal['Not Found']
     status: Literal[404]
 
 
 class FidePlayerName(BaseModel):
+    """
+    Represents the name of a chess player with a Fide rating. While
+    both arguments are required, the matching by the Fide API is done
+    by last name and then first name. Thus, it is highly advised to not
+    include a last name as a blank string.
+
+    Args:
+        first_name (str): The string first name of a player.
+        last_name (str): The string last name of a player.
+    """
     first_name: str
     last_name: str
 
     @model_validator(mode='after')
     def validate_names(self) -> 'FidePlayerName':
+        """Validate the first and last name."""
         assert self.first_name.isalpha()
         assert self.last_name.isalpha()
 
@@ -41,11 +70,18 @@ class FidePlayerName(BaseModel):
 
 
 class FideBaseID(BaseModel):
+    """
+    Base model for all Fide ID models (FidePlayerID, FideNewsID, FideEventID).
+
+    Args:
+        entity_id (int): An integer representing a Fide ID.
+    """
     entity_id: int
 
     @field_validator('entity_id', mode='before')
     @classmethod
     def cast_to_int(cls, entity_id: Union[str, int]) -> int:
+        """Validate and cast entity_id to an integer type."""
         if isinstance(entity_id, str):
             if not entity_id.isdigit():
                 raise InvalidFideIDError(
@@ -63,57 +99,134 @@ class FideBaseID(BaseModel):
                 )
             else:
                 return entity_id_cast
-
-        return entity_id
+        else:
+            return entity_id
     
 
 class FidePlayerID(FideBaseID):
+    """Model for a player Fide ID."""
     pass
 
 
 class FideNewsID(FideBaseID):
+    """Model for a news Fide ID."""
     pass
 
 
 class FideEventID(FideBaseID):
+    """Model for an event Fide ID."""
     pass
 
 
-class FidePlayerBasic(FidePlayerBasicBase):
+class FidePlayerBasic(BaseModel):
+    """
+    A slightly less detailed model than the FidePlayer model. Thus, it is
+    referred to as a "basic" version of FidePlayer.
+
+    Args:
+        player_id (int): An integer representing a Fide ID for the player.
+        name (str): A string full name of the player.
+        first_name (str): The string first name of the player.
+        last_name (str | None): The string last name of the player. Can also be None if
+            the last name could not reliably be detected.
+        country (str): The country that the player represents.
+    """
+    player_id: int
+    name: str
     first_name: str
     last_name: Optional[str]
+    country: str
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerBasic':
-        first_name, last_name, model = from_player_model(
-            player=player,
-            fide_player_model=FidePlayerBasicBase,
-        )
+        """
+        Creates an instance of FidePlayerBasic based on a dictionary pulled from
+        the API response.
 
+        Args:
+            player (Dict[str, Any]): A dictionary representing a player.
+
+        Returns:
+            FidePlayerBasic: A new FidePlayerBasic instance.
+        """
+        first_name, last_name, model = from_player_model(
+            player=player, fide_player_model=FidePlayerBasicRaw,
+        )
         return cls(
             first_name=first_name, last_name=last_name, **model
         )
 
 
-class FidePlayer(FidePlayerBase):
+class FidePlayer(BaseModel):
+    """
+    A model containing information for a specific player who has 
+    registered with Fide.
+    
+    Args:
+        player_id (int): An integer representing a Fide ID for the player.
+        name (str): A string full name of the player.
+        first_name (str): The string first name of the player.
+        last_name (str | None): The string last name of the player. Can also be None if
+            the last name could not reliably be detected.
+        title (str | None): The title of the player (GM, IM, ...). Can be None if the player
+            has no title.
+        country (str): The country that the player represents.
+    """
+    player_id: int
+    name: str
     first_name: str
     last_name: Optional[str]
+    title: Optional[str]
+    country: str
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayer':
-        first_name, last_name, model = from_player_model(
-            player=player,
-            fide_player_model=FidePlayerBase,
-        )
+        """
+        Creates an instance of FidePlayer based on a dictionary pulled from
+        the API response.
 
+        Args:
+            player (Dict[str, Any]): A dictionary representing a player.
+
+        Returns:
+            FidePlayer: A new FidePlayer instance.
+        """
+        first_name, last_name, model = from_player_model(
+            player=player, fide_player_model=FidePlayerRaw,
+        )
         return cls(
             first_name=first_name, last_name=last_name, **model
         )
 
 
-class FideTopPlayer(FideTopPlayerBase):
+class FideTopPlayer(BaseModel):
+    """
+    A more detailed model than the FidePlayer model, and containing
+    fields that are only included in the top player response. Thus,
+    it is separate from the FidePlayer model. In addition, the 'title'
+    field is not included in the raw response, so the core player attributes
+    are represented as a FidePlayerBasic object rather than a FidePlayer object.
+
+    Args:
+        player (FidePlayerBasic): A FidePlayerBasic object with all general player fields.
+        category (RatingCategory): The category that the player belongs to (OPEN, WOMEN, JUNIORS, GIRLS).
+        ranking (int): The ranking of the player.
+        period (DateISO): The period of reporting.
+        birthday (DateISO): The birthday of the player.
+        sex (Literal['M', 'F']): The sex of the player.
+        rating_standard (int | None): The current standard rating of the player.
+        rating_rapid (int | None): The current rapid rating of the player.
+        rating_blitz (int | None): The current blitz rating of the player.
+    """
     player: FidePlayerBasic
     category: RatingCategory
+    ranking: int
+    period: DateISO
+    birthday: DateISO
+    sex: Literal['M', 'F']
+    rating_standard: Optional[int]
+    rating_rapid: Optional[int]
+    rating_blitz: Optional[int]
 
     @classmethod
     def from_validated_model(
@@ -121,96 +234,212 @@ class FideTopPlayer(FideTopPlayerBase):
         player: Dict[str, Any],
         category: RatingCategory
     ) -> 'FideTopPlayer':
-        fide_player = FidePlayerBasic.from_validated_model(player=player)
-        fide_top_player = FideTopPlayerBase.model_validate(player)
+        """
+        Creates an instance of FideTopPlayer based on a dictionary pulled from
+        the API response and a specified RatingCategory.
 
+        Args:
+            player (Dict[str, Any]): A dictionary representing a player.
+            category (RatingCategory): A RatingCategory representing a chess
+                category (OPEN, WOMEN, JUNIORS, GIRLS).
+
+        Returns:
+            FideTopPlayer: A new FideTopPlayer instance.
+        """
+        fide_player = FidePlayerBasic.from_validated_model(player=player)
+        fide_top_player = FideTopPlayerRaw.model_validate(player)
         return cls(
             player=fide_player, category=category, **fide_top_player.model_dump()
         )
+    
 
+class FidePlayerDetail(BaseModel):
+    """
+    A model representing additional detail for a player beyond what is provided
+    in the generic FidePlayer model.
 
-class FidePlayerDetail(FidePlayerDetailBase):
+    Args:
+        player (FidePlayer): A FidePlayer object with all general player fields.
+        sex (Literal['M', 'F']): The sex of the player.
+        birth_year (DateYear): The birth year of the player.
+        rating_standard (int | None): The current standard rating of the player.
+        rating_rapid (int | None): The current rapid rating of the player.
+        rating_blitz (int | None): The current blitz rating of the player.
+    """
     player: FidePlayer
+    sex: Literal['M', 'F']
+    birth_year: DateYear
+    rating_standard: Optional[int]
+    rating_rapid: Optional[int]
+    rating_blitz: Optional[int]
 
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerDetail':
-        fide_player = FidePlayer.from_validated_model(player=player)
-        fide_player_detail = FidePlayerDetailBase.model_validate(player)
+        """
+        Creates an instance of FidePlayerDetail based on a dictionary pulled from
+        the API response.
 
+        Args:
+            player (Dict[str, Any]): A dictionary representing a player detail.
+
+        Returns:
+            FidePlayerDetail: A new FidePlayerDetail instance.
+        """
+        fide_player = FidePlayer.from_validated_model(player=player)
+        fide_player_detail = FidePlayerDetailRaw.model_validate(player)
         return cls(
             player=fide_player, **fide_player_detail.model_dump()
         )
-    
 
-class FideEvent(BaseRecordValidatorModel):
+
+class FideEvent(BaseRecordPaginationModel):
+    """
+    
+    """
     name: str = Field(..., validation_alias='name')
     event_id: int = Field(..., validation_alias='id')
 
     @property
     def event_url(self) -> str:
+        """The event URL from the Fide webiste."""
         return build_url(
             base='https://fide.com/calendar/', segments=self.event_id
         )
     
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideEvent':
+        """
+        """
         return FideEvent.model_validate(record)
 
 
-class FideNewsBasic(BaseRecordValidatorModel):
+class FideNewsBasic(BaseRecordPaginationModel):
+    """"""
     title: str = Field(..., validation_alias='name')
     news_id: int = Field(..., validation_alias='id')
 
     @property
     def news_url(self) -> str:
+        """The new URL from the Fide webiste."""
         return build_url(
             base='https://fide.com/news/', segments=self.news_id
         )
     
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideNewsBasic':
+        """
+        """
         return FideNewsBasic.model_validate(record)
     
 
 class FideNews(FideNewsBasic):
+    """"""
     posted_at: DateTime
 
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideNews':
+        """
+        """
         return FideNews.model_validate(record)
 
 
-class FideEventDetail(BaseRecordValidatorModel, FideEventDetailBase):
+class FideEventDetail(BaseRecordPaginationModel):
+    """
+    
+
+    """
     event: FideEvent
+    city: Optional[str]
+    country: Optional[str]
+    start_date: Optional[DateTime]
+    end_date: Optional[DateTime]
+    game_format: str
+    tournament_type: Optional[str]
+    time_control: Optional[str]
+    time_control_desc: Optional[str]
+    rounds: Optional[str]
+    players: Optional[str]
+    telephone: Optional[str]
+    website: Optional[str]
+    organizer: Optional[str]
+    chief_arbiter: Optional[str]
+    chief_organizer: Optional[str]
 
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideEventDetail':
+        """
+        Creates an instance of FideEventDetail based on a dictionary pulled from
+        the API response.
+
+        Args:
+            record (Dict[str, Any]): A dictionary representing detail for an event.
+
+        Returns:
+            FideEventDetail: A new FideEventDetail instance.
+        """
         fide_event = FideEvent.model_validate(record)
-        fide_event_detail = FideEventDetailBase.model_validate(record)
+        fide_event_detail = FideEventDetailRaw.model_validate(record)
         return cls(
             event=fide_event, **fide_event_detail.model_dump()
         )
 
 
-class FideNewsDetail(FideNewsDetailBase):
+class FideNewsDetail(BaseModel):
+    """
+
+
+    """
     news: FideNews
+    topic: FideNewsTopic
+    category: FideNewsCategory
+    contents: List[FideNewsContent]
+    created_at: DateTime
+    updated_at: DateTime
 
     @classmethod
     def from_validated_model(cls, news: Dict[str, Any]) -> 'FideNewsDetail':
-        fide_news = FideNews.model_validate(news)
-        fide_news_detail = FideNewsDetailBase.model_validate(news)
+        """
+        Creates an instance of FideNewsDetail based on a dictionary pulled from
+        the API response.
 
+        Args:
+            news (Dict[str, Any]): A dictionary representing detail for a news story.
+
+        Returns:
+            FideNewsDetail: A new FideNewsDetail instance.
+        """
+        fide_news = FideNews.model_validate(news)
+        fide_news_detail = FideNewsDetailRaw.model_validate(news)
         return cls(
             news=fide_news, **fide_news_detail.model_dump()
         )
 
 
 class FideRating(BaseModel):
+    """
+    Model that represents a rating for a specific game format at the end of a month,
+    along with the number of games played in that month.
+
+    Args:
+        games (int): The number of games played in a month.
+        rating (int | None): The rating at the end of the month.
+    """
     games: int
     rating: Optional[int]
 
 
 class FidePlayerRating(BaseModel):
+    """
+    Model that represents a set of ratings at the end of a specific month. Includes
+    end-of-month ratings for all formats (standard, rapid, blitz).
+
+    Args:
+        month (DateYearMonth): A specific month.
+        player (FidePlayer): A FidePlayer object with all general player fields.
+        standard (FideRating): A FideRating object representing the standard rating at end-of-month.
+        rapid (FideRating): A FideRating object representing the rapid rating at end-of-month.
+        blitz (FideRating): A FideRating object representing the blitz rating at end-of-month.
+    """
     month: DateYearMonth
     player: FidePlayer
     standard: FideRating
@@ -223,7 +452,18 @@ class FidePlayerRating(BaseModel):
         player: FidePlayer, 
         rating: Dict[str, Any]
     ) -> 'FidePlayerRating':
-        fide_rating = FidePlayerRatingBase.model_validate(rating)
+        """
+        Creates an instance of FidePlayerRating based on a dictionary pulled from
+        the API response.
+
+        Args:
+            player (FidePlayer): A FidePlayer object with all general player fields.
+            rating (Dict[str, Any]): A dictionary representing all ratings for a given month.
+
+        Returns:
+            FidePlayerRating: A new FidePlayerRating instance.
+        """
+        fide_rating = FidePlayerRatingRaw.model_validate(rating)
 
         # Decompose the raw models into structured models
         standard_rating = FideRating(
@@ -246,6 +486,16 @@ class FidePlayerRating(BaseModel):
 
 
 class FideGames(BaseModel):
+    """
+    A model that represents all game statistics for a specific game format. Included
+    is the total games won, drawn and lost.
+
+    Args:
+        games_total (int): The total number of games played.
+        games_won (int): The number of games won.
+        games_draw (int): The number of games drawn.
+        games_lost (int): The number of games lost.
+    """
     games_total: int = Field(..., description='Number of total games played')
     games_won: int = Field(..., description='Number of games won')
     games_draw: int = Field(..., description='Number of games drawn')
@@ -253,6 +503,7 @@ class FideGames(BaseModel):
 
     @model_validator(mode='after')
     def validate_parameters(self) -> 'FideGames':
+        """Calculates the number of games lost."""
         self.games_lost = (
             self.games_total - self.games_won - self.games_draw
         )
@@ -260,12 +511,39 @@ class FideGames(BaseModel):
     
 
 class FideGamesSet(BaseModel):
+    """
+    A model that represents a set of game statistics for all game formats (standard,
+    rapid, blitz).
+
+    Args:
+        standard (FideGames): A FideGames object representing the games stats
+            for the standard game format.
+        rapid (FideGames): A FideGames object representing the games stats
+            for the rapid game format.
+        blitz (FideGames): A FideGames object representing the games stats
+            for the blitz game format.
+    """
     standard: FideGames
     rapid: FideGames
     blitz: FideGames
 
 
 class FidePlayerGameStats(BaseModel):
+    """
+    A model that represents all game statistics for a specific player, partitioned by
+    when playing with both black and white pieces. If the 'opponent' attribute is not None,
+    then the game stats are filtered by games played against this player, otherwise
+    the entire game history is included.
+
+    Args:
+        player (FidePlayer): A FidePlayer object with all general player fields.
+        opponent (FidePlayer | None): A FidePlayer object with all general player fields.
+            Can be None if not specified.
+        white (FideGamesSest): The game statistics for all game formats when
+            playing with the white pieces.
+        black (FideGames Set): The game statistics for all game formats when
+            playing with the black pieces.
+    """
     player: FidePlayer
     opponent: Optional[FidePlayer]
     white: FideGamesSet
@@ -279,15 +557,26 @@ class FidePlayerGameStats(BaseModel):
         stats: Dict[str, Any]
     ) -> 'FidePlayerGameStats':
         """
+        Creates an instance of FidePlayerGameStats based on a dictionary pulled from
+        the API response.
+
+        Args:
+            fide_player (FidePlayer): A FidePlayer object with all general player fields.
+            fide_player_opponent (FidePlayer): A FidePlayer object with all general player fields. Can be
+                None if not specified.
+            stats (Dict[str, Any]): A dictionary representing all games stats for a given player.
+
+        Returns:
+            FidePlayerGameStats: A new FidePlayerGameStats instance.
         """
-        
         def decompose_raw_stats(
             fide_stats: Union[
-                FidePlayerGameBlackStatsBase,
-                FidePlayerGameWhiteStatsBase
+                FidePlayerGameBlackStatsRaw,
+                FidePlayerGameWhiteStatsRaw
             ]
         ) -> FideGamesSet:
             """
+            Generates a FideGamesSet object from the white or black raw stats model.
             """
             return FideGamesSet(
                 standard=FideGames(
@@ -308,16 +597,12 @@ class FidePlayerGameStats(BaseModel):
             )
 
         # Validate both white and black models
-        stats_white = FidePlayerGameWhiteStatsBase.model_validate(stats)
-        stats_black = FidePlayerGameBlackStatsBase.model_validate(stats)
+        stats_white = FidePlayerGameWhiteStatsRaw.model_validate(stats)
+        stats_black = FidePlayerGameBlackStatsRaw.model_validate(stats)
 
         # Decompose the raw models into structured models
-        stats_white_decomposed = decompose_raw_stats(
-            fide_stats=stats_white
-        )
-        stats_black_decomposed = decompose_raw_stats(
-            fide_stats=stats_black
-        )
+        stats_white_decomposed = decompose_raw_stats(fide_stats=stats_white)
+        stats_black_decomposed = decompose_raw_stats(fide_stats=stats_black)
 
         return FidePlayerGameStats(
             player=fide_player,
