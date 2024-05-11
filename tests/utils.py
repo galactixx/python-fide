@@ -5,14 +5,14 @@ import json
 from requests import RequestException
 
 def _build_response_path(filename: str) -> str:
-    """"""
+    """Utility function to build path to example file for tests."""
     return os.path.join(
         os.path.dirname(os.path.abspath(__file__)), 'examples', filename
     )
 
 
 def load_json_file(filename: str) -> Dict[str, Any]:
-    """"""
+    """Utility function to load example file as a JSON for tests."""
     response_path: str = _build_response_path(filename=filename)
     with open(response_path, encoding='utf-8') as json_file:
         fide_response = json.load(json_file)
@@ -21,6 +21,7 @@ def load_json_file(filename: str) -> Dict[str, Any]:
 
 
 class MockResponse:
+    """Mock response for patching."""
     def __init__(
         self,
         json_data: Dict[str, Any],
@@ -38,6 +39,7 @@ class MockResponse:
 
 
 class MockedResponse:
+    """Class used to create a MockResponse object."""
     def __init__(self, filename: str):
         self._response = load_json_file(filename=filename)
     

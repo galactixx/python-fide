@@ -15,7 +15,6 @@ fide_top_player_client = FideTopPlayersClient()
 
 @dataclass
 class CaseTopPlayers:
-    """A test case for the top ten standard players functionality."""
     limit: Optional[int]
     categories: Optional[List[RatingCategory]]
     exp_girls: int = 0
