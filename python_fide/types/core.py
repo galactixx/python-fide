@@ -9,6 +9,7 @@ from typing import (
 
 from pydantic import (
     BaseModel,
+    ConfigDict,
     Field, 
     field_validator,
     model_validator
@@ -124,10 +125,10 @@ class FidePlayerBasic(BaseModel):
     referred to as a "basic" version of FidePlayer.
 
     Args:
-        player_id (int): An integer representing a Fide ID for the player.
-        name (str): A string full name of the player.
-        first_name (str): The string first name of the player.
-        last_name (str | None): The string last name of the player. Can also be None if
+        player_id (int): An integer representing the Fide ID of the player.
+        name (str): The string full name.
+        first_name (str): The string first name.
+        last_name (str | None): The string last name . Can also be None if
             the last name could not reliably be detected.
         country (str): The country that the player represents.
     """
@@ -163,12 +164,12 @@ class FidePlayer(BaseModel):
     registered with Fide.
     
     Args:
-        player_id (int): An integer representing a Fide ID for the player.
-        name (str): A string full name of the player.
-        first_name (str): The string first name of the player.
-        last_name (str | None): The string last name of the player. Can also be None if
+        player_id (int): An integer representing the Fide ID of the player.
+        name (str): The string full name.
+        first_name (str): The string first name.
+        last_name (str | None): The string last name. Can also be None if
             the last name could not reliably be detected.
-        title (str | None): The title of the player (GM, IM, ...). Can be None if the player
+        title (str | None): The chess Fide title (GM, IM, ...). Can be None if the player
             has no title.
         country (str): The country that the player represents.
     """
@@ -214,10 +215,12 @@ class FideTopPlayer(BaseModel):
         period (DateISO): The period of reporting.
         birthday (DateISO): The birthday of the player.
         sex (Literal['M', 'F']): The sex of the player.
-        rating_standard (int | None): The current standard rating of the player.
-        rating_rapid (int | None): The current rapid rating of the player.
-        rating_blitz (int | None): The current blitz rating of the player.
+        rating_standard (int | None): The current standard rating.
+        rating_rapid (int | None): The current rapid rating.
+        rating_blitz (int | None): The current blitz rating.
     """
+    model_config = ConfigDict(use_enum_values=True)
+
     player: FidePlayerBasic
     category: RatingCategory
     ranking: int
@@ -262,9 +265,9 @@ class FidePlayerDetail(BaseModel):
         player (FidePlayer): A FidePlayer object with all general player fields.
         sex (Literal['M', 'F']): The sex of the player.
         birth_year (DateYear): The birth year of the player.
-        rating_standard (int | None): The current standard rating of the player.
-        rating_rapid (int | None): The current rapid rating of the player.
-        rating_blitz (int | None): The current blitz rating of the player.
+        rating_standard (int | None): The current standard rating.
+        rating_rapid (int | None): The current rapid rating.
+        rating_blitz (int | None): The current blitz rating.
     """
     player: FidePlayer
     sex: Literal['M', 'F']
@@ -294,7 +297,11 @@ class FidePlayerDetail(BaseModel):
 
 class FideEvent(BaseRecordPaginationModel):
     """
-    
+    A model containing information for a specific Fide event.
+
+    Args:
+        name (str): The string name of the event.
+        event_id (int): An integer representing a Fide ID for the event.
     """
     name: str = Field(..., validation_alias='name')
     event_id: int = Field(..., validation_alias='id')
@@ -309,12 +316,27 @@ class FideEvent(BaseRecordPaginationModel):
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideEvent':
         """
+        Creates an instance of FideEvent based on a dictionary pulled from
+        the API response.
+
+        Args:
+            record (Dict[str, Any]): A dictionary representing a Fide event.
+
+        Returns:
+            FideEvent: A FideEvent instance.
         """
         return FideEvent.model_validate(record)
 
 
 class FideNewsBasic(BaseRecordPaginationModel):
-    """"""
+    """
+    A slightly less detailed model than the FideNews model. Thus, it is
+    referred to as a "basic" version of FideNews.
+
+    Args:
+        title (str): The string title of the news story.
+        news_id (int): An integer representing a Fide ID for the news story.
+    """
     title: str = Field(..., validation_alias='name')
     news_id: int = Field(..., validation_alias='id')
 
@@ -328,25 +350,67 @@ class FideNewsBasic(BaseRecordPaginationModel):
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideNewsBasic':
         """
+        Creates an instance of FideNewsBasic based on a dictionary pulled from
+        the API response.
+
+        Args:
+            record (Dict[str, Any]): A dictionary representing a Fide news story.
+
+        Returns:
+            FideNewsBasic: A FideNewsBasic instance.
         """
         return FideNewsBasic.model_validate(record)
     
 
-class FideNews(FideNewsBasic):
-    """"""
+class FideNews(BaseRecordPaginationModel):
+    """
+    A model containing information for a specific news story published by Fide.
+
+    Args:
+        title (str): The string title of the news story.
+        news_id (int): An integer representing a Fide ID for the news story.
+        posted_at (DateTime): The datetime of posting.
+    """
+    title: str = Field(..., validation_alias='name')
+    news_id: int = Field(..., validation_alias='id')
     posted_at: DateTime
 
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideNews':
         """
+        Creates an instance of FideNews based on a dictionary pulled from
+        the API response.
+
+        Args:
+            record (Dict[str, Any]): A dictionary representing a Fide news story.
+
+        Returns:
+            FideNews: A FideNews instance.
         """
         return FideNews.model_validate(record)
 
 
 class FideEventDetail(BaseRecordPaginationModel):
     """
-    
+    A model representing additional detail for a Fide event beyond what is provided
+    in the generic FideEvent model.
 
+    event (FideEvent): A FideEvent object with all general event fields.
+    city (str | None): The city in which the country is taking place.
+    country (str | None): The country in which the event is taking place.
+    start_date (DateTime | None): The expected start date of the event.
+    end_date (DateTime | None): The expected end date of the event.
+    game_format (str): The game format.
+    tournament_type (str | None): The tournament system (i.e. Swiss).
+    time_control (str | None): The time control.
+    time_control_desc (str | None): The description of the time control.
+    rounds (str | None): The number of rounds.
+    players (str | None): The number of players expected to attend.
+    telephone (str | None): The telephone number associated with the event.
+    website (str | None): The website.
+    organizer (str | None): The organizer.
+    chief_arbiter (str | None): The chief arbiter.
+    chief_organizer (str | None): The chief organizer.
     """
     event: FideEvent
     city: Optional[str]
@@ -372,7 +436,7 @@ class FideEventDetail(BaseRecordPaginationModel):
         the API response.
 
         Args:
-            record (Dict[str, Any]): A dictionary representing detail for an event.
+            record (Dict[str, Any]): A dictionary representing detail of an event.
 
         Returns:
             FideEventDetail: A new FideEventDetail instance.
@@ -386,8 +450,16 @@ class FideEventDetail(BaseRecordPaginationModel):
 
 class FideNewsDetail(BaseModel):
     """
+    A model representing additional detail for a Fide news story beyond what is provided
+    in the generic FideNews model.
 
-
+    news (FideNews): A FideNews object with all general news story fields.
+    topic (FideNewsTopic): A FideNewsTopic object representing the news topic.
+    category (FideNewsCategory): A FideNewsCategory object representing the news category.
+    contents (List[FideNewsContent]): A list of FideNewsContent objects each representing content
+        included in the news story (HTML, images, ...).
+    created_at (DateTime): The datetime of creation.
+    updated_at (DateTime): The datetime of the last update.
     """
     news: FideNews
     topic: FideNewsTopic
@@ -403,7 +475,7 @@ class FideNewsDetail(BaseModel):
         the API response.
 
         Args:
-            news (Dict[str, Any]): A dictionary representing detail for a news story.
+            news (Dict[str, Any]): A dictionary representing detail of a news story.
 
         Returns:
             FideNewsDetail: A new FideNewsDetail instance.

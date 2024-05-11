@@ -22,12 +22,8 @@ fide_events_client = FideEventsClient()
 FIDE_EVENT_DETAIL_CANDIDATES = FideEventDetail(
     city='Toronto',
     country='Canada',
-    start_date=Date(
-        date_iso='2024-04-03', date_original='2024-04-03 00:00:00', date_original_format='%Y-%m-%d %H:%M:%S'
-    ),
-    end_date=Date(
-        date_iso='2024-04-23', date_original='2024-04-23 23:59:59', date_original_format='%Y-%m-%d %H:%M:%S'
-    ),
+    start_date=Date.from_date_format(date='2024-04-03 00:00:00', date_format='%Y-%m-%d %H:%M:%S'),
+    end_date=Date.from_date_format(date='2024-04-23 23:59:59', date_format='%Y-%m-%d %H:%M:%S'),
     game_format='s',
     tournament_type=None,
     time_control=None,
@@ -45,12 +41,8 @@ FIDE_EVENT_DETAIL_CANDIDATES = FideEventDetail(
 FIDE_EVENT_DETAIL_CANDIDATES_WOMEN = FideEventDetail(
     city='Toronto',
     country='Canada',
-    start_date=Date(
-        date_iso='2024-04-03', date_original='2024-04-03 00:00:00', date_original_format='%Y-%m-%d %H:%M:%S'
-    ),
-    end_date=Date(
-        date_iso='2024-04-23', date_original='2024-04-23 23:59:59', date_original_format='%Y-%m-%d %H:%M:%S'
-    ),
+    start_date=Date.from_date_format(date='2024-04-03 00:00:00', date_format='%Y-%m-%d %H:%M:%S'),
+    end_date=Date.from_date_format(date='2024-04-23 23:59:59', date_format='%Y-%m-%d %H:%M:%S'),
     game_format='s',
     tournament_type=None,
     time_control=None,
@@ -67,8 +59,7 @@ FIDE_EVENT_DETAIL_CANDIDATES_WOMEN = FideEventDetail(
 
 
 def test_event_detail_parsing() -> None:
-    """
-    """
+    """Testing the event detail parsing functions."""
     fide_response_one: Dict[str, Any] = load_json_file(filename='fide_event_candidates.json')
     event_detail: FideEventDetail = event_detail_parsing(response=fide_response_one)
     assert event_detail == FIDE_EVENT_DETAIL_CANDIDATES
@@ -91,8 +82,7 @@ def test_event_detail_parsing() -> None:
     autospec=True
 )
 def test_event_mock_detail_candidates(_, fide_event: Union[FideEvent, FideEventID]) -> None:
-    """
-    """
+    """Testing the event detail functionality for example one."""
     event_detail: FideEventDetail = fide_events_client.get_event_detail(
         fide_event=fide_event
     )
@@ -112,8 +102,7 @@ def test_event_mock_detail_candidates(_, fide_event: Union[FideEvent, FideEventI
     autospec=True
 )
 def test_event_mock_detail_candidates_women(_, fide_event: Union[FideEvent, FideEventID]) -> None:
-    """
-    """
+    """Testing the event detail functionality for example two."""
     event_detail: FideEventDetail = fide_events_client.get_event_detail(
         fide_event=fide_event
     )
@@ -128,8 +117,7 @@ def test_event_mock_detail_candidates_women(_, fide_event: Union[FideEvent, Fide
     ]
 )
 def test_event_error_invalid_fide_id(fide_event_id: str, error: str) -> None:
-    """
-    """
+    """Testing the InvalidFideIDError for the FideEventID class."""
     with pytest.raises(InvalidFideIDError) as exc_info:
         _ = FideEventID(entity_id=fide_event_id)
     assert str(exc_info.value) == error

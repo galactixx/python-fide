@@ -20,8 +20,7 @@ fide_search_client = FideSearchClient()
     autospec=True
 )
 def test_event_mock_search(_) -> None:
-    """
-    """
+    """Testing the event search functionality."""
     fide_events: List[FideEvent] = fide_search_client.get_events(query='Chess', limit=4)
 
     assert len(fide_events) == 4
@@ -34,8 +33,7 @@ def test_event_mock_search(_) -> None:
     autospec=True
 )
 def test_news_mock_search(_) -> None:
-    """
-    """
+    """Testing the news search functionality."""
     fide_news: List[FideNewsBasic] = fide_search_client.get_news(query='Chess', limit=6)
 
     assert len(fide_news) == 6
@@ -48,8 +46,7 @@ def test_news_mock_search(_) -> None:
     autospec=True
 )
 def test_player_mock_search(_) -> None:
-    """
-    """
+    """Testing the player search functionality."""
     fide_players: List[FidePlayer] = fide_search_client.get_fide_players_by_name(
         fide_player_name=FidePlayerName(first_name='Hikaru', last_name='Nakamura')
     )

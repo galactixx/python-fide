@@ -33,8 +33,7 @@ def top_standard_players_parsing(
             try:
                 player = next(players)
                 fide_player = FideTopPlayer.from_validated_model(
-                    player=player,
-                    category=category
+                    player=player, category=category
                 )
 
                 gathered_players.append(fide_player)

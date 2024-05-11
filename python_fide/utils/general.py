@@ -1,9 +1,20 @@
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 from datetime import datetime
 from urllib.parse import urljoin
 
 def validate_date_format(date: str, date_format: str) -> Optional[str]:
     """
+    Validation of a specific date format given a string date. Will return
+    an ISO formatted date (%Y-%m-%d). If the date does not match the format
+    provided, then None is returned instead of the formatted date.
+
+    Args:
+        date (str): A date represented as a string in some format.
+        date_format (str): A string format of the date.
+
+    Returns:
+        str | None: A string ISO formatted date or None if the date string
+            did not match the format provided.
     """
     try:
         month_reformatted = datetime.strptime(date, date_format)
@@ -14,51 +25,55 @@ def validate_date_format(date: str, date_format: str) -> Optional[str]:
         return month_date
 
 
-def join_strings_by_space(strings: List[str]) -> str:
-    """
-    """
-    return ' '.join(
-        name.strip() for name in strings
-    )
-
-
 def combine_fide_player_names(first_name: str, last_name: str) -> str:
+    """Standardizes the combination first and last name."""
     return f'{last_name}, {first_name}'
 
 
-## NEED TO FINE-TUNE TO CHANGE LOGIC TO ONLY SPLIT UP LAST AND FIRST NAME IF A COMMA EXISTS, OTHERWISE PUT
-## ALL IN FIRST NAME
-def parse_fide_player_name(name: str, split_char: str) -> Tuple[str, Optional[str]]:
+def clean_fide_player_name(name: str) -> Tuple[str, Optional[str]]:
     """
-    """
-    name_split = name.split(split_char)
-    if len(name_split) == 1:
-        player_first_name = name_split[0].strip()
-        return player_first_name, None
-    else:
-        player_last_name = name_split[0].strip()
-        player_first_name = join_strings_by_space(strings=name_split[1:])
-        return (
-            player_first_name, player_last_name
-        )
+    Cleans the raw player name field from the API response.
+    
+    If there is a comma in the name, it is clear that the last
+    name is separated from the rest of the name. Thus, we treat anything
+    before the comma as the last name and anything after is combined
+    into the first name.
 
+    If there is no comma found in the name, then the entire name is
+    treated as the first name, and the last name is returned as None.
 
-def clean_fide_player_name(name: str) -> Tuple[str, str]:
-    """
+    Args:
+        name (str): The full name of the player returned from the raw
+            API response.
+    
+    Returns:
+        Tuple[str, str | None]: A tuple of a string first name and a string
+            last name. The last name can be None if it was not detected
+            reliably.
     """
     if ',' not in name:
-        first_name, last_name = parse_fide_player_name(
-            name=name, split_char=' '
-        )
+        return name, None
     else:
-        first_name, last_name = parse_fide_player_name(
-            name=name, split_char=','
-        )
-    return first_name, last_name
+        name_split = name.split(',')
+        if len(name_split) == 1:
+            first_name = name_split[0].strip()
+            return first_name, None
+        else:
+            last_name = name_split[0].strip()
+            first_name = ' '.join(name.strip() for name in name_split[1:])
+            return first_name, last_name
 
 
 def build_url(base: str, segments: Union[int, str]) -> str:
     """
+    Builds a URL based on a base URL and segments.
+
+    Args:
+        base (str): A string base URL.
+        segments (int | str): A string or integer URL segment.
+
+    Returns:
+        str: A complete URL consolidating the base and segments.
     """
     if isinstance(segments, int):
         segments = str(segments)

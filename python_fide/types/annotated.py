@@ -16,17 +16,22 @@ class Date(BaseModel):
 
     Args:
         date_iso (str | None): The date value represented as an ISO date string. Can also
-            be None if there was an unexpected error in parsing the date.
+            be None if there was an unexpected error in validating the date.
+        date_orig (str): The original date represented as a string in some format.
+        date_orig_format (str): The exepected string format of the original date.
     """
     date_iso: Optional[str]
-    date_original: str
-    date_original_format: str
+    date_orig: str
+    date_orig_format: str
 
     @property
     def as_date(self) -> Optional[date]:
         """The ISO date converted into a date object."""
         datetime_as_date = self.as_datetime
-        return datetime_as_date.date() if datetime_as_date is not None else None 
+        return (
+            datetime_as_date.date()
+            if datetime_as_date is not None else None
+        )
 
     @property
     def as_datetime(self) -> Optional[datetime]:
@@ -51,7 +56,7 @@ class Date(BaseModel):
         """
         date_iso = validate_date_format(date=date, date_format=date_format)
         return cls(
-            date_iso=date_iso, date_original=date, date_original_format=date_format
+            date_iso=date_iso, date_orig=date, date_orig_format=date_format
         )
 
 
@@ -66,7 +71,7 @@ def _isinstance_date(func):
             return date
         else:
             raise TypeError(
-                f"{type(date)} not a valid type, expecting a str or dict"
+                f"{type(date)} not a valid type, expecting a str, dict, or Date"
             )
     return inner
 

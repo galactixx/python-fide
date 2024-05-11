@@ -53,10 +53,10 @@ class BaseRecordPaginationModel(ABC, BaseRawModel):
 
 class BasePlayer(BaseRawModel):
     """Base model for all player models."""
-    def get_decomposed_player_name(self) -> Tuple[str, str]:
+    def _get_decomposed_player_name(self) -> Tuple[str, str]:
         return clean_fide_player_name(name=getattr(self, 'name'))
 
-    def set_player_name(self, first_name: str, last_name: str) -> None:
+    def _set_player_name(self, first_name: str, last_name: str) -> None:
         setattr(
             self, 'name', f'{first_name} {last_name}'
         )

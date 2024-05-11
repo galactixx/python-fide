@@ -28,9 +28,7 @@ fide_player_client = FidePlayerClient()
 
 FIDE_PLAYER_DETAIL_CARLSEN = FidePlayerDetail(
     sex='M',
-    birth_year=Date(
-        date_iso='1990-01-01', date_original='1990', date_original_format='%Y'
-    ),
+    birth_year=Date.from_date_format(date='1990', date_format='%Y'),
     rating_standard=2830,
     rating_rapid=2828,
     rating_blitz=2886,
@@ -46,9 +44,7 @@ FIDE_PLAYER_DETAIL_CARLSEN = FidePlayerDetail(
 
 FIDE_PLAYER_DETAIL_NAKAMURA = FidePlayerDetail(
     sex='M',
-    birth_year=Date(
-        date_iso='1987-01-01', date_original='1987', date_original_format='%Y'
-    ),
+    birth_year=Date.from_date_format(date='1987', date_format='%Y'),
     rating_standard=2794,
     rating_rapid=2746,
     rating_blitz=2874,
@@ -63,8 +59,7 @@ FIDE_PLAYER_DETAIL_NAKAMURA = FidePlayerDetail(
 )
 
 def test_player_detail_parsing() -> None:
-    """
-    """
+    """Testing the player detail parsing functions."""
     fide_response_one: Dict[str, Any] = load_json_file(filename='fide_player_carlsen.json')
     player_detail: FidePlayerDetail = player_detail_parsing(response=fide_response_one)
     assert player_detail == FIDE_PLAYER_DETAIL_CARLSEN
@@ -86,9 +81,8 @@ def test_player_detail_parsing() -> None:
     side_effect=MockedResponse(filename='fide_player_carlsen.json').mock_response,
     autospec=True
 )
-def test_player_mock_detail_carslen(_, fide_player: Union[FidePlayer, FidePlayerID]) -> None:
-    """
-    """
+def test_player_mock_detail_carlsen(_, fide_player: Union[FidePlayer, FidePlayerID]) -> None:
+    """Testing the player detail functionality for example one."""
     player_detail: FidePlayerDetail = fide_player_client.get_fide_player_detail(
         fide_player=fide_player
     )
@@ -108,8 +102,7 @@ def test_player_mock_detail_carslen(_, fide_player: Union[FidePlayer, FidePlayer
     autospec=True
 )
 def test_player_mock_detail_nakamura(_, fide_player: Union[FidePlayer, FidePlayerID]) -> None:
-    """
-    """
+    """Testing the player detail functionality for example two."""
     player_detail: FidePlayerDetail = fide_player_client.get_fide_player_detail(
         fide_player=fide_player
     )
@@ -122,8 +115,7 @@ def test_player_mock_detail_nakamura(_, fide_player: Union[FidePlayer, FidePlaye
     autospec=True
 )
 def test_player_mock_opponents(_) -> None:
-    """
-    """
+    """Testing the player opponents functionality."""
     opponents = fide_player_client.get_fide_player_opponents(
         fide_player=FIDE_PLAYER_DETAIL_CARLSEN.player
     )
@@ -161,8 +153,7 @@ def test_player_mock_opponents(_) -> None:
     autospec=True
 )
 def test_player_mock_rating_progress_chart(_) -> None:
-    """
-    """
+    """Testing the player historical ratings functionality."""
     historical_ratings = fide_player_client.get_fide_player_rating_progress_chart(
         period=Period.ONE_YEAR, fide_player=FIDE_PLAYER_DETAIL_CARLSEN.player
     )
@@ -173,27 +164,21 @@ def test_player_mock_rating_progress_chart(_) -> None:
     )
 
     assert historical_ratings[0] == FidePlayerRating(
-        month=Date(
-            date_iso='2024-01-01', date_original='2024-Jan', date_original_format='%Y-%b'
-        ),
+        month=Date.from_date_format(date='2024-Jan', date_format='%Y-%b'),
         player=FIDE_PLAYER_DETAIL_CARLSEN.player,
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=43, rating=2823),
         blitz=FideRating(games=21, rating=2886)
     )
     assert historical_ratings[1] == FidePlayerRating(
-        month=Date(
-            date_iso='2024-02-01', date_original='2024-Feb', date_original_format='%Y-%b'
-        ),
+        month=Date.from_date_format(date='2024-Feb', date_format='%Y-%b'),
         player=FIDE_PLAYER_DETAIL_CARLSEN.player,
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=0, rating=2823),
         blitz=FideRating(games=0, rating=2886)
     )
     assert historical_ratings[2] == FidePlayerRating(
-        month=Date(
-            date_iso='2024-03-01', date_original='2024-Mar', date_original_format='%Y-%b'
-        ),
+        month=Date.from_date_format(date='2024-Mar', date_format='%Y-%b'),
         player=FIDE_PLAYER_DETAIL_CARLSEN.player,
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=0, rating=2823),
@@ -207,8 +192,7 @@ def test_player_mock_rating_progress_chart(_) -> None:
     autospec=True
 )
 def test_player_mock_game_stats(_) -> None:
-    """
-    """
+    """Testing the player game statistics functionality."""
     game_stats = fide_player_client.get_fide_player_game_stats(
         fide_player=FIDE_PLAYER_DETAIL_CARLSEN.player
     )
@@ -251,8 +235,7 @@ def test_player_mock_game_stats(_) -> None:
     ]
 )
 def test_player_error_invalid_fide_id(fide_player_id: str, error: str) -> None:
-    """
-    """
+    """Testing the InvalidFideIDError for the FidePlayerID class."""
     with pytest.raises(InvalidFideIDError) as exc_info:
         _ = FidePlayerID(entity_id=fide_player_id)
     assert str(exc_info.value) == error
