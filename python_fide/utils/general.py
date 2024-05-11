@@ -55,13 +55,9 @@ def clean_fide_player_name(name: str) -> Tuple[str, Optional[str]]:
         return name, None
     else:
         name_split = name.split(',')
-        if len(name_split) == 1:
-            first_name = name_split[0].strip()
-            return first_name, None
-        else:
-            last_name = name_split[0].strip()
-            first_name = ' '.join(name.strip() for name in name_split[1:])
-            return first_name, last_name
+        last_name = name_split[0].strip()
+        first_name = ' '.join(name.strip() for name in name_split[1:])
+        return first_name, last_name
 
 
 def build_url(base: str, segments: Union[int, str]) -> str:
