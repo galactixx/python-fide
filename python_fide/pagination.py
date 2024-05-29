@@ -4,8 +4,8 @@ T = TypeVar('T')
 
 class FidePagination:
     """
-    Pagination class with helper methods. Generally used for pagination
-    when parsing from the event and news endpoints.
+    Pagination class with helper methods. Generally used for
+    pagination when parsing from the event and news endpoints.
 
     Args:
         limit (int): The maximum number of records to pull from endpoint.

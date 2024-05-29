@@ -72,7 +72,8 @@ class FidePlayerName(BaseModel):
 
 class FideBaseID(BaseModel):
     """
-    Base model for all Fide ID models (FidePlayerID, FideNewsID, FideEventID).
+    Base model for all Fide ID models (FidePlayerID, FideNewsID,
+    FideEventID).
 
     Args:
         entity_id (int): An integer representing a Fide ID.
@@ -121,8 +122,8 @@ class FideEventID(FideBaseID):
 
 class FidePlayerBasic(BaseModel):
     """
-    A slightly less detailed model than the FidePlayer model. Thus, it is
-    referred to as a "basic" version of FidePlayer.
+    A slightly less detailed model than the FidePlayer model. Thus,
+    it is referred to as a "basic" version of FidePlayer.
 
     Args:
         player_id (int): An integer representing the Fide ID of the player.
@@ -141,8 +142,8 @@ class FidePlayerBasic(BaseModel):
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerBasic':
         """
-        Creates an instance of FidePlayerBasic based on a dictionary pulled from
-        the API response.
+        Creates an instance of FidePlayerBasic based on a dictionary
+        pulled from the API response.
 
         Args:
             player (Dict[str, Any]): A dictionary representing a player.
@@ -164,13 +165,14 @@ class FidePlayer(BaseModel):
     registered with Fide.
     
     Args:
-        player_id (int): An integer representing the Fide ID of the player.
+        player_id (int): An integer representing the Fide ID of
+            the player.
         name (str): The string full name.
         first_name (str): The string first name.
         last_name (str | None): The string last name. Can also be None if
             the last name could not reliably be detected.
-        title (str | None): The chess Fide title (GM, IM, ...). Can be None if the player
-            has no title.
+        title (str | None): The chess Fide title (GM, IM, ...). Can be
+            None if the player has no title.
         country (str): The country that the player represents.
     """
     player_id: int
@@ -183,8 +185,8 @@ class FidePlayer(BaseModel):
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayer':
         """
-        Creates an instance of FidePlayer based on a dictionary pulled from
-        the API response.
+        Creates an instance of FidePlayer based on a dictionary pulled
+        from the API response.
 
         Args:
             player (Dict[str, Any]): A dictionary representing a player.
@@ -205,12 +207,15 @@ class FideTopPlayer(BaseModel):
     A more detailed model than the FidePlayer model, and containing
     fields that are only included in the top player response. Thus,
     it is separate from the FidePlayer model. In addition, the 'title'
-    field is not included in the raw response, so the core player attributes
-    are represented as a FidePlayerBasic object rather than a FidePlayer object.
+    field is not included in the raw response, so the core player
+    attributes are represented as a FidePlayerBasic object rather than
+    a FidePlayer object.
 
     Args:
-        player (FidePlayerBasic): A FidePlayerBasic object with all general player fields.
-        category (RatingCategory): The category that the player belongs to (OPEN, WOMEN, JUNIORS, GIRLS).
+        player (FidePlayerBasic): A FidePlayerBasic object with all
+            general player fields.
+        category (RatingCategory): The category that the player belongs
+            to (OPEN, WOMEN, JUNIORS, GIRLS).
         ranking (int): The ranking of the player.
         period (DateISO): The period of reporting.
         birthday (DateISO): The birthday of the player.
@@ -238,13 +243,13 @@ class FideTopPlayer(BaseModel):
         category: RatingCategory
     ) -> 'FideTopPlayer':
         """
-        Creates an instance of FideTopPlayer based on a dictionary pulled from
-        the API response and a specified RatingCategory.
+        Creates an instance of FideTopPlayer based on a dictionary
+        pulled from the API response and a specified RatingCategory.
 
         Args:
             player (Dict[str, Any]): A dictionary representing a player.
-            category (RatingCategory): A RatingCategory representing a chess
-                category (OPEN, WOMEN, JUNIORS, GIRLS).
+            category (RatingCategory): A RatingCategory representing a
+                chess category (OPEN, WOMEN, JUNIORS, GIRLS).
 
         Returns:
             FideTopPlayer: A new FideTopPlayer instance.
@@ -258,8 +263,8 @@ class FideTopPlayer(BaseModel):
 
 class FidePlayerDetail(BaseModel):
     """
-    A model representing additional detail for a player beyond what is provided
-    in the generic FidePlayer model.
+    A model representing additional detail for a player beyond
+    what is provided in the generic FidePlayer model.
 
     Args:
         player (FidePlayer): A FidePlayer object with all general player fields.
@@ -279,8 +284,8 @@ class FidePlayerDetail(BaseModel):
     @classmethod
     def from_validated_model(cls, player: Dict[str, Any]) -> 'FidePlayerDetail':
         """
-        Creates an instance of FidePlayerDetail based on a dictionary pulled from
-        the API response.
+        Creates an instance of FidePlayerDetail based on a
+        dictionary pulled from the API response.
 
         Args:
             player (Dict[str, Any]): A dictionary representing a player detail.
@@ -316,8 +321,8 @@ class FideEvent(BaseRecordPaginationModel):
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideEvent':
         """
-        Creates an instance of FideEvent based on a dictionary pulled from
-        the API response.
+        Creates an instance of FideEvent based on a dictionary
+        pulled from the API response.
 
         Args:
             record (Dict[str, Any]): A dictionary representing a Fide event.
@@ -330,8 +335,8 @@ class FideEvent(BaseRecordPaginationModel):
 
 class FideNewsBasic(BaseRecordPaginationModel):
     """
-    A slightly less detailed model than the FideNews model. Thus, it is
-    referred to as a "basic" version of FideNews.
+    A slightly less detailed model than the FideNews model. Thus,
+    it is referred to as a "basic" version of FideNews.
 
     Args:
         title (str): The string title of the news story.
@@ -350,11 +355,12 @@ class FideNewsBasic(BaseRecordPaginationModel):
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideNewsBasic':
         """
-        Creates an instance of FideNewsBasic based on a dictionary pulled from
-        the API response.
+        Creates an instance of FideNewsBasic based on a dictionary
+        pulled from the API response.
 
         Args:
-            record (Dict[str, Any]): A dictionary representing a Fide news story.
+            record (Dict[str, Any]): A dictionary representing a Fide
+                news story.
 
         Returns:
             FideNewsBasic: A FideNewsBasic instance.
@@ -364,7 +370,8 @@ class FideNewsBasic(BaseRecordPaginationModel):
 
 class FideNews(BaseRecordPaginationModel):
     """
-    A model containing information for a specific news story published by Fide.
+    A model containing information for a specific news story
+    published by Fide.
 
     Args:
         title (str): The string title of the news story.
@@ -378,11 +385,12 @@ class FideNews(BaseRecordPaginationModel):
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideNews':
         """
-        Creates an instance of FideNews based on a dictionary pulled from
-        the API response.
+        Creates an instance of FideNews based on a dictionary pulled
+        from the API response.
 
         Args:
-            record (Dict[str, Any]): A dictionary representing a Fide news story.
+            record (Dict[str, Any]): A dictionary representing a Fide
+                news story.
 
         Returns:
             FideNews: A FideNews instance.
@@ -392,8 +400,8 @@ class FideNews(BaseRecordPaginationModel):
 
 class FideEventDetail(BaseRecordPaginationModel):
     """
-    A model representing additional detail for a Fide event beyond what is provided
-    in the generic FideEvent model.
+    A model representing additional detail for a Fide event beyond
+    what is provided in the generic FideEvent model.
 
     event (FideEvent): A FideEvent object with all general event fields.
     city (str | None): The city in which the country is taking place.
@@ -432,11 +440,12 @@ class FideEventDetail(BaseRecordPaginationModel):
     @classmethod
     def from_validated_model(cls, record: Dict[str, Any]) -> 'FideEventDetail':
         """
-        Creates an instance of FideEventDetail based on a dictionary pulled from
-        the API response.
+        Creates an instance of FideEventDetail based on a dictionary
+        pulled from the API response.
 
         Args:
-            record (Dict[str, Any]): A dictionary representing detail of an event.
+            record (Dict[str, Any]): A dictionary representing detail
+                of an event.
 
         Returns:
             FideEventDetail: A new FideEventDetail instance.
@@ -450,14 +459,15 @@ class FideEventDetail(BaseRecordPaginationModel):
 
 class FideNewsDetail(BaseModel):
     """
-    A model representing additional detail for a Fide news story beyond what is provided
-    in the generic FideNews model.
+    A model representing additional detail for a Fide news story
+    beyond what is provided in the generic FideNews model.
 
     news (FideNews): A FideNews object with all general news story fields.
     topic (FideNewsTopic): A FideNewsTopic object representing the news topic.
-    category (FideNewsCategory): A FideNewsCategory object representing the news category.
-    contents (List[FideNewsContent]): A list of FideNewsContent objects each representing content
-        included in the news story (HTML, images, ...).
+    category (FideNewsCategory): A FideNewsCategory object representing the
+        news category.
+    contents (List[FideNewsContent]): A list of FideNewsContent objects
+        each representing content included in the news story (HTML, images, ...).
     created_at (DateTime): The datetime of creation.
     updated_at (DateTime): The datetime of the last update.
     """
@@ -471,11 +481,12 @@ class FideNewsDetail(BaseModel):
     @classmethod
     def from_validated_model(cls, news: Dict[str, Any]) -> 'FideNewsDetail':
         """
-        Creates an instance of FideNewsDetail based on a dictionary pulled from
-        the API response.
+        Creates an instance of FideNewsDetail based on a dictionary
+        pulled from the API response.
 
         Args:
-            news (Dict[str, Any]): A dictionary representing detail of a news story.
+            news (Dict[str, Any]): A dictionary representing detail of
+                a news story.
 
         Returns:
             FideNewsDetail: A new FideNewsDetail instance.
@@ -489,8 +500,8 @@ class FideNewsDetail(BaseModel):
 
 class FideRating(BaseModel):
     """
-    Model that represents a rating for a specific game format at the end of a month,
-    along with the number of games played in that month.
+    Model that represents a rating for a specific game format at the
+    end of a month, along with the number of games played in that month.
 
     Args:
         games (int): The number of games played in a month.
@@ -502,15 +513,20 @@ class FideRating(BaseModel):
 
 class FidePlayerRating(BaseModel):
     """
-    Model that represents a set of ratings at the end of a specific month. Includes
-    end-of-month ratings for all formats (standard, rapid, blitz).
+    Model that represents a set of ratings at the end of a specific
+    month. Includes end-of-month ratings for all formats (standard,
+    rapid, blitz).
 
     Args:
         month (DateYearMonth): A specific month.
-        player (FidePlayer): A FidePlayer object with all general player fields.
-        standard (FideRating): A FideRating object representing the standard rating at end-of-month.
-        rapid (FideRating): A FideRating object representing the rapid rating at end-of-month.
-        blitz (FideRating): A FideRating object representing the blitz rating at end-of-month.
+        player (FidePlayer): A FidePlayer object with all general 
+            player fields.
+        standard (FideRating): A FideRating object representing the
+            standard rating at end-of-month.
+        rapid (FideRating): A FideRating object representing the rapid
+            rating at end-of-month.
+        blitz (FideRating): A FideRating object representing the blitz
+            rating at end-of-month.
     """
     month: DateYearMonth
     player: FidePlayer
@@ -525,12 +541,14 @@ class FidePlayerRating(BaseModel):
         rating: Dict[str, Any]
     ) -> 'FidePlayerRating':
         """
-        Creates an instance of FidePlayerRating based on a dictionary pulled from
-        the API response.
+        Creates an instance of FidePlayerRating based on a dictionary
+        pulled from the API response.
 
         Args:
-            player (FidePlayer): A FidePlayer object with all general player fields.
-            rating (Dict[str, Any]): A dictionary representing all ratings for a given month.
+            player (FidePlayer): A FidePlayer object with all general
+                player fields.
+            rating (Dict[str, Any]): A dictionary representing all
+                ratings for a given month.
 
         Returns:
             FidePlayerRating: A new FidePlayerRating instance.
@@ -559,8 +577,8 @@ class FidePlayerRating(BaseModel):
 
 class FideGames(BaseModel):
     """
-    A model that represents all game statistics for a specific game format. Included
-    is the total games won, drawn and lost.
+    A model that represents all game statistics for a specific game
+    format. Included is the total games won, drawn and lost.
 
     Args:
         games_total (int): The total number of games played.
@@ -584,16 +602,16 @@ class FideGames(BaseModel):
 
 class FideGamesSet(BaseModel):
     """
-    A model that represents a set of game statistics for all game formats (standard,
-    rapid, blitz).
+    A model that represents a set of game statistics for all game
+    formats (standard, rapid, blitz).
 
     Args:
-        standard (FideGames): A FideGames object representing the games stats
-            for the standard game format.
-        rapid (FideGames): A FideGames object representing the games stats
-            for the rapid game format.
-        blitz (FideGames): A FideGames object representing the games stats
-            for the blitz game format.
+        standard (FideGames): A FideGames object representing the
+            games stats for the standard game format.
+        rapid (FideGames): A FideGames object representing the games
+            stats for the rapid game format.
+        blitz (FideGames): A FideGames object representing the games
+            stats for the blitz game format.
     """
     standard: FideGames
     rapid: FideGames
@@ -602,15 +620,16 @@ class FideGamesSet(BaseModel):
 
 class FidePlayerGameStats(BaseModel):
     """
-    A model that represents all game statistics for a specific player, partitioned by
-    when playing with both black and white pieces. If the 'opponent' attribute is not None,
-    then the game stats are filtered by games played against this player, otherwise
-    the entire game history is included.
+    A model that represents all game statistics for a specific player,
+    partitioned by when playing with both black and white pieces. If
+    the 'opponent' attribute is not None, then the game stats are filtered
+    by games played against this player, otherwise the entire game history
+    is included.
 
     Args:
         player (FidePlayer): A FidePlayer object with all general player fields.
-        opponent (FidePlayer | None): A FidePlayer object with all general player fields.
-            Can be None if not specified.
+        opponent (FidePlayer | None): A FidePlayer object with all general
+            player fields. Can be None if not specified.
         white (FideGamesSest): The game statistics for all game formats when
             playing with the white pieces.
         black (FideGames Set): The game statistics for all game formats when
@@ -629,14 +648,16 @@ class FidePlayerGameStats(BaseModel):
         stats: Dict[str, Any]
     ) -> 'FidePlayerGameStats':
         """
-        Creates an instance of FidePlayerGameStats based on a dictionary pulled from
-        the API response.
+        Creates an instance of FidePlayerGameStats based on a dictionary
+        pulled from the API response.
 
         Args:
-            fide_player (FidePlayer): A FidePlayer object with all general player fields.
-            fide_player_opponent (FidePlayer): A FidePlayer object with all general player fields. Can be
-                None if not specified.
-            stats (Dict[str, Any]): A dictionary representing all games stats for a given player.
+            fide_player (FidePlayer): A FidePlayer object with all general
+                player fields.
+            fide_player_opponent (FidePlayer): A FidePlayer object with all
+                general player fields. Can be None if not specified.
+            stats (Dict[str, Any]): A dictionary representing all games stats
+                for a given player.
 
         Returns:
             FidePlayerGameStats: A new FidePlayerGameStats instance.
@@ -648,7 +669,8 @@ class FidePlayerGameStats(BaseModel):
             ]
         ) -> FideGamesSet:
             """
-            Generates a FideGamesSet object from the white or black raw stats model.
+            Generates a FideGamesSet object from the white or black raw
+            stats model.
             """
             return FideGamesSet(
                 standard=FideGames(

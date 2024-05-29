@@ -14,22 +14,25 @@ from python_fide.types.core import (
 
 class BaseSearchConfig(ParameterAliasConfig):
     """
-    Base search configuration for all search endpoints from the FideSearchClient.
+    Base search configuration for all search endpoints
+    from the FideSearchClient.
 
     Args:
-        link (Literal['event', 'news', 'player']): A literal for the type of search. A
-            search can either be by event, news, or player.
+        link (Literal['event', 'news', 'player']): A literal
+            for the type of search. A search can either be by
+            event, news, or player.
     """
     link: Literal['event', 'news', 'player']
 
 
 class SearchConfig(BaseSearchConfig):
     """
-    The search configuration for both the event and news search endpoints from
-    the FideSearchClient.
+    The search configuration for both the event and news
+    search endpoints from the FideSearchClient.
 
     Args:
-        search_query (str | int): A string or integer representing the search query.
+        search_query (str | int): A string or integer
+            representing the search query.
     """
     search_query: Union[str, int] = Field(..., alias='query')
 
@@ -40,13 +43,15 @@ class SearchConfig(BaseSearchConfig):
         search_query: Union[str, FideEventID, FideNewsID]
     ) -> 'SearchConfig':
         """
-        Create a SearchConfig instance from a string, FideEventID or FideNewsID object.
+        Create a SearchConfig instance from a string,
+        FideEventID or FideNewsID object.
 
         Args:
-            link (Literal['event', 'news']): A literal for the type of search. A
-                search can either be by event or news.
-            search_query (str | FideEventID | FideNewsID): A string, FideEventID or
-                FideNewsID object.
+            link (Literal['event', 'news']): A literal for
+                the type of search. A search can either be
+                by event or news.
+            search_query (str | FideEventID | FideNewsID): A
+                string, FideEventID or FideNewsID object.
         
         Returns:
             SearchConfig: A new SearchConfig instance.
@@ -63,14 +68,16 @@ class SearchConfig(BaseSearchConfig):
 
 class SearchPlayerNameConfig(BaseSearchConfig):
     """
-    The player name search configuration for the player search endpoint from the
-    FideSearchClient. This configuration is used when executing a player search
+    The player name search configuration for the player
+    search endpoint from the FideSearchClient. This
+    configuration is used when executing a player search
     by the player name (first and last names).
 
     Args:
-        fide_player_name (str): A string representatin of the name of the player.
-        fide_player_type (FidePlayerName): A FidePlayerName object representing the
-            name of the player.
+        fide_player_name (str): A string representatin of
+            the name of the player.
+        fide_player_type (FidePlayerName): A FidePlayerName
+            object representing the name of the player.
     """
     fide_player_name: str = Field(..., alias='query')
     fide_player_type: FidePlayerName = Field(..., exclude=True)
@@ -83,15 +90,18 @@ class SearchPlayerNameConfig(BaseSearchConfig):
         cls, link: Literal['player'], fide_player_name: FidePlayerName
     ) -> 'SearchPlayerNameConfig':
         """
-        Create a SearchPlayerNameConfig instance from a FidePlayerName object.
+        Create a SearchPlayerNameConfig instance from a
+        FidePlayerName object.
 
         Args:
-            link (Literal['player']): A literal for the type of search.
-            fide_player_name (FidePlayerName): A FidePlayerName object representing the
-                name of the player.
+            link (Literal['player']): A literal for the type
+                of search.
+            fide_player_name (FidePlayerName): A FidePlayerName
+                object representing the name of the player.
 
         Returns:
-            SearchPlayerNameConfig: A new SearchPlayerNameConfig instance.
+            SearchPlayerNameConfig: A new SearchPlayerNameConfig
+                instance.
         """
         return cls(
             link=link,
@@ -101,7 +111,8 @@ class SearchPlayerNameConfig(BaseSearchConfig):
 
     def update_player_name(self) -> None:
         """
-        Updates player name used in pagination after each additional request.
+        Updates player name used in pagination after each
+        additional request.
         """
         first_name_substring = (
             self.fide_player_type.first_name[:self.__num_requests]
@@ -116,12 +127,14 @@ class SearchPlayerNameConfig(BaseSearchConfig):
 
 class SearchPlayerIDConfig(BaseSearchConfig):
     """
-    The player ID search configuration for the player search endpoint from the
-    FideSearchClient. This configuration is used when executing a player search
+    The player ID search configuration for the player
+    search endpoint from the FideSearchClient. This
+    configuration is used when executing a player search
     by the player Fide ID.
 
     Args:
-        fide_player_id (int): An integer representing the Fide ID for a player.
+        fide_player_id (int): An integer representing the
+            Fide ID for a player.
     """
     fide_player_id: int = Field(..., alias='query')
 
@@ -130,14 +143,15 @@ class SearchPlayerIDConfig(BaseSearchConfig):
 
     def update_player_id(self) -> None:
         """
-        Updates the current Fide player ID by popping the next ID the queue
-        containing all Fide IDs to iterate through.
+        Updates the current Fide player ID by popping the next
+        ID the queue containing all Fide IDs to iterate through.
         """
         self.fide_player_id = self.__fide_ids_to_parse.popleft()
 
     def add_player_ids(self) -> None:
         """
-        Extends the queue by ten additional Fide player IDs to iterate through.
+        Extends the queue by ten additional Fide player IDs
+        to iterate through.
         """
         self.__fide_ids_to_parse.extend(
             int(f'{self.fide_player_id}{integer}') for integer in range(10)
@@ -153,15 +167,18 @@ class SearchPlayerIDConfig(BaseSearchConfig):
         cls, link: Literal['player'], fide_player_id: FidePlayerID
     ) -> 'SearchPlayerIDConfig':
         """
-        Create a SearchPlayerIDConfig instance from a FidePlayerID object.
+        Create a SearchPlayerIDConfig instance from a
+        FidePlayerID object.
 
         Args:
-            link (Literal['player']): A literal for the type of search.
-            fide_player_id (FidePlayerID): A FidePlayerID object representing the
-                Fide ID of the player.
+            link (Literal['player']): A literal for the type
+                of search.
+            fide_player_id (FidePlayerID): A FidePlayerID object
+                representing the Fide ID of the player.
 
         Returns:
-            SearchPlayerIDConfig: A new SearchPlayerIDConfig instance.
+            SearchPlayerIDConfig: A new SearchPlayerIDConfig
+                instance.
         """
         return cls(
             link=link, fide_player_id=fide_player_id.entity_id

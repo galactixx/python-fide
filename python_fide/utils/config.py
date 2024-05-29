@@ -9,11 +9,12 @@ def parse_fide_player(
     fide_player: Union[FidePlayer, FidePlayerID]
 ) -> int:
     """
-    Given a FidePlayer or FidePlayerID object, will return an integer
-    representing the Fide ID of the player.
+    Given a FidePlayer or FidePlayerID object, will return an
+    integer representing the Fide ID of the player.
 
     Args:
-        fide_player (FidePlayer | FidePlayerID): A FidePlayer or FidePlayerID object.
+        fide_player (FidePlayer | FidePlayerID): A FidePlayer or
+            FidePlayerID object.
 
     Returns:
         int: An integer representing the Fide ID of the player.
@@ -32,16 +33,18 @@ def parse_fide_player_optional(
     fide_player: Optional[Union[FidePlayer, FidePlayerID]]
 ) -> Optional[int]:
     """
-    Given a FidePlayer or FidePlayerID object, will return an integer
-    representing the Fide ID of the player. If no fide_player is specified,
-    will return None.
+    Given a FidePlayer or FidePlayerID object, will return an
+    integer representing the Fide ID of the player. If no
+    fide_player is specified, will return None.
     
     Args:
-        fide_player (FidePlayer | FidePlayerID | None): A FidePlayer or FidePlayerID
-            object. Can also be None if the argument is not specified.
+        fide_player (FidePlayer | FidePlayerID | None): A
+            FidePlayeror FidePlayerID object. Can also be None
+            if the argument is not specified.
 
     Returns:
-        int | None: An integer representing the Fide ID of the player or None.
+        int | None: An integer representing the Fide ID of
+            the player or None.
     """
     if fide_player is not None:
         return parse_fide_player(fide_player=fide_player)

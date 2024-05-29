@@ -15,11 +15,12 @@ from python_fide.types.core import (
 
 class NewsLatestConfig(ParameterNullConfig):
     """
-    Simple configuration for the latest news endpoint from the FideNewsClient.
+    Simple configuration for the latest news endpoint
+    from the FideNewsClient.
 
     Args:
-        limit (int): An integer of the maximum number of news stories to parse
-            and return.
+        limit (int): An integer of the maximum number of
+            news stories to parse and return.
     """
     limit: int
 
@@ -37,10 +38,12 @@ class NewsLatestConfig(ParameterNullConfig):
 
 class NewsDetailConfig(BaseEndpointConfig):
     """
-    Simple configuration for the news detail endpoint from the FideNewsClient.
+    Simple configuration for the news detail endpoint from
+    the FideNewsClient.
 
     Args:
-        fide_news_id (int): An integer representing the Fide ID for a news story.
+        fide_news_id (int): An integer representing the Fide
+            ID for a news story.
     """
     fide_news_id: int
 
@@ -50,10 +53,12 @@ class NewsDetailConfig(BaseEndpointConfig):
         fide_news: Union[FideNews, FideNewsID]
     ) -> 'NewsDetailConfig':
         """
-        Create an NewsDetailConfig instance from a FideNews or FideNewsID object.
+        Create an NewsDetailConfig instance from a FideNews or
+        FideNewsID object.
 
         Args:
-            fide_news (FideNews | FideNewsID): A FideNews or FideNewsID object.
+            fide_news (FideNews | FideNewsID): A FideNews or
+                FideNewsID object.
         
         Returns:
             NewsDetailConfig: A new NewsDetailConfig instance.

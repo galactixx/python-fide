@@ -15,11 +15,12 @@ from python_fide.types.core import (
 
 class EventLatestConfig(ParameterNullConfig):
     """
-    Simple configuration for the latest events endpoint from the FideEventsClient.
+    Simple configuration for the latest events endpoint
+    from the FideEventsClient.
 
     Args:
-        limit (int): An integer of the maximum number of events to parse
-            and return.
+        limit (int): An integer of the maximum number of
+            events to parse and return.
     """
     limit: int
 
@@ -37,10 +38,12 @@ class EventLatestConfig(ParameterNullConfig):
 
 class EventDetailConfig(BaseEndpointConfig):
     """
-    Simple configuration for the event detail endpoint from the FideEventsClient.
+    Simple configuration for the event detail endpoint
+    from the FideEventsClient.
 
     Args:
-        fide_event_id (int): An integer representing the Fide ID for an event.
+        fide_event_id (int): An integer representing the
+            Fide ID for an event.
     """
     fide_event_id: int
 
@@ -50,10 +53,12 @@ class EventDetailConfig(BaseEndpointConfig):
         fide_event: Union[FideEvent, FideEventID]
     ) -> 'EventDetailConfig':
         """
-        Create an EventDetailConfig instance from a FideEvent or FideEventID object.
+        Create an EventDetailConfig instance from a FideEvent
+        or FideEventID object.
 
         Args:
-            fide_event (FideEvent | FideEventID): A FideEvent or FideEventID object.
+            fide_event (FideEvent | FideEventID): A FideEvent
+                or FideEventID object.
         
         Returns:
             EventDetailConfig: A new EventDetailConfig instance.

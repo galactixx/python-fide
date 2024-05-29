@@ -8,13 +8,16 @@ def search_player_parsing(
     gathered_players: List[FidePlayer]
 ) -> List[FidePlayer]:
     """
-    Logic to parse the response returned from the search player endpoint.
+    Logic to parse the response returned from the search
+    player endpoint.
 
     Args:
-        response (Dict[str, Any]): A dictionary representation of the JSON response.
-        gathered_players (List[FidePlayer]): A list of all players that have already
-            been parsed. This is important if multiple pages of results are being
-            iterated through, where there is risk of duplicate players.
+        response (Dict[str, Any]): A dictionary representation
+            of the JSON response.
+        gathered_players (List[FidePlayer]): A list of all players
+            that have already been parsed. This is important if
+            multiple pages of results are being iterated through,
+            where there is risk of duplicate players.
 
     Returns:
         List[FidePlayer]: A list of FidePlayer objects.

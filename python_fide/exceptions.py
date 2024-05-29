@@ -14,7 +14,10 @@ class InvalidFideIDError(BaseError):
         
 
 class InvalidFormatError(BaseError):
-    """Error indicating that the format of the response is not what is expected."""
+    """
+    Error indicating that the format of the response is
+    not what is expected.
+    """
     def __init__(self):
         super().__init__(
             message=(

@@ -9,16 +9,20 @@ from python_fide.utils.general import validate_date_format
 
 class Date(BaseModel):
     """
-    Structure to represent a date value returned from a Fide response. The date
-    is returned in ISO format, but properties are included to convert the ISO date
-    into a date or datetime object. In addition, properties to view the original date and
+    Structure to represent a date value returned from a Fide
+    response. The date is returned in ISO format, but properties
+    are included to convert the ISO date into a date or datetime
+    object. In addition, properties to view the original date and
     date string format that is expected are also accessible.
 
     Args:
-        date_iso (str | None): The date value represented as an ISO date string. Can also
-            be None if there was an unexpected error in validating the date.
-        date_orig (str): The original date represented as a string in some format.
-        date_orig_format (str): The exepected string format of the original date.
+        date_iso (str | None): The date value represented as an
+            ISO date string. Can also be None if there was an
+            unexpected error in validating the date.
+        date_orig (str): The original date represented as a
+            string in some format.
+        date_orig_format (str): The exepected string format of
+            the original date.
     """
     date_iso: Optional[str]
     date_orig: str
@@ -44,8 +48,8 @@ class Date(BaseModel):
     @classmethod
     def from_date_format(cls, date: str, date_format: str) -> 'Date':
         """
-        Creates a Date instance based on a string date value and the accompanying
-        date format.
+        Creates a Date instance based on a string date value and the
+        accompanying date format.
         
         Args:
             date (str): A date represented as a string in some format.

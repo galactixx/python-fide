@@ -27,7 +27,8 @@ from python_fide.types.annotated import (
 
 class BaseRawModel(BaseModel):
     """
-    Base model for all types. Sets model configuration and basic field validation.
+    Base model for all types. Sets model configuration and
+    basic field validation.
     """
     model_config = ConfigDict(populate_by_name=True, use_enum_values=True)
 
@@ -125,7 +126,8 @@ class FideNewsImage(BaseRawModel):
 
 class FideNewsContent(BaseRawModel):
     """
-    Model representing a content element, including text content and any images.
+    Model representing a content element, including text content
+    and any images.
     """
     content: str
     images: List[FideNewsImage]
@@ -172,7 +174,10 @@ class FidePlayerRatingRaw(BaseRawModel):
 
 
 class FidePlayerGameWhiteStatsRaw(BaseRawModel):
-    """Raw model used in validating the white game stats fields in the FidePlayerGameStats model."""
+    """
+    Raw model used in validating the white game stats fields
+    in the FidePlayerGameStats model.
+    """
     total: Optional[int] = Field(..., validation_alias='white_total')
     total_win: Optional[int] = Field(..., validation_alias='white_win_num')
     total_draw: Optional[int] = Field(..., validation_alias='white_draw_num')
@@ -194,7 +199,10 @@ class FidePlayerGameWhiteStatsRaw(BaseRawModel):
 
 
 class FidePlayerGameBlackStatsRaw(BaseRawModel):
-    """Raw model used in validating the black game stats fields in the FidePlayerGameStats model."""
+    """
+    Raw model used in validating the black game stats fields
+    in the FidePlayerGameStats model.
+    """
     total: Optional[int] = Field(..., validation_alias='black_total')
     total_win: Optional[int] = Field(..., validation_alias='black_win_num')
     total_draw: Optional[int] = Field(..., validation_alias='black_draw_num')

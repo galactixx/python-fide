@@ -3,18 +3,24 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field, HttpUrl
 
 class PartialDictAdapter(BaseModel):
-    """General response structure whose value is a dictionary."""
+    """
+    General response structure whose value is a dictionary.
+    """
     data: Dict[str, Any]
 
 
 class PartialListAdapter(BaseModel):
-    """General response structure whose value is a list of dictionaries."""
+    """
+    General response structure whose value is a list of
+    dictionaries.
+    """
     data: List[dict]
 
     @classmethod
     def from_minimal_adapter(cls, response: List[dict]) -> 'PartialListAdapter':
         """
-        Creates an instance of PartialListAdapter for responses that dont have the valid key.
+        Creates an instance of PartialListAdapter for responses
+        that dont have the valid key.
         """
         adapter = cls.model_validate({'data': response})
         return adapter
@@ -31,7 +37,9 @@ class PartialListAdapter(BaseModel):
 
 
 class TopPlayersAdapter(BaseModel):
-    """Response structure for the top ten standard players endpoint."""
+    """
+    Response structure for the top ten standard players endpoint.
+    """
     open: List[dict]
     girls: List[dict]
     juniors: List[dict]
@@ -58,7 +66,10 @@ class _LinksAdapter(BaseModel):
 
 
 class HolisticAdapter(BaseModel):
-    """Response structure for the complete response containing pagination information."""
+    """
+    Response structure for the complete response containing
+    pagination information.
+    """
     data: List[dict]
     links: _LinksAdapter
     meta: _MetaAdapter

@@ -12,8 +12,9 @@ class PaginationConfig(BaseModel):
 
 class BaseParameterConfig(ABC, BaseModel):
     """
-    Base abstract parameter configuration used in any endpoint configurations
-    that contain parameters to be used in the request.
+    Base abstract parameter configuration used in any
+    endpoint configurations that contain parameters to
+    be used in the request.
     """
     model_config = ConfigDict(populate_by_name=True, use_enum_values=True)
 
@@ -28,14 +29,17 @@ class BaseParameterConfig(ABC, BaseModel):
         parameters: Dict[str, Any] = {}
     ) -> Dict[str, Any]:
         """
-        Updates and sets the page parameter for endpoints that require pagination.
+        Updates and sets the page parameter for endpoints
+        that require pagination.
 
         Args:
             page (int): The current page number.
-            parameters (Dict[str, Any]): A dictionary of all parameters required for request.
+            parameters (Dict[str, Any]): A dictionary of all
+                parameters required for request.
 
         Returns:
-            Dict[str, Any]: An updated dictionary of all parameters required for request.
+            Dict[str, Any]: An updated dictionary of all parameters
+                required for request.
         """
         pagination_config = PaginationConfig(page=page)
         return (
@@ -66,8 +70,9 @@ class ParameterNullConfig(BaseParameterConfig):
 
 class BaseEndpointConfig(ABC, BaseModel):
     """
-    Base abstract endpoint configuration used in any endpoint configurations
-    that dont contain parameters but instead require the building of a URL.
+    Base abstract endpoint configuration used in any endpoint
+    configurations that dont contain parameters but instead
+    require the building of a URL.
     """
     @abstractmethod
     def endpointize(self) -> Dict[str, Any]:

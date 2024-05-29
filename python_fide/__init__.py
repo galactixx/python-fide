@@ -1,8 +1,15 @@
-from python_fide.clients.sync.event import FideEventsClient
-from python_fide.clients.sync.news import FideNewsClient
-from python_fide.clients.sync.player import FidePlayerClient
-from python_fide.clients.sync.search import FideSearchClient
-from python_fide.clients.sync.top_players import FideTopPlayersClient
+from python_fide.clients_sync.event import FideEventsClient
+from python_fide.clients_sync.news import FideNewsClient
+from python_fide.clients_sync.player import FidePlayerClient
+from python_fide.clients_sync.search import FideSearchClient
+from python_fide.clients_sync.top_players import FideTopPlayersClient
+
+from python_fide.clients_async.event import AsyncFideEventsClient
+from python_fide.clients_async.news import AsyncFideNewsClient
+from python_fide.clients_async.player import AsyncFidePlayerClient
+from python_fide.clients_async.search import AsyncFideSearchClient
+from python_fide.clients_async.top_players import AsyncFideTopPlayersClient
+
 from python_fide.types.annotated import Date
 from python_fide.exceptions import (
     InvalidFideIDError,
@@ -48,6 +55,11 @@ __all__ = [
     'FidePlayerClient',
     'FideSearchClient',
     'FideTopPlayersClient',
+    'AsyncFideEventsClient',
+    'AsyncFideNewsClient',
+    'AsyncFidePlayerClient',
+    'AsyncFideSearchClient',
+    'AsyncFideTopPlayersClient',
     'FideEvent',
     'FideEventDetail',
     'FideEventID',

@@ -6,16 +6,20 @@ from python_fide.types.core import FideNewsDetail
 
 def news_detail_parsing(response: Dict[str, dict]) -> Optional[FideNewsDetail]:
     """
-    Logic to parse the response returned from the news detail endpoint.
+    Logic to parse the response returned from the news
+    detail endpoint.
 
     Args:
-        response (Dict[str, Any]): A dictionary representation of the JSON response.
+        response (Dict[str, Any]): A dictionary representation
+            of the JSON response.
 
     Returns:
-        FideNewsDetail | None: A FideNewsDetail object or if there was no results, None.
+        FideNewsDetail | None: A FideNewsDetail object or if
+            there was no results, None.
     """
-    # This is a search by Fide ID, thus there should never be a response
-    # that has more than one item, although there can be a response with no items
+    # This is a search by Fide ID, thus there should never
+    # be a response that has more than one item, although
+    # there can be a response with no items
     no_results = detect_client_error(response=response)
 
     if no_results:

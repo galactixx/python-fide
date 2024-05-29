@@ -6,14 +6,15 @@ from python_fide.enums import RatingCategory
 
 class TopPlayersConfig(BaseModel):
     """
-    Simple configuration for the top ten standard endpoint from the
-    FideTopPlayersClient.
+    Simple configuration for the top ten standard
+    endpoint from the FideTopPlayersClient.
 
     Args:
-        limit (int): An integer of the maximum number of events to parse
-            and return, cannot be more than 10.
-        categories (List[RatingCategory]): A list of RatingCategory values each
-            representing a chess category (OPEN, WOMEN, JUNIORS, GIRLS).
+        limit (int): An integer of the maximum number
+            of events to parse and return, cannot be more than 10.
+        categories (List[RatingCategory]): A list of RatingCategory
+            values each representing a chess category (OPEN, WOMEN,
+            JUNIORS, GIRLS).
     """
     limit: int
     categories: List[RatingCategory]
@@ -35,13 +36,16 @@ class TopPlayersConfig(BaseModel):
         Validation for the categories parameter.
         
         Args:
-            categories (List[RatingCategory] | None): A list of RatingCategory values each
-                representing a chess category (OPEN, WOMEN, JUNIORS, GIRLS). If no category is
-                specified, all categories will be included.
+            categories (List[RatingCategory] | None): A list
+                of RatingCategory values each representing a
+                chess category (OPEN, WOMEN, JUNIORS, GIRLS). If
+                no category is specified, all categories will be
+                included.
 
         Returns:
-            List[RatingCategory]: A list of RatingCategory values each representing a
-                chess category (OPEN, WOMEN, JUNIORS, GIRLS).
+            List[RatingCategory]: A list of RatingCategory values
+                each representing a chess category (OPEN, WOMEN,
+                JUNIORS, GIRLS).
         """
         if categories is None:
             return [category for category in RatingCategory]
