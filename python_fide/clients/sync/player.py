@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-from python_fide.clients.base_client import FideClient
+from python_fide.clients.sync.base_client import FideClient
 from python_fide.enums import Period
 from python_fide.exceptions import InvalidFideIDError
 from python_fide.utils.general import build_url

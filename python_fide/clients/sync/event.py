@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-from python_fide.clients.base_client import FideClientWithPagination
+from python_fide.clients.sync.base_client import FideClientWithPagination
 from python_fide.parsing.event_parsing import event_detail_parsing
 from python_fide.types.core import (
     FideEvent,

@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from python_fide.enums import RatingCategory
-from python_fide.clients.base_client import FideClient
+from python_fide.clients.sync.base_client import FideClient
 from python_fide.config.top_players_config import TopPlayersConfig
 from python_fide.parsing.top_players_parsing import top_standard_players_parsing
 from python_fide.types.core import FideTopPlayer

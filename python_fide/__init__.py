@@ -1,8 +1,8 @@
-from python_fide.clients.event import FideEventsClient
-from python_fide.clients.news import FideNewsClient
-from python_fide.clients.player import FidePlayerClient
-from python_fide.clients.search import FideSearchClient
-from python_fide.clients.top_players import FideTopPlayersClient
+from python_fide.clients.sync.event import FideEventsClient
+from python_fide.clients.sync.news import FideNewsClient
+from python_fide.clients.sync.player import FidePlayerClient
+from python_fide.clients.sync.search import FideSearchClient
+from python_fide.clients.sync.top_players import FideTopPlayersClient
 from python_fide.types.annotated import Date
 from python_fide.exceptions import (
     InvalidFideIDError,

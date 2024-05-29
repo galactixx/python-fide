@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-from python_fide.clients.base_client import FideClientWithPagination
+from python_fide.clients.sync.base_client import FideClientWithPagination
 from python_fide.parsing.news_parsing import news_detail_parsing
 from python_fide.config.news_config import (
     NewsDetailConfig,

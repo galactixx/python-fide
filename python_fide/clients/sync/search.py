@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-from python_fide.clients.base_client import FideClientWithPagination
+from python_fide.clients.sync.base_client import FideClientWithPagination
 from python_fide.parsing.search_parsing import search_player_parsing
 from python_fide.config.search_config import (
     SearchConfig,
