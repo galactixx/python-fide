@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
-import requests
-from requests import HTTPError
+import httpx
+from httpx import HTTPStatusError
 from faker import Faker
 
 from python_fide.types.adapters import HolisticAdapter
@@ -34,18 +34,19 @@ class AsyncFideClient(object):
             Dict[str, Any]: A dictionary representation of the
                 JSON response.
         """
-        response = requests.get(
-            url=fide_url,
-            params=params,
-            headers={
-                "Accept": "*/*",
-                "Accept-Language": "en-US,en;q=0.9,bg;q=0.8",
-                "X-Requested-With": "XMLHttpRequest",
-                'User-Agent': self.user_agent
-            }
-        )
-        response.raise_for_status()
-        return response.json()
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                url=fide_url,
+                params=params,
+                headers={
+                    "Accept": "*/*",
+                    "Accept-Language": "en-US,en;q=0.9,bg;q=0.8",
+                    "X-Requested-With": "XMLHttpRequest",
+                    'User-Agent': self.user_agent
+                }
+            )
+            response.raise_for_status()
+            return response.json()
     
     async def _fide_request_wrapped(
         self,
@@ -70,14 +71,15 @@ class AsyncFideClient(object):
                 was a 500 status code due to no results. 
         """
         try:
-            response_json = self._fide_request(
-                fide_url=fide_url, params=params
-            )
-        except HTTPError as e:
+            async with httpx.AsyncClient() as client:
+                response_json = await self._fide_request(
+                    fide_url=fide_url, params=params
+                )
+        except HTTPStatusError as e:
             if e.response.status_code == 500:
                 return
             else:
-                raise HTTPError(e)
+                raise HTTPStatusError(e)
         else:
             return response_json
         

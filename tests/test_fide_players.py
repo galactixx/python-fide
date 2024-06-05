@@ -2,13 +2,13 @@ from typing import Any, Dict, Union
 from unittest import mock
 import pytest
 
+from python_fide.clients_sync import FidePlayerClient
 from python_fide import (
     Date,
     FideGames,
     FideGamesSet,
     FidePlayer,
     FidePlayerBasic,
-    FidePlayerClient,
     FidePlayerDetail,
     FidePlayerGameStats,
     FidePlayerID,

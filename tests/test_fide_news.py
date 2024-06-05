@@ -3,11 +3,11 @@ from unittest import mock
 import pytest
 
 import pytest
+from python_fide.clients_sync import FideNewsClient
 from python_fide import (
     Date,
     FideNews,
     FideNewsCategory,
-    FideNewsClient,
     FideNewsContent,
     FideNewsDetail,
     FideNewsID,

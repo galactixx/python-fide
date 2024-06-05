@@ -2,12 +2,12 @@ from typing import Any, Dict, Union
 from unittest import mock
 import pytest
 
+from python_fide.clients_sync import FideEventsClient
 from python_fide import (
     Date,
     FideEvent,
     FideEventDetail,
     FideEventID,
-    FideEventsClient,
     InvalidFideIDError
 )
 

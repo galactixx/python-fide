@@ -1,13 +1,13 @@
 from typing import List
 from unittest import mock
 
+from python_fide.clients_sync import FideSearchClient
 from python_fide import (
     FideEvent,
     FideNewsBasic,
     FidePlayer,
     FidePlayerID,
-    FidePlayerName,
-    FideSearchClient
+    FidePlayerName
 )
 
 from tests.utils import MockedResponse

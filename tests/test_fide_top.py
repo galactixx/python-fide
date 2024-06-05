@@ -3,9 +3,9 @@ from unittest import mock
 import pytest
 from dataclasses import dataclass
 
+from python_fide.clients_sync import FideTopPlayersClient
 from python_fide import (
     FideTopPlayer,
-    FideTopPlayersClient,
     RatingCategory
 )
 
