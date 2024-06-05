@@ -1,10 +1,18 @@
 [tool.poetry]
 name = "python-fide"
-version = "0.1.0"
+version = "0.2.0"
 description = "Methods to Facilitate Analysis of Fide Ratings"
 authors = ["galactixx"]
 license = "MIT License"
 readme = "README.md"
+keywords = [
+    "chess",
+    "fide",
+    "ratings",
+    "player",
+    "news",
+    "events"
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"
