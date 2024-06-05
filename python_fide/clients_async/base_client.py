@@ -71,10 +71,9 @@ class AsyncFideClient(object):
                 was a 500 status code due to no results. 
         """
         try:
-            async with httpx.AsyncClient() as client:
-                response_json = await self._fide_request(
-                    fide_url=fide_url, params=params
-                )
+            response_json = await self._fide_request(
+                fide_url=fide_url, params=params
+            )
         except HTTPStatusError as e:
             if e.response.status_code == 500:
                 return
