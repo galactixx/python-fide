@@ -1,7 +1,7 @@
-import pytest
 from typing import Any, Dict, Optional, Union
 from dataclasses import dataclass
 
+import pytest
 from python_fide import FidePlayerID
 
 from python_fide.types.base import FidePlayerRaw

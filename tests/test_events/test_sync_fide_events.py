@@ -1,10 +1,9 @@
 from typing import Any, Dict, Union
 from unittest import mock
-import pytest
 
+import pytest
 from python_fide.clients_sync import FideEventsClient
 from python_fide import (
-    Date,
     FideEvent,
     FideEventDetail,
     FideEventID,
@@ -16,47 +15,14 @@ from tests.utils import (
     load_json_file,
     MockedResponse
 )
+from tests.test_events.common_events import (
+    FIDE_EVENT_DETAIL_CANDIDATES,
+    FIDE_EVENT_DETAIL_CANDIDATES_WOMEN,
+    FIDE_EVENT_PARAMETERS_CANDIDATES,
+    FIDE_EVENT_PARAMETERS_CANDIDATES_WOMEN
+)
 
 fide_events_client = FideEventsClient()
-
-FIDE_EVENT_DETAIL_CANDIDATES = FideEventDetail(
-    city='Toronto',
-    country='Canada',
-    start_date=Date.from_date_format(date='2024-04-03 00:00:00', date_format='%Y-%m-%d %H:%M:%S'),
-    end_date=Date.from_date_format(date='2024-04-23 23:59:59', date_format='%Y-%m-%d %H:%M:%S'),
-    game_format='s',
-    tournament_type=None,
-    time_control=None,
-    time_control_desc=None,
-    rounds=None,
-    players=None,
-    telephone=None,
-    website='https://candidates2024.fide.com/',
-    organizer=None,
-    chief_arbiter=None,
-    chief_organizer=None,
-    event=FideEvent(name='Candidates Tournament', event_id=53626)
-)
-
-FIDE_EVENT_DETAIL_CANDIDATES_WOMEN = FideEventDetail(
-    city='Toronto',
-    country='Canada',
-    start_date=Date.from_date_format(date='2024-04-03 00:00:00', date_format='%Y-%m-%d %H:%M:%S'),
-    end_date=Date.from_date_format(date='2024-04-23 23:59:59', date_format='%Y-%m-%d %H:%M:%S'),
-    game_format='s',
-    tournament_type=None,
-    time_control=None,
-    time_control_desc=None,
-    rounds=None,
-    players=None,
-    telephone=None,
-    website='https://candidates2024.fide.com/',
-    organizer=None,
-    chief_arbiter=None,
-    chief_organizer=None,
-    event=FideEvent(name="Women's Candidates Tournament", event_id=53627)
-)
-
 
 def test_event_detail_parsing() -> None:
     """Testing the event detail parsing functions."""
@@ -70,18 +36,16 @@ def test_event_detail_parsing() -> None:
 
 
 @pytest.mark.parametrize(
-    'fide_event', [
-        FideEventID(entity_id='53626'),
-        FideEventID(entity_id=53626),
-        FIDE_EVENT_DETAIL_CANDIDATES.event
-    ]
+    'fide_event', FIDE_EVENT_PARAMETERS_CANDIDATES
 )
 @mock.patch(
     target='requests.get',
     side_effect=MockedResponse(filename='fide_event_candidates.json').mock_response,
     autospec=True
 )
-def test_event_mock_detail_candidates(_, fide_event: Union[FideEvent, FideEventID]) -> None:
+def test_event_mock_detail_candidates(
+    _, fide_event: Union[FideEvent, FideEventID]
+) -> None:
     """Testing the event detail functionality for example one."""
     event_detail: FideEventDetail = fide_events_client.get_event_detail(
         fide_event=fide_event
@@ -90,18 +54,16 @@ def test_event_mock_detail_candidates(_, fide_event: Union[FideEvent, FideEventI
 
 
 @pytest.mark.parametrize(
-    'fide_event', [
-        FideEventID(entity_id='53627'),
-        FideEventID(entity_id=53627),
-        FIDE_EVENT_DETAIL_CANDIDATES_WOMEN.event
-    ]
+    'fide_event', FIDE_EVENT_PARAMETERS_CANDIDATES_WOMEN
 )
 @mock.patch(
     target='requests.get',
     side_effect=MockedResponse(filename='fide_event_candidates_women.json').mock_response, 
     autospec=True
 )
-def test_event_mock_detail_candidates_women(_, fide_event: Union[FideEvent, FideEventID]) -> None:
+def test_event_mock_detail_candidates_women(
+    _, fide_event: Union[FideEvent, FideEventID]
+) -> None:
     """Testing the event detail functionality for example two."""
     event_detail: FideEventDetail = fide_events_client.get_event_detail(
         fide_event=fide_event
