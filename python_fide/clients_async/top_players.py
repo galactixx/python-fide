@@ -8,10 +8,9 @@ from python_fide.types.core import FideTopPlayer
 
 class AsyncFideTopPlayersClient(AsyncFideClient):
     """
-    A Fide top players client to pull all player rankings
-    data from the Fide API. Can pull top 10 and 100 rankings
-    for any category (OPEN, WOMEN, JUNIORS, GIRLS) and country,
-    among other parameters.
+    A Fide top players client to pull all player rankings data from the Fide
+    API. Can pull top 10 and 100 rankings for any category (OPEN, WOMEN, JUNIORS,
+    GIRLS) and country, among other parameters.
     """
     def __init__(self):
         self.base_url = 'https://app.fide.com/api/v1/client/players/'
@@ -22,22 +21,19 @@ class AsyncFideTopPlayersClient(AsyncFideClient):
         categories: Optional[List[RatingCategory]] = None
     ) -> List[FideTopPlayer]:
         """
-        Will return a list of FideTopPlayer objects each
-        representing a player in the top ten standard rating
-        rankings.
+        Will return a list of FideTopPlayer objects each representing a player
+        in the top ten standard rating rankings.
 
-        limit (int | None): An integer of the maximum number
-            of events to parse and return, cannot be more than
-            10. If no limit is specified then it defaults to 10.
-        categories (List[RatingCategory] | None): A list of
-            RatingCategory values each representing a chess category
-            (OPEN, WOMEN, JUNIORS, GIRLS). If no category is specified,
-            all categories will be included.
+        limit (int | None): An integer of the maximum number of events to parse
+            and return, cannot be more than 10. If no limit is specified then it
+            defaults to 10.
+        categories (List[RatingCategory] | None): A list of RatingCategory values
+            each representing a chess category (OPEN, WOMEN, JUNIORS, GIRLS). If no
+            category is specified, all categories will be included.
 
         Returns:
-            List[FideTopPlayer]: A list of FideTopPlayer objects,
-                each representing a player from the top ten standard
-                rating rankings.
+            List[FideTopPlayer]: A list of FideTopPlayer objects, each representing
+                a player from the top ten standard rating rankings.
         """
         config = TopPlayersConfig(limit=limit, categories=categories)
 

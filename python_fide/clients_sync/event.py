@@ -14,9 +14,9 @@ from python_fide.config.event_config import (
 
 class FideEventsClient(FideClientPaginate):
     """
-    A Fide events client to pull all event specific
-    data from the Fide API. Will pull data for the
-    latest events as well as detail for a specific event.
+    A Fide events client to pull all event specific data from the
+    Fide API. Will pull data for the latest events as well as detail
+    for a specific event.
     """
     def __init__(self):
         self.base_url = 'https://app.fide.com/api/v1/client/events/'
@@ -27,13 +27,12 @@ class FideEventsClient(FideClientPaginate):
         limit: Optional[int] = None
     ) -> List[FideEventDetail]:
         """
-        Will return all latest events up to a specific
-        limit. If no limit is provided then a limit of
-        'sys.maxsize' will automatically be set. 
+        Will return all latest events up to a specific limit. If no limit
+        is provided then a limit of 'sys.maxsize' will automatically be set. 
 
         Args:
-            limit (int | None): An integer of the maximum
-                number of events to parse and return.
+            limit (int | None): An integer of the maximum number of events
+                to parse and return.
         
         Returns:
             List[FideEventDetail]: A list of FideEventDetail objects.
@@ -54,19 +53,16 @@ class FideEventsClient(FideClientPaginate):
         fide_event: Union[FideEvent, FideEventID]
     ) -> Optional[FideEventDetail]:
         """
-        Given a FideEvent or FideEventID object, will
-        return a FideEventDetail object containing further
-        detail for a Fide event. If the ID included does
-        not link to a valid Fide event ID, then None is
-        returned.
+        Given a FideEvent or FideEventID object, will return a FideEventDetail
+        object containing further detail for a Fide event. If the ID included does
+        not link to a valid Fide event ID, then None is returned.
         
         Args:
-            fide_event (FideEvent | FideEventID): A FideEvent
-                or FideEventID object.
+            fide_event (FideEvent | FideEventID): A FideEvent or FideEventID object.
         
         Returns:
-            FideEventDetail | None: A FideEventDetail object
-                or if the Fide event ID is invalid, None.
+            FideEventDetail | None: A FideEventDetail object or if the Fide event
+                ID is invalid, None.
         """
         config = EventDetailConfig.from_event_object(fide_event=fide_event)
 

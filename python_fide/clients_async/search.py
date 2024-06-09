@@ -22,8 +22,8 @@ _MAX_RESULTS_PLAYER = 300
 
 class AsyncFideSearchClient(AsyncFideClientPaginate):
     """
-    A Fide search client which provides methods to perform a
-    lexical search through all players, events, and news.
+    A Fide search client which provides methods to perform a lexical search
+    through all players, events, and news.
     """
     def __init__(self):
         self.base_url = 'https://app.fide.com/api/v1/client/search?'
@@ -34,15 +34,13 @@ class AsyncFideSearchClient(AsyncFideClientPaginate):
         limit: Optional[int] = None
     ) -> List[FideEvent]:
         """
-        Given a query, being a string or FideEventID object,
-        will return a list of FideEvent objects that represent
-        events associated with the query.
+        Given a query, being a string or FideEventID object, will return a list
+        of FideEvent objects that represent events associated with the query.
 
         Args:
-            query (str | FideEventID): A string query or FideEventID
-                object.
-            limit (int | None): An integer of the maximum number of
-                events to parse and return.
+            query (str | FideEventID): A string query or FideEventID object.
+            limit (int | None): An integer of the maximum number of events to parse
+                and return.
 
         Returns:
             List[FideEvent]: A list of FideEvent objects.
@@ -66,17 +64,15 @@ class AsyncFideSearchClient(AsyncFideClientPaginate):
         limit: Optional[int] = None
     ) -> List[FideNewsBasic]:
         """
-        Given a query, being a string or FideNewsID object,
-        will return a list of FideNewsBasic objects that
-        represent news associated associated with the query. A
-        FideNewsBasic object is a mariginally less detailed
-        version of the FideNews object.
+        Given a query, being a string or FideNewsID object, will return a list
+        of FideNewsBasic objects that represent news associated associated with
+        the query. A FideNewsBasic object is a mariginally less detailed version
+        of the FideNews object.
 
         Args:
-            query (str | FideNewsID): A string query or FideNewsID
-                object.
-            limit (int | None): An integer of the maximum number
-                of news stories to parse and return.
+            query (str | FideNewsID): A string query or FideNewsID object.
+            limit (int | None): An integer of the maximum number of news stories
+                to parse and return.
 
         Returns:
             List[FideNewsBasic]: A list of FideNewsBasic objects.
@@ -99,19 +95,15 @@ class AsyncFideSearchClient(AsyncFideClientPaginate):
         fide_player_id: FidePlayerID
     ) -> List[FidePlayer]:
         """
-        Given a FidePlayerID object, will return all Fide
-        players whose Fide ID starts with the ID passed. For
-        example, if 'FidePlayerID(entityid=1503014)' is passed,
-        then a list of only one FidePlayer will be returned
-        since this ID corresponds to a single player. On the
-        other hand, if 'FidePlayerID(entityid=150)' is passed,
-        then a list of FidePlayers will be returned,
-        corresponding with all players whose Fide ID starts with
-        150. 
+        Given a FidePlayerID object, will return all Fide players whose Fide ID
+        starts with the ID passed. For example, if 'FidePlayerID(entityid=1503014)'
+        is passed, then a list of only one FidePlayer will be returned since this
+        ID corresponds to a single player. On the other hand, if 'FidePlayerID(entityid=150)'
+        is passed, then a list of FidePlayers will be returned, corresponding with all
+        players whose Fide ID starts with 150. 
         
         Args:
-            fide_player_id (FidePlayerID): A FidePlayerID object,
-                containing the Fide ID.
+            fide_player_id (FidePlayerID): A FidePlayerID object, containing the Fide ID.
 
         Returns:
             List[FidePlayer]: A list of FidePlayer objects.
@@ -148,13 +140,12 @@ class AsyncFideSearchClient(AsyncFideClientPaginate):
         fide_player_name: FidePlayerName
     ) -> List[FidePlayer]:
         """
-        Given a FidePlayerName object, will return all Fide
-        players whose name matches the first/last name passed.
+        Given a FidePlayerName object, will return all Fide players whose name
+        matches the first/last name passed.
         
         Args:
-            fide_player_name (FidePlayerName): A FidePlayerName
-                object containing the first and last name of the
-                player.
+            fide_player_name (FidePlayerName): A FidePlayerName object containing
+                the first and last name of the player.
 
         Returns:
             List[FidePlayer]: A list of FidePlayer objects.
@@ -198,15 +189,13 @@ class AsyncFideSearchClient(AsyncFideClientPaginate):
         query: Union[FidePlayerID, FidePlayerName]
     ) -> Optional[FidePlayer]:
         """
-        Given a FidePlayerID or FidePlayerName object, will
-        return a singular FidePlayer object only if a match
-        could be found based on Fide ID, or there was only one
-        player found through the search. If neither are true,
+        Given a FidePlayerID or FidePlayerName object, will return a singular
+        FidePlayer object only if a match could be found based on Fide ID, or
+        there was only one player found through the search. If neither are true,
         then None is returned.
                 
         Args:
-            query (FidePlayerID | FidePlayerName): A FidePlayerID
-                or FidePlayerName object.
+            query (FidePlayerID | FidePlayerName): A FidePlayerID or FidePlayerName object.
 
         Returns:
             List[FidePlayer]: A list of FidePlayer objects.
