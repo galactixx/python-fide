@@ -204,7 +204,7 @@ class FidePlayerClient(FideClient):
         """
         config = PlayerStatsConfig(
             fide_player_id=fide_player,
-            fide_player_opponent=fide_player_opponent
+            fide_player_opponent_id=fide_player_opponent
         )
 
         # Retrieve the player structure for both the player and the opponent

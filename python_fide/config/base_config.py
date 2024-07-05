@@ -16,7 +16,9 @@ class BaseParameterConfig(ABC, BaseModel):
     endpoint configurations that contain parameters to
     be used in the request.
     """
-    model_config = ConfigDict(populate_by_name=True, use_enum_values=True)
+    model_config = ConfigDict(
+        populate_by_name=True, use_enum_values=True, extra='forbid'
+    )
 
     @property
     @abstractmethod

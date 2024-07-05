@@ -37,7 +37,7 @@ from python_fide.types.core import (
     FideTopPlayer
 )
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 __all__ = [
     'clients_sync',
     'clients_async',
