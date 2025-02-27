@@ -1,8 +1,7 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import requests
 from faker import Faker
-from requests import HTTPError
 
 
 class FideClient(object):
@@ -37,30 +36,3 @@ class FideClient(object):
         )
         response.raise_for_status()
         return response.json()
-
-    def _fide_request_wrapped(
-        self, fide_url: str, params: Dict[str, Any] = {}
-    ) -> Optional[Dict[str, Any]]:
-        """
-        Private method which makes a specific request to the Fide player
-        search endpoint. A separate method exists due to the API crashing
-        if there are no results from a player search request.
-
-        Args:
-            fide_url (str): A string URL representing a Fide API endpoint.
-            params (Dict[str, Any]): The paramaters to include in the request.
-
-        Returns:
-            Dict[str, Any] | None: A dictionary representation of the JSON
-                response. Can return None if there was a 500 status code due
-                to no results.
-        """
-        try:
-            response_json = self._fide_request(fide_url=fide_url, params=params)
-        except HTTPError as e:
-            if e.response.status_code == 500:
-                return
-            else:
-                raise HTTPError(e)
-        else:
-            return response_json

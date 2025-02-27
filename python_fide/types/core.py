@@ -2,7 +2,14 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 from python_fide.exceptions import InvalidFideIDError
 from python_fide.types.annotated import DateYearMonth
@@ -138,13 +145,13 @@ class FidePlayer(BaseModel):
     registered with Fide.
 
     Args:
-        player_id (int): An integer representing the Fide ID of
+        fide_id (int): An integer representing the Fide ID of
             the player.
         name (str): The string full name.
         country (str): The country that the player represents.
     """
 
-    player_id: int = Field(..., validation_alias="id_number")
+    fide_id: int = Field(..., validation_alias=AliasChoices("fide_id", "id_number"))
     name: str = Field(..., validation_alias="name")
     country: str
 

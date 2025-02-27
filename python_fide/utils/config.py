@@ -16,7 +16,7 @@ def parse_fide_player(fide_player: Union[FidePlayer, FidePlayerID]) -> int:
         int: An integer representing the Fide ID of the player.
     """
     if isinstance(fide_player, FidePlayer):
-        return fide_player.player_id
+        return fide_player.fide_id
     elif isinstance(fide_player, FidePlayerID):
         return fide_player.entity_id
     else:

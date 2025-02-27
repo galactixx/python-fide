@@ -31,9 +31,7 @@ class AsyncFidePlayerClient(AsyncFideClient):
     def __init__(self):
         self.base_url = "https://ratings.fide.com/"
 
-    async def get_opponents(
-        self, fide_player: FidePlayerID
-    ) -> List[FidePlayer]:
+    async def get_opponents(self, fide_player: FidePlayerID) -> List[FidePlayer]:
         """
         Given a FidePlayer or FidePlayerID object, will return a list
         of FidePlayer objects each representing an opponent (another

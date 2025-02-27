@@ -1,51 +1,46 @@
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Union
+from typing import Optional, Union
 
 import pytest
 
 from python_fide import FidePlayerID
-from python_fide.types.base import FidePlayerRaw
 from python_fide.utils.config import parse_fide_player, parse_fide_player_optional
 from python_fide.utils.general import (
     build_url,
-    clean_fide_player_name,
     validate_date_format,
 )
-from python_fide.utils.pydantic import from_player_model
 
 
 @dataclass
 class CaseParseFidePlayer:
-    player_id: Optional[FidePlayerID]
+    fide_id: Optional[FidePlayerID]
     exp_id: int
 
 
 @pytest.mark.parametrize(
     "test_case",
     [
-        CaseParseFidePlayer(player_id=FidePlayerID(entity_id="12222"), exp_id=12222),
-        CaseParseFidePlayer(player_id=FidePlayerID(entity_id=12222), exp_id=12222),
-        CaseParseFidePlayer(player_id=FidePlayerID(entity_id=10006), exp_id=10006),
+        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id="12222"), exp_id=12222),
+        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id=12222), exp_id=12222),
+        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id=10006), exp_id=10006),
     ],
 )
 def test_parse_fide_player(test_case: CaseParseFidePlayer) -> None:
     """Testing the 'parse_fide_player' utility function."""
-    assert parse_fide_player(fide_player=test_case.player_id) == test_case.exp_id
+    assert parse_fide_player(fide_player=test_case.fide_id) == test_case.exp_id
 
 
 @pytest.mark.parametrize(
     "test_case",
     [
-        CaseParseFidePlayer(player_id=FidePlayerID(entity_id="55332"), exp_id=55332),
-        CaseParseFidePlayer(player_id=FidePlayerID(entity_id=78332), exp_id=78332),
-        CaseParseFidePlayer(player_id=None, exp_id=None),
+        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id="55332"), exp_id=55332),
+        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id=78332), exp_id=78332),
+        CaseParseFidePlayer(fide_id=None, exp_id=None),
     ],
 )
 def test_parse_fide_player_optional(test_case: CaseParseFidePlayer) -> None:
     """Testing the 'parse_fide_player_optional' utility function."""
-    assert (
-        parse_fide_player_optional(fide_player=test_case.player_id) == test_case.exp_id
-    )
+    assert parse_fide_player_optional(fide_player=test_case.fide_id) == test_case.exp_id
 
 
 @dataclass
@@ -84,37 +79,6 @@ def test_build_url(test_case: CaseBuildURL) -> None:
 
 
 @dataclass
-class CaseCleanFidePlayerName:
-    name: str
-    exp_first_name: str
-    exp_last_name: str
-
-
-@pytest.mark.parametrize(
-    "test_case",
-    [
-        CaseCleanFidePlayerName(
-            name="Carlsen, Magnus", exp_first_name="Magnus", exp_last_name="Carlsen"
-        ),
-        CaseCleanFidePlayerName(
-            name="Magnus Carlsen", exp_first_name="Magnus Carlsen", exp_last_name=None
-        ),
-        CaseCleanFidePlayerName(
-            name="Carlsen, Magnus The Goat",
-            exp_first_name="Magnus The Goat",
-            exp_last_name="Carlsen",
-        ),
-    ],
-)
-def test_clean_fide_player_name(test_case: CaseCleanFidePlayerName) -> None:
-    """Testing the 'clean_fide_player_name' utility function."""
-    assert clean_fide_player_name(name=test_case.name) == (
-        test_case.exp_first_name,
-        test_case.exp_last_name,
-    )
-
-
-@dataclass
 class CaseValidateDateFormat:
     date: str
     date_format: str
@@ -141,42 +105,3 @@ def test_validate_date_format(test_case: CaseValidateDateFormat) -> None:
         validate_date_format(date=test_case.date, date_format=test_case.date_format)
         == test_case.exp_date
     )
-
-
-@dataclass
-class CaseFromPlayerModel:
-    player: Dict[str, Any]
-    exp_first_name: str
-    exp_last_name: str
-    exp_model_dump: str
-
-
-@pytest.mark.parametrize(
-    "test_case",
-    [
-        CaseFromPlayerModel(
-            player={
-                "id": "1503014",
-                "name": "Carlsen, Magnus",
-                "title": "GM",
-                "country": "NOR",
-            },
-            exp_first_name="Magnus",
-            exp_last_name="Carlsen",
-            exp_model_dump={
-                "name": "Magnus Carlsen",
-                "player_id": 1503014,
-                "title": "GM",
-                "country": "NOR",
-            },
-        )
-    ],
-)
-def test_from_player_model(test_case: CaseFromPlayerModel) -> None:
-    """Testing the 'from_player_model' utility function."""
-    first_name, last_name, model_dump = from_player_model(
-        player=test_case.player, fide_player_model=FidePlayerRaw
-    )
-    assert test_case.exp_first_name == first_name
-    assert test_case.exp_last_name == last_name
-    assert test_case.exp_model_dump == model_dump

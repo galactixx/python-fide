@@ -6,6 +6,7 @@ from python_fide import (
     FideGamesSet,
     FidePlayer,
     FidePlayerGameStats,
+    FidePlayerID,
     FidePlayerRating,
     FideRating,
 )
@@ -16,7 +17,7 @@ def game_stats_assertion(game_stats: FidePlayerGameStats) -> None:
     assert isinstance(game_stats, FidePlayerGameStats)
 
     assert game_stats == FidePlayerGameStats(
-        player=FIDE_PLAYER_DETAIL_CARLSEN.player,
+        fide_id=FidePlayerID(entity_id=1503014),
         opponent=None,
         white=FideGamesSet(
             standard=FideGames(
@@ -50,21 +51,21 @@ def rating_chart_assertion(historical_ratings: List[FidePlayerRating]) -> None:
 
     assert historical_ratings[0] == FidePlayerRating(
         month=Date.from_date_format(date="2024-Jan", date_format="%Y-%b"),
-        player=FIDE_PLAYER_DETAIL_CARLSEN.player,
+        fide_id=FidePlayerID(entity_id=1503014),
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=43, rating=2823),
         blitz=FideRating(games=21, rating=2886),
     )
     assert historical_ratings[1] == FidePlayerRating(
         month=Date.from_date_format(date="2024-Feb", date_format="%Y-%b"),
-        player=FIDE_PLAYER_DETAIL_CARLSEN.player,
+        fide_id=FidePlayerID(entity_id=1503014),
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=0, rating=2823),
         blitz=FideRating(games=0, rating=2886),
     )
     assert historical_ratings[2] == FidePlayerRating(
         month=Date.from_date_format(date="2024-Mar", date_format="%Y-%b"),
-        player=FIDE_PLAYER_DETAIL_CARLSEN.player,
+        fide_id=FidePlayerID(entity_id=1503014),
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=0, rating=2823),
         blitz=FideRating(games=0, rating=2886),
@@ -76,15 +77,15 @@ def opponents_assertion(opponents: List[FidePlayer]) -> None:
     assert len(opponents) == 3
     assert all(isinstance(opponent, FidePlayer) for opponent in opponents)
     assert opponents[0] == FidePlayer(
-        name="Nijat Abasov",
-        player_id=13402960,
+        name="Abasov, Nijat",
+        fide_id=13402960,
         country="AZE",
     )
     assert opponents[1] == FidePlayer(
-        name="Nodirbek Abdusattorov", player_id=14204118, country="UZB"
+        name="Abdusattorov, Nodirbek", fide_id=14204118, country="UZB"
     )
     assert opponents[2] == FidePlayer(
-        name="Michael Adams",
-        player_id=400041,
+        name="Adams, Michael",
+        fide_id=400041,
         country="ENG",
     )

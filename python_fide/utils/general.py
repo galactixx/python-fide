@@ -27,37 +27,6 @@ def validate_date_format(date: str, date_format: str) -> Optional[str]:
         return month_date
 
 
-def clean_fide_player_name(name: str) -> Tuple[str, Optional[str]]:
-    """
-    Cleans the raw player name field from the API response.
-
-    If there is a comma in the name, it is clear that the last
-    name is separated from the rest of the name. Thus, we treat
-    anything before the comma as the last name and anything
-    after is combined into the first name.
-
-    If there is no comma found in the name, then the entire name
-    is treated as the first name, and the last name is returned
-    as None.
-
-    Args:
-        name (str): The full name of the player returned from
-            the raw API response.
-
-    Returns:
-        Tuple[str, str | None]: A tuple of a string first name
-            and a string last name. The last name can be None if
-            it was not detected reliably.
-    """
-    if "," not in name:
-        return name, None
-    else:
-        name_split = name.split(",")
-        last_name = name_split[0].strip()
-        first_name = " ".join(name.strip() for name in name_split[1:])
-        return first_name, last_name
-
-
 def build_url(base: str, segments: Union[int, str]) -> str:
     """
     Builds a URL based on a base URL and segments.
