@@ -11,8 +11,7 @@ class BaseError(Exception):
 class InvalidFideIDError(BaseError):
     """Error indicating that the Fide ID passed is invalid."""
 
-    def __init__(self, message: str) -> None:
-        super().__init__(message=message)
+    pass
 
 
 class InvalidFormatError(BaseError):
@@ -21,7 +20,12 @@ class InvalidFormatError(BaseError):
     not what is expected.
     """
 
-    def __init__(self) -> None:
-        super().__init__(
-            message=("Please ensure the data adheres to the expected schema.")
-        )
+    pass
+
+
+class InvalidFidePlayerError(BaseError):
+    """
+    An error indicating that the Fide player ID does not exist.
+    """
+
+    pass

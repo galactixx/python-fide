@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from python_fide.types.core import FidePlayer, FidePlayerID
+from python_fide.types._core import FidePlayer, FidePlayerID
 
 
 def parse_fide_player(fide_player: Union[FidePlayer, FidePlayerID]) -> int:

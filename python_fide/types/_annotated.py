@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from pydantic.functional_validators import BeforeValidator
 from typing_extensions import Annotated
 
-from python_fide.utils.general import validate_date_format
+from python_fide.utils._general import validate_date_format
 
 
 class Date(BaseModel):
@@ -78,17 +78,10 @@ def _isinstance_date(func):
 
 
 @_isinstance_date
-def validate_date_year_month(date: Union[str, dict]) -> Date:
+def _validate_date_year_month(date: Union[str, dict]) -> Date:
     """Validation for the year-month format."""
     return Date.from_date_format(date=date, date_format="%Y-%b")
 
 
-@_isinstance_date
-def validate_date_year(date: Union[str, dict]) -> Date:
-    """Validation for the year format."""
-    return Date.from_date_format(date=date, date_format="%Y")
-
-
 # Annotated types
-DateYear = Annotated[Date, BeforeValidator(validate_date_year)]
-DateYearMonth = Annotated[Date, BeforeValidator(validate_date_year_month)]
+DateYearMonth = Annotated[Date, BeforeValidator(_validate_date_year_month)]

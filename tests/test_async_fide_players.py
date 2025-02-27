@@ -3,8 +3,7 @@ from typing import Any
 
 import pytest
 
-from python_fide import FidePlayerID, Period
-from python_fide.clients_async import AsyncFidePlayerClient
+from python_fide import AsyncFidePlayerClient, FidePlayerID, RatingPeriod
 from tests.common import (
     game_stats_assertion,
     opponents_assertion,
@@ -38,7 +37,7 @@ async def test_async_player_mock_opponents(_: Any) -> None:
 async def test_async_player_mock_rating_progress_chart(_: Any) -> None:
     """Testing the player historical ratings functionality."""
     historical_ratings = await fide_player_client.get_rating_progress_chart(
-        period=Period.ONE_YEAR, fide_id=FidePlayerID(fide_id=1503014)
+        period=RatingPeriod.ONE_YEAR, fide_id=FidePlayerID(fide_id=1503014)
     )
     rating_chart_assertion(historical_ratings=historical_ratings)
 

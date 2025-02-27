@@ -3,8 +3,7 @@ from typing import Any
 
 import pytest
 
-from python_fide import FidePlayerID, InvalidFideIDError, Period
-from python_fide.clients_sync import FidePlayerClient
+from python_fide import FidePlayerClient, FidePlayerID, InvalidFideIDError, RatingPeriod
 from tests.common import (
     game_stats_assertion,
     opponents_assertion,
@@ -36,7 +35,7 @@ def test_player_mock_opponents(_: Any) -> None:
 def test_player_mock_rating_progress_chart(_: Any) -> None:
     """Testing the player historical ratings functionality."""
     historical_ratings = fide_player_client.get_rating_progress_chart(
-        period=Period.ONE_YEAR, fide_id=FidePlayerID(fide_id=1503014)
+        period=RatingPeriod.ONE_YEAR, fide_id=FidePlayerID(fide_id=1503014)
     )
     rating_chart_assertion(historical_ratings=historical_ratings)
 
@@ -71,5 +70,5 @@ def test_player_mock_game_stats(_: Any) -> None:
 def test_player_error_invalid_fide_id(fide_player_id: str, error: str) -> None:
     """Testing the InvalidFideIDError for the FidePlayerID class."""
     with pytest.raises(InvalidFideIDError) as exc_info:
-        _ = FidePlayerID(fide_id=fide_player_id)  # type: ignore[arg-type]
+        _ = FidePlayerID(fide_id=fide_player_id)
     assert str(exc_info.value) == error

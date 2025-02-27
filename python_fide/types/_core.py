@@ -11,8 +11,8 @@ from pydantic import (
     model_validator,
 )
 
-from python_fide.exceptions import InvalidFideIDError
-from python_fide.types.annotated import DateYearMonth
+from python_fide._exceptions import InvalidFideIDError
+from python_fide.types._annotated import DateYearMonth
 
 
 class BaseRawModel(BaseModel):

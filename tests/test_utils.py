@@ -4,8 +4,8 @@ from typing import Optional, Union
 import pytest
 
 from python_fide import FidePlayerID
-from python_fide.utils.config import parse_fide_player, parse_fide_player_optional
-from python_fide.utils.general import build_url, validate_date_format
+from python_fide.utils._config import parse_fide_player, parse_fide_player_optional
+from python_fide.utils._general import build_url, validate_date_format
 
 
 @dataclass

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Period(Enum):
+class RatingPeriod(Enum):
     """The periods in which to filter the historical ratings."""
 
     ONE_YEAR = 1

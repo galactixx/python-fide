@@ -1,8 +1,8 @@
 from typing import List, Optional
 
-from python_fide.exceptions import InvalidFormatError
-from python_fide.types.adapters import PartialListAdapter
-from python_fide.types.core import FidePlayer, FidePlayerGameStats, FidePlayerRating
+from python_fide._exceptions import InvalidFormatError
+from python_fide.types._adapters import PartialListAdapter
+from python_fide.types._core import FidePlayer, FidePlayerGameStats, FidePlayerRating
 
 
 def player_opponents_parsing(response: List[dict]) -> List[FidePlayer]:
@@ -92,5 +92,5 @@ def player_stats_parsing(
         return fide_stats
     else:
         raise InvalidFormatError(
-            "invalid format, a stats response should always return only one set of stats"
+            "Invalid format, a stats response should always return only one set of stats"
         )

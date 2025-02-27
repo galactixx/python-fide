@@ -19,7 +19,7 @@ pip install python-fide
 ### Importing the Client
 To use the package, import the `FidePlayerClient` class and instantiate it:
 ```python
-from python_fide.clients_sync.fide_player_client import FidePlayerClient
+from python_fide import FidePlayerClient
 
 client = FidePlayerClient()
 ```
@@ -27,7 +27,7 @@ client = FidePlayerClient()
 ### Retrieve Player Opponents
 You can retrieve a list of opponents a player has faced using their FIDE ID:
 ```python
-from python_fide.types.core import FidePlayerID
+from python_fide import FidePlayerID
 
 fide_id = FidePlayerID(fide_id=123456)
 opponents = client.get_opponents(fide_id)
@@ -45,9 +45,9 @@ print(opponents)
 ### Retrieve Rating Progress Chart
 To get the rating progress chart of a player, use:
 ```python
-from python_fide.enums import Period
+from python_fide import RatingPeriod
 
-ratings = client.get_rating_progress_chart(fide_id, period=Period.TWO_YEARS)
+ratings = client.get_rating_progress_chart(fide_id, period=RatingPeriod.TWO_YEARS)
 
 print(ratings)
 ```
@@ -55,7 +55,7 @@ print(ratings)
 ```python
 [
     FidePlayerRating(
-        month="2023-06",
+        month=Date(date_iso='2023-06-01', date_format='%Y-%b'),
         fide_id=FidePlayerID(fide_id=123456),
         standard=FideRating(games=10, rating=2500),
         rapid=FideRating(games=5, rating=2450),
@@ -98,7 +98,7 @@ FidePlayerGameStats(
 | Method | Description | Arguments | Returns |
 |--------|-------------|------------|----------|
 | `get_opponents(fide_player: FidePlayerID) -> List[FidePlayer]` | Retrieves a list of opponents a player has faced. | `fide_player` (FidePlayerID): The FIDE ID of the player. | `List[FidePlayer]`: A list of FIDE players the given player has faced. |
-| `get_rating_progress_chart(fide_id: FidePlayerID, period: Optional[Period] = None) -> List[FidePlayerRating]` | Retrieves the rating progress chart for a player. | `fide_id` (FidePlayerID): The FIDE ID of the player. `period` (Optional[Period]): The period to filter the rating history. | `List[FidePlayerRating]`: A list of rating history data. |
+| `get_rating_progress_chart(fide_id: FidePlayerID, period: Optional[RatingPeriod] = None) -> List[FidePlayerRating]` | Retrieves the rating progress chart for a player. | `fide_id` (FidePlayerID): The FIDE ID of the player. `period` (Optional[RatingPeriod]): The period to filter the rating history. | `List[FidePlayerRating]`: A list of rating history data. |
 | `get_game_stats(fide_id: FidePlayerID, fide_id_opponent: Optional[FidePlayerID] = None) -> FidePlayerGameStats` | Retrieves game statistics for a player. | `fide_id` (FidePlayerID): The FIDE ID of the player. `fide_id_opponent` (Optional[FidePlayerID]): The FIDE ID of an opponent to filter game statistics. | `FidePlayerGameStats`: The game statistics for the given player. |
 
 ## 🤝 **License**
