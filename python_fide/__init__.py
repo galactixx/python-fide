@@ -12,7 +12,7 @@ from python_fide.types.core import (
     FideRating,
 )
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 __all__ = [
     "clients_sync",
     "clients_async",
