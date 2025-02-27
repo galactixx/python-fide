@@ -31,7 +31,7 @@ class AsyncFidePlayerClient(AsyncFideClient):
     def __init__(self):
         self.base_url = "https://ratings.fide.com/"
 
-    async def get_fide_player_opponents(
+    async def get_opponents(
         self, fide_player: FidePlayerID
     ) -> List[FidePlayer]:
         """
@@ -64,9 +64,9 @@ class AsyncFidePlayerClient(AsyncFideClient):
 
         return opponents
 
-    async def get_fide_player_rating_progress_chart(
+    async def get_rating_progress_chart(
         self,
-        fide_player: FidePlayerID,
+        fide_id: FidePlayerID,
         period: Optional[Period] = None,
     ) -> List[FidePlayerRating]:
         """
@@ -90,7 +90,7 @@ class AsyncFidePlayerClient(AsyncFideClient):
             List[FidePlayerRating]: A list of FidePlayerRating objects, each
                 reprsenting a set of ratings for a specific month.
         """
-        config = PlayerChartsConfig(fide_player_id=fide_player, period=period)
+        config = PlayerChartsConfig(fide_player_id=fide_id, period=period)
 
         # Request from API to get charts JSON response
         fide_url = build_url(base=self.base_url, segments="a_chart_data.phtml?")
@@ -99,15 +99,13 @@ class AsyncFidePlayerClient(AsyncFideClient):
         )
 
         # Validate and parse ratings chart fields from response
-        rating_charts = player_charts_parsing(
-            fide_player=fide_player, response=response
-        )
+        rating_charts = player_charts_parsing(fide_id=fide_id, response=response)
         return rating_charts
 
-    async def get_fide_player_game_stats(
+    async def get_game_stats(
         self,
-        fide_player: FidePlayerID,
-        fide_player_opponent: Optional[FidePlayerID] = None,
+        fide_id: FidePlayerID,
+        fide_id_opponent: Optional[FidePlayerID] = None,
     ) -> FidePlayerGameStats:
         """
         Given a FidePlayer or FidePlayerID object, will return a
@@ -132,7 +130,7 @@ class AsyncFidePlayerClient(AsyncFideClient):
                 game statistics for the given Fide player.
         """
         config = PlayerStatsConfig(
-            fide_player_id=fide_player, fide_player_opponent_id=fide_player_opponent
+            fide_player_id=fide_id, fide_player_opponent_id=fide_id_opponent
         )
 
         # Request from API to get game stats JSON response
@@ -143,8 +141,8 @@ class AsyncFidePlayerClient(AsyncFideClient):
 
         # Validate and parse game statistics from response
         game_stats = player_stats_parsing(
-            fide_player=fide_player,
-            fide_player_opponent=fide_player_opponent,
+            fide_id=fide_id,
+            fide_id_opponent=fide_id_opponent,
             response=response,
         )
         return game_stats

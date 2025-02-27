@@ -6,7 +6,6 @@ from python_fide import (
     FideGamesSet,
     FidePlayer,
     FidePlayerGameStats,
-    FidePlayerID,
     FidePlayerRating,
     FideRating,
 )
@@ -80,31 +79,12 @@ def opponents_assertion(opponents: List[FidePlayer]) -> None:
         name="Nijat Abasov",
         player_id=13402960,
         country="AZE",
-        first_name="Nijat",
-        last_name="Abasov",
     )
     assert opponents[1] == FidePlayer(
-        name="Nodirbek Abdusattorov",
-        player_id=14204118,
-        country="UZB",
-        first_name="Nodirbek",
-        last_name="Abdusattorov",
+        name="Nodirbek Abdusattorov", player_id=14204118, country="UZB"
     )
     assert opponents[2] == FidePlayer(
         name="Michael Adams",
         player_id=400041,
         country="ENG",
-        first_name="Michael",
-        last_name="Adams",
     )
-
-
-FIDE_PLAYER_PARAMETERS_CARLSEN = [
-    FidePlayerID(entity_id="1503014"),
-    FidePlayerID(entity_id=1503014),
-]
-
-FIDE_PLAYER_PARAMETERS_NAKAMURA = [
-    FidePlayerID(entity_id="2016192"),
-    FidePlayerID(entity_id=2016192),
-]

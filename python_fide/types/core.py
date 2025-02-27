@@ -171,7 +171,7 @@ class FidePlayerRating(BaseModel):
 
     Args:
         month (DateYearMonth): A specific month.
-        player (FidePlayer): A FidePlayer object with all general
+        player (FidePlayerID): A FidePlayer object with all general
             player fields.
         standard (FideRating): A FideRating object representing the
             standard rating at end-of-month.
@@ -182,14 +182,14 @@ class FidePlayerRating(BaseModel):
     """
 
     month: DateYearMonth
-    player: FidePlayer
+    fide_id: FidePlayerID
     standard: FideRating
     rapid: FideRating
     blitz: FideRating
 
     @classmethod
     def from_validated_model(
-        cls, player: FidePlayer, rating: Dict[str, Any]
+        cls, fide_id: FidePlayerID, rating: Dict[str, Any]
     ) -> FidePlayerRating:
         """
         Creates an instance of FidePlayerRating based on a dictionary
@@ -218,7 +218,7 @@ class FidePlayerRating(BaseModel):
         )
 
         return cls(
-            player=player,
+            fide_id=fide_id,
             month=fide_rating.month,
             standard=standard_rating,
             rapid=rapid_rating,
@@ -278,7 +278,7 @@ class FidePlayerGameStats(BaseModel):
     is included.
 
     Args:
-        player (FidePlayer): A FidePlayer object with all general player fields.
+        fide_id (FidePlayerID): A FidePlayerID object.
         opponent (FidePlayer | None): A FidePlayer object with all general
             player fields. Can be None if not specified.
         white (FideGamesSest): The game statistics for all game formats when
@@ -287,7 +287,7 @@ class FidePlayerGameStats(BaseModel):
             playing with the black pieces.
     """
 
-    player: FidePlayer
+    fide_id: FidePlayerID
     opponent: Optional[FidePlayer]
     white: FideGamesSet
     black: FideGamesSet
@@ -295,8 +295,8 @@ class FidePlayerGameStats(BaseModel):
     @classmethod
     def from_validated_model(
         cls,
-        fide_player: FidePlayer,
-        fide_player_opponent: Optional[FidePlayer],
+        fide_id: FidePlayerID,
+        fide_id_opponent: Optional[FidePlayer],
         stats: Dict[str, Any],
     ) -> FidePlayerGameStats:
         """
@@ -349,8 +349,8 @@ class FidePlayerGameStats(BaseModel):
         stats_black_decomposed = decompose_raw_stats(fide_stats=stats_black)
 
         return FidePlayerGameStats(
-            player=fide_player,
-            opponent=fide_player_opponent,
+            fide_id=fide_id,
+            opponent=fide_id_opponent,
             white=stats_white_decomposed,
             black=stats_black_decomposed,
         )

@@ -27,14 +27,14 @@ def player_opponents_parsing(response: List[dict]) -> List[FidePlayer]:
     gathered_players: List[FidePlayer] = []
 
     for player in players.data:
-        fide_player = FidePlayer.from_validated_model(player=player)
+        fide_player = FidePlayer.model_validate(player)
         gathered_players.append(fide_player)
 
     return gathered_players
 
 
 def player_charts_parsing(
-    fide_player: FidePlayer, response: List[dict]
+    fide_id: FidePlayer, response: List[dict]
 ) -> List[FidePlayerRating]:
     """
     Logic to parse the response returned from the player
@@ -54,7 +54,7 @@ def player_charts_parsing(
 
     for month_rating in ratings.data:
         fide_rating = FidePlayerRating.from_validated_model(
-            player=fide_player, rating=month_rating
+            fide_id=fide_id, rating=month_rating
         )
         gathered_ratings.append(fide_rating)
 
@@ -62,8 +62,8 @@ def player_charts_parsing(
 
 
 def player_stats_parsing(
-    fide_player: FidePlayer,
-    fide_player_opponent: Optional[FidePlayer],
+    fide_id: FidePlayer,
+    fide_id_opponent: Optional[FidePlayer],
     response: List[dict],
 ) -> FidePlayerGameStats:
     """
@@ -89,8 +89,8 @@ def player_stats_parsing(
     # can be a response with no items
     if player_stats.num_observations == 1:
         fide_stats = FidePlayerGameStats.from_validated_model(
-            fide_player=fide_player,
-            fide_player_opponent=fide_player_opponent,
+            fide_id=fide_id,
+            fide_id_opponent=fide_id_opponent,
             stats=player_stats.extract,
         )
         return fide_stats
