@@ -24,6 +24,11 @@ from python_fide import FidePlayerClient
 client = FidePlayerClient()
 ```
 
+In addition, an asynchronous version of the client also exists and can be imported as follows:
+```python
+from python_fide import AsyncFidePlayerClient
+```
+
 ### Retrieve Player Opponents
 You can retrieve a list of opponents a player has faced using their FIDE ID:
 ```python
@@ -37,8 +42,8 @@ print(opponents)
 #### Example Output:
 ```python
 [
-    FidePlayer(fide_id=654321, name="Opponent Name", country="USA"),
-    FidePlayer(fide_id=789012, name="Another Opponent", country="UK")
+    FidePlayer(fide_id=FidePlayerID(fide_id=123456), name="Opponent Name", country="USA"),
+    FidePlayer(fide_id=FidePlayerID(fide_id=123456), name="Another Opponent", country="UK")
 ]
 ```
 
@@ -73,13 +78,14 @@ To get statistics against a specific opponent:
 ```python
 opponent_id = FidePlayerID(fide_id=654321)
 stats = client.get_game_stats(fide_id, fide_id_opponent=opponent_id)
+
 print(stats)
 ```
 #### Example Output:
 ```python
 FidePlayerGameStats(
     fide_id=FidePlayerID(fide_id=123456),
-    opponent=FidePlayer(fide_id=654321, name="Opponent Name", country="USA"),
+    opponent=FidePlayerID(fide_id=654321),
     white=FideGamesSet(
         standard=FideGames(games_total=30, games_won=15, games_draw=10, games_lost=5),
         rapid=FideGames(games_total=20, games_won=10, games_draw=5, games_lost=5),
