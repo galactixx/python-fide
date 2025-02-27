@@ -1,6 +1,7 @@
-from typing import Optional, Tuple, Union
 from datetime import datetime
+from typing import Optional, Tuple, Union
 from urllib.parse import urljoin
+
 
 def validate_date_format(date: str, date_format: str) -> Optional[str]:
     """
@@ -19,22 +20,17 @@ def validate_date_format(date: str, date_format: str) -> Optional[str]:
     """
     try:
         month_reformatted = datetime.strptime(date, date_format)
-        month_date = datetime.strftime(month_reformatted, '%Y-%m-%d')
+        month_date = datetime.strftime(month_reformatted, "%Y-%m-%d")
     except ValueError:
         month_date = None
     finally:
         return month_date
 
 
-def combine_fide_player_names(first_name: str, last_name: str) -> str:
-    """Standardizes the combination first and last name."""
-    return f'{last_name}, {first_name}'
-
-
 def clean_fide_player_name(name: str) -> Tuple[str, Optional[str]]:
     """
     Cleans the raw player name field from the API response.
-    
+
     If there is a comma in the name, it is clear that the last
     name is separated from the rest of the name. Thus, we treat
     anything before the comma as the last name and anything
@@ -47,18 +43,18 @@ def clean_fide_player_name(name: str) -> Tuple[str, Optional[str]]:
     Args:
         name (str): The full name of the player returned from
             the raw API response.
-    
+
     Returns:
         Tuple[str, str | None]: A tuple of a string first name
             and a string last name. The last name can be None if
             it was not detected reliably.
     """
-    if ',' not in name:
+    if "," not in name:
         return name, None
     else:
-        name_split = name.split(',')
+        name_split = name.split(",")
         last_name = name_split[0].strip()
-        first_name = ' '.join(name.strip() for name in name_split[1:])
+        first_name = " ".join(name.strip() for name in name_split[1:])
         return first_name, last_name
 
 
@@ -76,7 +72,7 @@ def build_url(base: str, segments: Union[int, str]) -> str:
     if isinstance(segments, int):
         segments = str(segments)
 
-    if not base.endswith('/'):
-        base += '/'
+    if not base.endswith("/"):
+        base += "/"
 
     return urljoin(base=base, url=segments)

@@ -1,11 +1,12 @@
-from typing_extensions import Annotated
+from datetime import date, datetime
 from typing import Optional, Union
-from datetime import datetime, date
 
 from pydantic import BaseModel
 from pydantic.functional_validators import BeforeValidator
+from typing_extensions import Annotated
 
 from python_fide.utils.general import validate_date_format
+
 
 class Date(BaseModel):
     """
@@ -24,6 +25,7 @@ class Date(BaseModel):
         date_orig_format (str): The exepected string format of
             the original date.
     """
+
     date_iso: Optional[str]
     date_orig: str
     date_orig_format: str
@@ -32,25 +34,23 @@ class Date(BaseModel):
     def as_date(self) -> Optional[date]:
         """The ISO date converted into a date object."""
         datetime_as_date = self.as_datetime
-        return (
-            datetime_as_date.date()
-            if datetime_as_date is not None else None
-        )
+        return datetime_as_date.date() if datetime_as_date is not None else None
 
     @property
     def as_datetime(self) -> Optional[datetime]:
         """The ISO date converted into a datetime object."""
         return (
-            datetime.strptime(self.date_iso, '%Y-%m-%d')
-            if self.date_iso is not None else None
+            datetime.strptime(self.date_iso, "%Y-%m-%d")
+            if self.date_iso is not None
+            else None
         )
-    
+
     @classmethod
-    def from_date_format(cls, date: str, date_format: str) -> 'Date':
+    def from_date_format(cls, date: str, date_format: str) -> "Date":
         """
         Creates a Date instance based on a string date value and the
         accompanying date format.
-        
+
         Args:
             date (str): A date represented as a string in some format.
             date_format (str): A string format of the date.
@@ -59,13 +59,12 @@ class Date(BaseModel):
             Date: A Date instance.
         """
         date_iso = validate_date_format(date=date, date_format=date_format)
-        return cls(
-            date_iso=date_iso, date_orig=date, date_orig_format=date_format
-        )
+        return cls(date_iso=date_iso, date_orig=date, date_orig_format=date_format)
 
 
 def _isinstance_date(func):
     """Private wrapper to facilitate the conversion to a Date object."""
+
     def inner(date: Union[str, dict, Date]) -> Date:
         if isinstance(date, str):
             return func(date=date)
@@ -77,35 +76,22 @@ def _isinstance_date(func):
             raise TypeError(
                 f"{type(date)} not a valid type, expecting a str, dict, or Date"
             )
+
     return inner
 
 
 @_isinstance_date
 def validate_date_year_month(date: Union[str, dict]) -> Date:
     """Validation for the year-month format."""
-    return Date.from_date_format(date=date, date_format='%Y-%b')
-
-
-@_isinstance_date
-def validate_date_iso(date: Union[str, dict]) -> Date:
-    """Validation for the year-month-date format."""
-    return Date.from_date_format(date=date, date_format='%Y-%m-%d')
+    return Date.from_date_format(date=date, date_format="%Y-%b")
 
 
 @_isinstance_date
 def validate_date_year(date: Union[str, dict]) -> Date:
     """Validation for the year format."""
-    return Date.from_date_format(date=date, date_format='%Y')
-
-
-@_isinstance_date
-def validate_datetime(date: Union[str, dict]) -> Date:
-    """Validation for the datetime format."""
-    return Date.from_date_format(date=date, date_format='%Y-%m-%d %H:%M:%S')
+    return Date.from_date_format(date=date, date_format="%Y")
 
 
 # Annotated types
-DateISO = Annotated[Date, BeforeValidator(validate_date_iso)]
 DateYear = Annotated[Date, BeforeValidator(validate_date_year)]
-DateTime = Annotated[Date, BeforeValidator(validate_datetime)]
 DateYearMonth = Annotated[Date, BeforeValidator(validate_date_year_month)]

@@ -5,9 +5,9 @@ from python_fide.clients_async.search import AsyncFideSearchClient
 from python_fide.clients_async.top_players import AsyncFideTopPlayersClient
 
 __all__ = [
-    'AsyncFideEventsClient',
-    'AsyncFideNewsClient',
-    'AsyncFidePlayerClient',
-    'AsyncFideSearchClient',
-    'AsyncFideTopPlayersClient'
+    "AsyncFideEventsClient",
+    "AsyncFideNewsClient",
+    "AsyncFidePlayerClient",
+    "AsyncFideSearchClient",
+    "AsyncFideTopPlayersClient",
 ]

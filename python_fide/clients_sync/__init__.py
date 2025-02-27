@@ -5,9 +5,9 @@ from python_fide.clients_sync.search import FideSearchClient
 from python_fide.clients_sync.top_players import FideTopPlayersClient
 
 __all__ = [
-    'FideEventsClient',
-    'FideNewsClient',
-    'FidePlayerClient',
-    'FideSearchClient',
-    'FideTopPlayersClient'
+    "FideEventsClient",
+    "FideNewsClient",
+    "FidePlayerClient",
+    "FideSearchClient",
+    "FideTopPlayersClient",
 ]

@@ -1,13 +1,9 @@
 from typing import Optional, Union
 
-from python_fide.types.core import (
-    FidePlayer,
-    FidePlayerID
-)
+from python_fide.types.core import FidePlayer, FidePlayerID
 
-def parse_fide_player(
-    fide_player: Union[FidePlayer, FidePlayerID]
-) -> int:
+
+def parse_fide_player(fide_player: Union[FidePlayer, FidePlayerID]) -> int:
     """
     Given a FidePlayer or FidePlayerID object, will return an
     integer representing the Fide ID of the player.
@@ -24,10 +20,8 @@ def parse_fide_player(
     elif isinstance(fide_player, FidePlayerID):
         return fide_player.entity_id
     else:
-        raise ValueError(
-            "not a valid 'fide_player' type"
-        )
-    
+        raise ValueError("not a valid 'fide_player' type")
+
 
 def parse_fide_player_optional(
     fide_player: Optional[Union[FidePlayer, FidePlayerID]]
@@ -36,7 +30,7 @@ def parse_fide_player_optional(
     Given a FidePlayer or FidePlayerID object, will return an
     integer representing the Fide ID of the player. If no
     fide_player is specified, will return None.
-    
+
     Args:
         fide_player (FidePlayer | FidePlayerID | None): A
             FidePlayeror FidePlayerID object. Can also be None

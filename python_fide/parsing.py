@@ -4,13 +4,12 @@ from python_fide.exceptions import InvalidFormatError
 from python_fide.types.adapters import PartialListAdapter
 from python_fide.types.core import (
     FidePlayer,
-    FidePlayerBasic,
-    FidePlayerDetail,
     FidePlayerGameStats,
-    FidePlayerRating
+    FidePlayerRating,
 )
 
-def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
+
+def player_opponents_parsing(response: List[dict]) -> List[FidePlayer]:
     """
     Logic to parse the response returned from the opponents
     endpoint.
@@ -20,50 +19,18 @@ def player_opponents_parsing(response: List[dict]) -> List[FidePlayerBasic]:
             representing a Fide player.
 
     Returns:
-        List[FidePlayerBasic]: A list of FidePlayerBasic objects
+        List[FidePlayer]: A list of FidePlayer objects
             each representing an opponent the player in question
             has faced.
     """
     players = PartialListAdapter.from_minimal_adapter(response=response)
-    gathered_players: List[FidePlayerBasic] = []
-    
+    gathered_players: List[FidePlayer] = []
+
     for player in players.data:
-        fide_player = FidePlayerBasic.from_validated_model(player=player)
+        fide_player = FidePlayer.from_validated_model(player=player)
         gathered_players.append(fide_player)
-    
+
     return gathered_players
-
-
-def player_detail_parsing(response: List[dict]) -> Optional[FidePlayerDetail]:
-    """
-    Logic to parse the response returned from the player
-    detail endpoint.
-
-    Args:
-        response (List[dict]): A list of dictionaries. In
-            this case, if the Fide ID is valid, there should
-            only be one dictionary in the list.
-
-    Returns:
-        FidePlayerDetail | None: A FidePlayerDetail object or
-            if the Fide player ID is invalid, None.
-    """
-    players = PartialListAdapter.from_minimal_adapter(response=response)
-
-    # This is a search by Fide ID, thus there should never
-    # be a response that has more than one item, although
-    # there can be a response with no items
-    if players.num_observations == 1:
-        fide_detail = FidePlayerDetail.from_validated_model(
-            player=players.extract
-        )
-        return fide_detail
-    elif players.num_observations == 0:
-        return
-    else:
-        raise InvalidFormatError(
-            "invalid format, a player detail response cannot return more than one player"
-        )
 
 
 def player_charts_parsing(
@@ -97,7 +64,7 @@ def player_charts_parsing(
 def player_stats_parsing(
     fide_player: FidePlayer,
     fide_player_opponent: Optional[FidePlayer],
-    response: List[dict]
+    response: List[dict],
 ) -> FidePlayerGameStats:
     """
     Logic to parse the response returned from the game stats
@@ -124,7 +91,7 @@ def player_stats_parsing(
         fide_stats = FidePlayerGameStats.from_validated_model(
             fide_player=fide_player,
             fide_player_opponent=fide_player_opponent,
-            stats=player_stats.extract
+            stats=player_stats.extract,
         )
         return fide_stats
     else:
