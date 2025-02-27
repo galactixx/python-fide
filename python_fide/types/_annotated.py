@@ -20,8 +20,8 @@ class Date(BaseModel):
         date_iso (str | None): The date value represented as an
             ISO date string. Can also be None if there was an
             unexpected error in validating the date.
-        date_orig_format (str): The exepected string format of
-            the original date.
+        date_format (str): The exepected string format of the
+            original date.
     """
 
     date_iso: Optional[str]
@@ -29,13 +29,13 @@ class Date(BaseModel):
 
     @property
     def as_date(self) -> Optional[date]:
-        """The ISO date converted into a date object."""
+        """Returns the ISO date converted into a date object."""
         datetime_as_date = self.as_datetime
         return datetime_as_date.date() if datetime_as_date is not None else None
 
     @property
     def as_datetime(self) -> Optional[datetime]:
-        """The ISO date converted into a datetime object."""
+        """Returns the ISO date converted into a datetime object."""
         return (
             datetime.strptime(self.date_iso, "%Y-%m-%d")
             if self.date_iso is not None

@@ -15,10 +15,10 @@ from python_fide._exceptions import InvalidFideIDError
 from python_fide.types._annotated import DateYearMonth
 
 
-class BaseRawModel(BaseModel):
+class BaseFideModel(BaseModel):
     """
-    Base model for all types. Sets model configuration and
-    basic field validation.
+    Base model for all types. Sets model configuration and basic
+    field validation.
     """
 
     model_config = ConfigDict(populate_by_name=True, use_enum_values=True)
@@ -32,8 +32,8 @@ class BaseRawModel(BaseModel):
         return value
 
 
-class FidePlayerRatings(BaseRawModel):
-    """Raw model used in validating the FidePlayerRating model."""
+class FidePlayerRatings(BaseFideModel):
+    """An intermediate model used in validating the `FidePlayerRating` model."""
 
     month: str = Field(..., validation_alias="date_2")
     rating_standard: Optional[int] = Field(..., validation_alias="rating")
@@ -50,52 +50,52 @@ class FidePlayerRatings(BaseRawModel):
         return value or 0
 
 
-class FidePlayerGameWhiteStats(BaseRawModel):
+class FidePlayerGameWhiteStats(BaseFideModel):
     """
-    Raw model used in validating the white game stats fields
-    in the FidePlayerGameStats model.
+    An intermediate model used in validating the white game stats fields
+    in the `FidePlayerGameStats` model.
     """
 
-    total: Optional[int] = Field(..., validation_alias="white_total")
-    total_win: Optional[int] = Field(..., validation_alias="white_win_num")
-    total_draw: Optional[int] = Field(..., validation_alias="white_draw_num")
-    standard: Optional[int] = Field(..., validation_alias="white_total_std")
-    standard_win: Optional[int] = Field(..., validation_alias="white_win_num_std")
-    standard_draw: Optional[int] = Field(..., validation_alias="white_draw_num_std")
-    rapid: Optional[int] = Field(..., validation_alias="white_total_rpd")
-    rapid_win: Optional[int] = Field(..., validation_alias="white_win_num_rpd")
-    rapid_draw: Optional[int] = Field(..., validation_alias="white_draw_num_rpd")
-    blitz: Optional[int] = Field(..., validation_alias="white_total_blz")
-    blitz_win: Optional[int] = Field(..., validation_alias="white_win_num_blz")
-    blitz_draw: Optional[int] = Field(..., validation_alias="white_draw_num_blz")
+    total: int = Field(..., validation_alias="white_total")
+    total_win: int = Field(..., validation_alias="white_win_num")
+    total_draw: int = Field(..., validation_alias="white_draw_num")
+    standard: int = Field(..., validation_alias="white_total_std")
+    standard_win: int = Field(..., validation_alias="white_win_num_std")
+    standard_draw: int = Field(..., validation_alias="white_draw_num_std")
+    rapid: int = Field(..., validation_alias="white_total_rpd")
+    rapid_win: int = Field(..., validation_alias="white_win_num_rpd")
+    rapid_draw: int = Field(..., validation_alias="white_draw_num_rpd")
+    blitz: int = Field(..., validation_alias="white_total_blz")
+    blitz_win: int = Field(..., validation_alias="white_win_num_blz")
+    blitz_draw: int = Field(..., validation_alias="white_draw_num_blz")
 
-    @field_validator("*", mode="after")
+    @field_validator("*", mode="before")
     @classmethod
     def override_none(cls, value: Optional[int]) -> int:
         """Validator to return a 0 if the value is None."""
         return value or 0
 
 
-class FidePlayerGameBlackStats(BaseRawModel):
+class FidePlayerGameBlackStats(BaseFideModel):
     """
-    Raw model used in validating the black game stats fields
-    in the FidePlayerGameStats model.
+    An intermediate model used in validating the black game stats fields
+    in the `FidePlayerGameStats` model.
     """
 
-    total: Optional[int] = Field(..., validation_alias="black_total")
-    total_win: Optional[int] = Field(..., validation_alias="black_win_num")
-    total_draw: Optional[int] = Field(..., validation_alias="black_draw_num")
-    standard: Optional[int] = Field(..., validation_alias="black_total_std")
-    standard_win: Optional[int] = Field(..., validation_alias="black_win_num_std")
-    standard_draw: Optional[int] = Field(..., validation_alias="black_draw_num_std")
-    rapid: Optional[int] = Field(..., validation_alias="black_total_rpd")
-    rapid_win: Optional[int] = Field(..., validation_alias="black_win_num_rpd")
-    rapid_draw: Optional[int] = Field(..., validation_alias="black_draw_num_rpd")
-    blitz: Optional[int] = Field(..., validation_alias="black_total_blz")
-    blitz_win: Optional[int] = Field(..., validation_alias="black_win_num_blz")
-    blitz_draw: Optional[int] = Field(..., validation_alias="black_draw_num_blz")
+    total: int = Field(..., validation_alias="black_total")
+    total_win: int = Field(..., validation_alias="black_win_num")
+    total_draw: int = Field(..., validation_alias="black_draw_num")
+    standard: int = Field(..., validation_alias="black_total_std")
+    standard_win: int = Field(..., validation_alias="black_win_num_std")
+    standard_draw: int = Field(..., validation_alias="black_draw_num_std")
+    rapid: int = Field(..., validation_alias="black_total_rpd")
+    rapid_win: int = Field(..., validation_alias="black_win_num_rpd")
+    rapid_draw: int = Field(..., validation_alias="black_draw_num_rpd")
+    blitz: int = Field(..., validation_alias="black_total_blz")
+    blitz_win: int = Field(..., validation_alias="black_win_num_blz")
+    blitz_draw: int = Field(..., validation_alias="black_draw_num_blz")
 
-    @field_validator("*", mode="after")
+    @field_validator("*", mode="before")
     @classmethod
     def override_none(cls, value: Optional[int]) -> int:
         """Validator to return a 0 if the value is None."""
@@ -104,10 +104,10 @@ class FidePlayerGameBlackStats(BaseRawModel):
 
 class FidePlayerID(BaseModel):
     """
-    Base model for a Fide ID.
+    A simple `pydantic` model used to validate an represent a Fide ID.
 
     Args:
-        fide_id (int): An integer representing a Fide ID.
+        fide_id (int): An integer representing a valid Fide ID.
     """
 
     fide_id: int
@@ -177,14 +177,14 @@ class FidePlayerRating(BaseModel):
     rapid, blitz).
 
     Args:
-        month (DateYearMonth): A specific month.
-        player (FidePlayerID): A FidePlayer object with all general
-            player fields.
-        standard (FideRating): A FideRating object representing the
+        month (`DateYearMonth`): A `DateYearMonth` object representing a
+            specific year and month.
+        player (`FidePlayerID`): A `FidePlayerID` object.
+        standard (`FideRating`): A `FideRating` object representing the
             standard rating at end-of-month.
-        rapid (FideRating): A FideRating object representing the rapid
+        rapid (`FideRating`): A `FideRating` object representing the rapid
             rating at end-of-month.
-        blitz (FideRating): A FideRating object representing the blitz
+        blitz (`FideRating`): A `FideRating` object representing the blitz
             rating at end-of-month.
     """
 
@@ -199,17 +199,17 @@ class FidePlayerRating(BaseModel):
         cls, fide_id: FidePlayerID, rating: Dict[str, Any]
     ) -> FidePlayerRating:
         """
-        Creates an instance of FidePlayerRating based on a dictionary
+        Creates an instance of `FidePlayerRating` based on a dictionary
         pulled from the API response.
 
         Args:
-            player (FidePlayer): A FidePlayer object with all general
+            player (`FidePlayer`): A `FidePlayer` object with all general
                 player fields.
             rating (Dict[str, Any]): A dictionary representing all
                 ratings for a given month.
 
         Returns:
-            FidePlayerRating: A new FidePlayerRating instance.
+            `FidePlayerRating`: A new `FidePlayerRating` instance.
         """
         fide_rating = FidePlayerRatings.model_validate(rating)
 
@@ -263,11 +263,11 @@ class FideGamesSet(BaseModel):
     formats (standard, rapid, blitz).
 
     Args:
-        standard (FideGames): A FideGames object representing the
+        standard (`FideGames`): A `FideGames` object representing the
             games stats for the standard game format.
-        rapid (FideGames): A FideGames object representing the games
+        rapid (`FideGames`): A `FideGames` object representing the games
             stats for the rapid game format.
-        blitz (FideGames): A FideGames object representing the games
+        blitz (`FideGames`): A `FideGames` object representing the games
             stats for the blitz game format.
     """
 
@@ -285,17 +285,17 @@ class FidePlayerGameStats(BaseModel):
     is included.
 
     Args:
-        fide_id (FidePlayerID): A FidePlayerID object.
-        opponent (FidePlayer | None): A FidePlayer object with all general
-            player fields. Can be None if not specified.
-        white (FideGamesSest): The game statistics for all game formats when
+        fide_id (`FidePlayerID`): A `FidePlayerID` object.
+        opponent (`FidePlayerID` | None): A `FidePlayerID` object.Can be
+            None if not specified.
+        white (`FideGamesSet`): The game statistics for all game formats when
             playing with the white pieces.
-        black (FideGames Set): The game statistics for all game formats when
+        black (`FideGamesSet`): The game statistics for all game formats when
             playing with the black pieces.
     """
 
     fide_id: FidePlayerID
-    opponent: Optional[FidePlayer]
+    opponent: Optional[FidePlayerID]
     white: FideGamesSet
     black: FideGamesSet
 
@@ -303,30 +303,29 @@ class FidePlayerGameStats(BaseModel):
     def from_validated_model(
         cls,
         fide_id: FidePlayerID,
-        fide_id_opponent: Optional[FidePlayer],
+        fide_id_opponent: Optional[FidePlayerID],
         stats: Dict[str, Any],
     ) -> FidePlayerGameStats:
         """
-        Creates an instance of FidePlayerGameStats based on a dictionary
+        Creates an instance of `FidePlayerGameStats` based on a dictionary
         pulled from the API response.
 
         Args:
-            fide_player (FidePlayer): A FidePlayer object with all general
-                player fields.
-            fide_player_opponent (FidePlayer): A FidePlayer object with all
-                general player fields. Can be None if not specified.
+            fide_player (`FidePlayerID`): A `FidePlayerID` object.
+            fide_player_opponent (`FidePlayerID`): A `FidePlayerID` object.
+                Can be None if not specified.
             stats (Dict[str, Any]): A dictionary representing all games stats
                 for a given player.
 
         Returns:
-            FidePlayerGameStats: A new FidePlayerGameStats instance.
+            `FidePlayerGameStats`: A new `FidePlayerGameStats` instance.
         """
 
         def decompose_raw_stats(
             fide_stats: Union[FidePlayerGameBlackStats, FidePlayerGameWhiteStats]
         ) -> FideGamesSet:
             """
-            Generates a FideGamesSet object from the white or black raw
+            Generates a `FideGamesSet` object from the white or black raw
             stats model.
             """
             return FideGamesSet(

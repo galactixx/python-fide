@@ -4,8 +4,8 @@ from pydantic import Field, field_validator
 from pydantic.functional_validators import BeforeValidator
 from typing_extensions import Annotated
 
-from python_fide.config._base import BaseEndpointConfig
 from python_fide._enums import RatingPeriod
+from python_fide.config._base import BaseEndpointConfig
 from python_fide.utils._config import parse_fide_player, parse_fide_player_optional
 
 FideID = Annotated[int, BeforeValidator(parse_fide_player)]
@@ -14,30 +14,18 @@ FideIDOptional = Annotated[Optional[int], BeforeValidator(parse_fide_player_opti
 
 class PlayerOpponentsConfig(BaseEndpointConfig):
     """
-    Simple configuration for the opponents endpoint from
-    the FidePlayerClient.
-
-    Args:
-        fide_player_id (FideID): An integer representing
-            the Fide ID for a player.
+    Simple configuration for the opponents endpoint.
     """
 
-    fide_player_id: FideID = Field(..., alias="pl")
+    fide_id: FideID = Field(..., alias="pl")
 
 
 class PlayerChartsConfig(BaseEndpointConfig):
     """
-    Simple configuration for the ratings charts endpoint
-    from the FidePlayerClient.
-
-    Args:
-        fide_player_id (FideID): An integer representing
-            the Fide ID for a player.
-        period (RatingPeriod): An enum which allows filtering of
-            the ratings data by period of time.
+    Simple configuration for the ratings charts endpoint.
     """
 
-    fide_player_id: FideID = Field(..., alias="event")
+    fide_id: FideID = Field(..., alias="event")
     period: RatingPeriod = Field(..., alias="period")
 
     @field_validator("period", mode="before")
@@ -52,16 +40,8 @@ class PlayerChartsConfig(BaseEndpointConfig):
 
 class PlayerStatsConfig(BaseEndpointConfig):
     """
-    Simple configuration for the game stats endpoint from
-    the FidePlayerClient.
-
-    Args:
-        fide_player_id (FideID): An integer representing the
-            Fide ID for a player.
-        fide_player_opponent (FideIDOptional): An integer
-            representing the Fide ID for a player. Can also
-            be None if the entire game history should be returned.
+    Simple configuration for the game stats endpoint.
     """
 
-    fide_player_id: FideID = Field(..., alias="id1")
-    fide_player_opponent_id: FideIDOptional = Field(default=None, alias="id2")
+    fide_id: FideID = Field(..., alias="id1")
+    fide_id_opponent: FideIDOptional = Field(default=None, alias="id2")

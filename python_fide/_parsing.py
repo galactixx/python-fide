@@ -1,23 +1,16 @@
 from typing import List, Optional
 
 from python_fide._exceptions import InvalidFormatError
+from python_fide._typing import FidePlayerLike
 from python_fide.types._adapters import PartialListAdapter
 from python_fide.types._core import FidePlayer, FidePlayerGameStats, FidePlayerRating
+from python_fide.utils._config import to_fide_id, to_fide_id_optional
 
 
 def player_opponents_parsing(response: List[dict]) -> List[FidePlayer]:
     """
     Logic to parse the response returned from the opponents
     endpoint.
-
-    Args:
-        response (List[dict]): A list of dictionaries each
-            representing a Fide player.
-
-    Returns:
-        List[FidePlayer]: A list of FidePlayer objects
-            each representing an opponent the player in question
-            has faced.
     """
     players = PartialListAdapter.from_minimal_adapter(response=response)
     gathered_players: List[FidePlayer] = []
@@ -30,21 +23,13 @@ def player_opponents_parsing(response: List[dict]) -> List[FidePlayer]:
 
 
 def player_charts_parsing(
-    fide_id: FidePlayer, response: List[dict]
+    player: FidePlayerLike, response: List[dict]
 ) -> List[FidePlayerRating]:
     """
     Logic to parse the response returned from the player
     ratings endpoint.
-
-    Args:
-        fide_player (FidePlayer): A FidePlayer object.
-        response (List[dict]): A list of dictionaries each
-            representing a set of ratings for a specific month.
-
-    Returns:
-        List[FidePlayerRating]: A list of FidePlayerRating objects,
-            each reprsenting a set of ratings for a specific month.
     """
+    fide_id = to_fide_id(fide_player=player)
     ratings = PartialListAdapter.from_minimal_adapter(response=response)
     gathered_ratings: List[FidePlayerRating] = []
 
@@ -58,25 +43,13 @@ def player_charts_parsing(
 
 
 def player_stats_parsing(
-    fide_id: FidePlayer,
-    fide_id_opponent: Optional[FidePlayer],
+    player: FidePlayerLike,
+    opponent: Optional[FidePlayerLike],
     response: List[dict],
 ) -> FidePlayerGameStats:
     """
     Logic to parse the response returned from the game stats
     endpoint.
-
-    Args:
-        fide_player (FidePlayer): A FidePlayer object representing
-            the player in question.
-        fide_player_opponent (FidePlayer | None): A FidePlayer
-            object representing the opponent, otherwise None.
-        response (List[dict]): A list of dictionaries. In this case,
-            there should only ever be one dictionary in the list.
-
-    Returns:
-        FidePlayerGameStats: A FidePlayerGameStats object consisting
-            of game statistics for the given Fide player.
     """
     player_stats = PartialListAdapter.from_minimal_adapter(response=response)
 
@@ -84,6 +57,8 @@ def player_stats_parsing(
     # be a response that has more than one item, although there
     # can be a response with no items
     if player_stats.num_observations == 1:
+        fide_id = to_fide_id(fide_player=player)
+        fide_id_opponent = to_fide_id_optional(fide_player=opponent)
         fide_stats = FidePlayerGameStats.from_validated_model(
             fide_id=fide_id,
             fide_id_opponent=fide_id_opponent,

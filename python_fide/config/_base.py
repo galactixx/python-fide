@@ -5,9 +5,9 @@ from pydantic import BaseModel, ConfigDict
 
 class BaseEndpointConfig(BaseModel):
     """
-    Base abstract parameter configuration used in any
-    endpoint configurations that contain parameters to
-    be used in the request.
+    Base abstract parameter configuration used in any endpoint
+    configurations that contain parameters to be used in the
+    request.
     """
 
     model_config = ConfigDict(

@@ -1,8 +1,8 @@
 from typing import Any, Dict
 
 import httpx
-from faker import Faker
 import requests
+from faker import Faker
 
 
 class BaseFideClient(object):
@@ -23,13 +23,6 @@ class AsyncFideClient(BaseFideClient):
     ) -> Dict[str, Any]:
         """
         Private method which makes a generic request to a Fide API endpoint.
-
-        Args:
-            fide_url (str): A string URL representing a Fide API endpoint.
-            params (Dict[str, Any]): The paramaters to include in the request.
-
-        Returns:
-            Dict[str, Any]: A dictionary representation of the JSON response.
         """
         async with httpx.AsyncClient() as client:
             response = await client.get(
@@ -56,13 +49,6 @@ class SyncFideClient(BaseFideClient):
     ) -> Dict[str, Any]:
         """
         Private method which makes a generic request to a Fide API endpoint.
-
-        Args:
-            fide_url (str): A string URL representing a Fide API endpoint.
-            params (Dict[str, Any]): The paramaters to include in the request.
-
-        Returns:
-            Dict[str, Any]: A dictionary representation of the JSON response.
         """
         response = requests.get(
             url=fide_url,

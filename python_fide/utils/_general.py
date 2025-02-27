@@ -9,14 +9,6 @@ def validate_date_format(date: str, date_format: str) -> Optional[str]:
     return an ISO formatted date (%Y-%m-%d). If the date does not
     match the format provided, then None is returned instead of the
     formatted date.
-
-    Args:
-        date (str): A date represented as a string in some format.
-        date_format (str): A string format of the date.
-
-    Returns:
-        str | None: A string ISO formatted date or None if the date
-            string did not match the format provided.
     """
     try:
         month_reformatted = datetime.strptime(date, date_format)
@@ -28,16 +20,7 @@ def validate_date_format(date: str, date_format: str) -> Optional[str]:
 
 
 def build_url(base: str, segments: Union[int, str]) -> str:
-    """
-    Builds a URL based on a base URL and segments.
-
-    Args:
-        base (str): A string base URL.
-        segments (int | str): A string or integer URL segment.
-
-    Returns:
-        str: A complete URL consolidating the base and segments.
-    """
+    """Builds a URL based on a base URL and segments."""
     if isinstance(segments, int):
         segments = str(segments)
 

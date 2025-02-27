@@ -1,5 +1,10 @@
 from python_fide._enums import RatingPeriod
-from python_fide._exceptions import InvalidFideIDError, InvalidFormatError
+from python_fide._exceptions import (
+    InvalidFideIDError,
+    InvalidFidePlayerError,
+    InvalidFormatError,
+)
+from python_fide._typing import FidePlayerLike
 from python_fide.clients._player_async import AsyncFidePlayerClient
 from python_fide.clients._player_sync import FidePlayerClient
 from python_fide.types._annotated import Date
@@ -27,5 +32,7 @@ __all__ = [
     "FideRating",
     "InvalidFideIDError",
     "InvalidFormatError",
+    "InvalidFidePlayerError",
     "RatingPeriod",
+    "FidePlayerLike",
 ]

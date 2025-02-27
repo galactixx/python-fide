@@ -1,19 +1,37 @@
-from typing import Optional, Union
+from typing import Optional
 
+from python_fide._typing import FidePlayerLike
 from python_fide.types._core import FidePlayer, FidePlayerID
 
 
-def parse_fide_player(fide_player: Union[FidePlayer, FidePlayerID]) -> int:
+def to_fide_id(fide_player: FidePlayerLike) -> FidePlayerID:
     """
-    Given a FidePlayer or FidePlayerID object, will return an
+    Given a `FidePlayer` or `FidePlayerID` object, will return an
+    `FidePlayerID` object representing the Fide ID of the player.
+    """
+    fide_id = parse_fide_player(fide_player=fide_player)
+    return FidePlayerID(fide_id=fide_id)
+
+
+def to_fide_id_optional(
+    fide_player: Optional[FidePlayerLike],
+) -> Optional[FidePlayerID]:
+    """
+    Given a `FidePlayer` or `FidePlayerID` object, will return an
+    `FidePlayerID` object representing the Fide ID of the player.
+    Can be None if no object is passed as an argument.
+    """
+    fide_id = parse_fide_player_optional(fide_player=fide_player)
+    if fide_id is not None:
+        return FidePlayerID(fide_id=fide_id)
+    else:
+        return None
+
+
+def parse_fide_player(fide_player: FidePlayerLike) -> int:
+    """
+    Given a `FidePlayer` or `FidePlayerID` object, will return an
     integer representing the Fide ID of the player.
-
-    Args:
-        fide_player (FidePlayer | FidePlayerID): A FidePlayer or
-            FidePlayerID object.
-
-    Returns:
-        int: An integer representing the Fide ID of the player.
     """
     if isinstance(fide_player, FidePlayer):
         return fide_player.fide_id
@@ -23,22 +41,11 @@ def parse_fide_player(fide_player: Union[FidePlayer, FidePlayerID]) -> int:
         raise ValueError("not a valid 'fide_player' type")
 
 
-def parse_fide_player_optional(
-    fide_player: Optional[Union[FidePlayer, FidePlayerID]]
-) -> Optional[int]:
+def parse_fide_player_optional(fide_player: Optional[FidePlayerLike]) -> Optional[int]:
     """
-    Given a FidePlayer or FidePlayerID object, will return an
+    Given a `FidePlayer` or `FidePlayerID` object, will return an
     integer representing the Fide ID of the player. If no
     fide_player is specified, will return None.
-
-    Args:
-        fide_player (FidePlayer | FidePlayerID | None): A
-            FidePlayeror FidePlayerID object. Can also be None
-            if the argument is not specified.
-
-    Returns:
-        int | None: An integer representing the Fide ID of
-            the player or None.
     """
     if fide_player is not None:
         return parse_fide_player(fide_player=fide_player)

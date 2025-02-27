@@ -1,5 +1,5 @@
-from unittest import mock
 from typing import Any
+from unittest import mock
 
 import pytest
 
@@ -23,7 +23,7 @@ fide_player_client = AsyncFidePlayerClient()
 async def test_async_player_mock_opponents(_: Any) -> None:
     """Testing the player opponents functionality."""
     opponents = await fide_player_client.get_opponents(
-        fide_player=FidePlayerID(fide_id=1503014)
+        player=FidePlayerID(fide_id=1503014)
     )
     opponents_assertion(opponents=opponents)
 
@@ -37,7 +37,7 @@ async def test_async_player_mock_opponents(_: Any) -> None:
 async def test_async_player_mock_rating_progress_chart(_: Any) -> None:
     """Testing the player historical ratings functionality."""
     historical_ratings = await fide_player_client.get_rating_progress_chart(
-        period=RatingPeriod.ONE_YEAR, fide_id=FidePlayerID(fide_id=1503014)
+        period=RatingPeriod.ONE_YEAR, player=FidePlayerID(fide_id=1503014)
     )
     rating_chart_assertion(historical_ratings=historical_ratings)
 
@@ -51,6 +51,6 @@ async def test_async_player_mock_rating_progress_chart(_: Any) -> None:
 async def test_async_player_mock_game_stats(_: Any) -> None:
     """Testing the player game statistics functionality."""
     game_stats = await fide_player_client.get_game_stats(
-        fide_id=FidePlayerID(fide_id=1503014)
+        player=FidePlayerID(fide_id=1503014)
     )
     game_stats_assertion(game_stats=game_stats)
