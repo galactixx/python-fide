@@ -13,22 +13,19 @@ class Date(BaseModel):
     Structure to represent a date value returned from a Fide
     response. The date is returned in ISO format, but properties
     are included to convert the ISO date into a date or datetime
-    object. In addition, properties to view the original date and
-    date string format that is expected are also accessible.
+    object. In addition, a property to view the original date
+    string format is also provided.
 
     Args:
         date_iso (str | None): The date value represented as an
             ISO date string. Can also be None if there was an
             unexpected error in validating the date.
-        date_orig (str): The original date represented as a
-            string in some format.
         date_orig_format (str): The exepected string format of
             the original date.
     """
 
     date_iso: Optional[str]
-    date_orig: str
-    date_orig_format: str
+    date_format: str
 
     @property
     def as_date(self) -> Optional[date]:
@@ -59,7 +56,7 @@ class Date(BaseModel):
             Date: A Date instance.
         """
         date_iso = validate_date_format(date=date, date_format=date_format)
-        return cls(date_iso=date_iso, date_orig=date, date_orig_format=date_format)
+        return cls(date_iso=date_iso, date_format=date_format)
 
 
 def _isinstance_date(func):

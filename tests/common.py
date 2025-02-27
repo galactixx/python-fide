@@ -17,7 +17,7 @@ def game_stats_assertion(game_stats: FidePlayerGameStats) -> None:
     assert isinstance(game_stats, FidePlayerGameStats)
 
     assert game_stats == FidePlayerGameStats(
-        fide_id=FidePlayerID(entity_id=1503014),
+        fide_id=FidePlayerID(fide_id=1503014),
         opponent=None,
         white=FideGamesSet(
             standard=FideGames(
@@ -51,21 +51,21 @@ def rating_chart_assertion(historical_ratings: List[FidePlayerRating]) -> None:
 
     assert historical_ratings[0] == FidePlayerRating(
         month=Date.from_date_format(date="2024-Jan", date_format="%Y-%b"),
-        fide_id=FidePlayerID(entity_id=1503014),
+        fide_id=FidePlayerID(fide_id=1503014),
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=43, rating=2823),
         blitz=FideRating(games=21, rating=2886),
     )
     assert historical_ratings[1] == FidePlayerRating(
         month=Date.from_date_format(date="2024-Feb", date_format="%Y-%b"),
-        fide_id=FidePlayerID(entity_id=1503014),
+        fide_id=FidePlayerID(fide_id=1503014),
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=0, rating=2823),
         blitz=FideRating(games=0, rating=2886),
     )
     assert historical_ratings[2] == FidePlayerRating(
         month=Date.from_date_format(date="2024-Mar", date_format="%Y-%b"),
-        fide_id=FidePlayerID(entity_id=1503014),
+        fide_id=FidePlayerID(fide_id=1503014),
         standard=FideRating(games=0, rating=2830),
         rapid=FideRating(games=0, rating=2823),
         blitz=FideRating(games=0, rating=2886),

@@ -107,28 +107,28 @@ class FidePlayerID(BaseModel):
     Base model for a Fide ID.
 
     Args:
-        entity_id (int): An integer representing a Fide ID.
+        fide_id (int): An integer representing a Fide ID.
     """
 
-    entity_id: int
+    fide_id: int
 
-    @field_validator("entity_id", mode="before")
+    @field_validator("fide_id", mode="before")
     @classmethod
-    def cast_to_int(cls, entity_id: Union[str, int]) -> int:
-        """Validate and cast entity_id to an integer type."""
-        if isinstance(entity_id, str):
-            if not entity_id.isdigit():
+    def cast_to_int(cls, fide_id: Union[str, int]) -> int:
+        """Validate and cast fide_id to an integer type."""
+        if isinstance(fide_id, str):
+            if not fide_id.isdigit():
                 raise InvalidFideIDError(
                     "invalid Fide ID entered, must be an integer (as str in int type)"
                 )
 
-            if entity_id.startswith("0"):
+            if fide_id.startswith("0"):
                 raise InvalidFideIDError(
                     "invalid Fide ID entered, cannot start with a zero"
                 )
 
             try:
-                entity_id_cast = int(entity_id)
+                entity_id_cast = int(fide_id)
             except ValueError:
                 raise InvalidFideIDError(
                     "invalid Fide ID entered, must be an equivalent integer"
@@ -136,7 +136,7 @@ class FidePlayerID(BaseModel):
             else:
                 return entity_id_cast
         else:
-            return entity_id
+            return fide_id
 
 
 class FidePlayer(BaseModel):

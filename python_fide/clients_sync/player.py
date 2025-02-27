@@ -28,7 +28,7 @@ class FidePlayerClient(FideClient):
     month ratings, and complete game stats.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.base_url = "https://ratings.fide.com/"
 
     def get_opponents(self, fide_player: FidePlayerID) -> List[FidePlayer]:

@@ -2,11 +2,7 @@ from typing import List, Optional
 
 from python_fide.exceptions import InvalidFormatError
 from python_fide.types.adapters import PartialListAdapter
-from python_fide.types.core import (
-    FidePlayer,
-    FidePlayerGameStats,
-    FidePlayerRating,
-)
+from python_fide.types.core import FidePlayer, FidePlayerGameStats, FidePlayerRating
 
 
 def player_opponents_parsing(response: List[dict]) -> List[FidePlayer]:

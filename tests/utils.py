@@ -24,14 +24,14 @@ def load_json_file(filename: str) -> Dict[str, Any]:
 class MockResponse:
     """Mock response for patching."""
 
-    def __init__(self, json_data: Dict[str, Any], status_code: int):
+    def __init__(self, json_data: Dict[str, Any], status_code: int) -> None:
         self.json_data = json_data
         self.status_code = status_code
 
-    def json(self):
+    def json(self) -> Dict[str, Any]:
         return self.json_data
 
-    def raise_for_status(self):
+    def raise_for_status(self) -> None:
         if self.status_code != 200:
             raise RequestException("Incorrect status code...")
 
@@ -39,8 +39,8 @@ class MockResponse:
 class MockedResponse:
     """Class used to create a MockResponse object."""
 
-    def __init__(self, filename: str):
+    def __init__(self, filename: str) -> None:
         self._response = load_json_file(filename=filename)
 
-    def mock_response(self, *args, **kwargs) -> MockResponse:
+    def mock_response(self, *args: Any, **kwargs: Any) -> MockResponse:
         return MockResponse(json_data=self._response, status_code=200)

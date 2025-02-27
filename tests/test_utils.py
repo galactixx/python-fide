@@ -5,10 +5,7 @@ import pytest
 
 from python_fide import FidePlayerID
 from python_fide.utils.config import parse_fide_player, parse_fide_player_optional
-from python_fide.utils.general import (
-    build_url,
-    validate_date_format,
-)
+from python_fide.utils.general import build_url, validate_date_format
 
 
 @dataclass
@@ -20,9 +17,9 @@ class CaseParseFidePlayer:
 @pytest.mark.parametrize(
     "test_case",
     [
-        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id="12222"), exp_id=12222),
-        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id=12222), exp_id=12222),
-        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id=10006), exp_id=10006),
+        CaseParseFidePlayer(fide_id=FidePlayerID(fide_id="12222"), exp_id=12222),
+        CaseParseFidePlayer(fide_id=FidePlayerID(fide_id=12222), exp_id=12222),
+        CaseParseFidePlayer(fide_id=FidePlayerID(fide_id=10006), exp_id=10006),
     ],
 )
 def test_parse_fide_player(test_case: CaseParseFidePlayer) -> None:
@@ -33,8 +30,8 @@ def test_parse_fide_player(test_case: CaseParseFidePlayer) -> None:
 @pytest.mark.parametrize(
     "test_case",
     [
-        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id="55332"), exp_id=55332),
-        CaseParseFidePlayer(fide_id=FidePlayerID(entity_id=78332), exp_id=78332),
+        CaseParseFidePlayer(fide_id=FidePlayerID(fide_id="55332"), exp_id=55332),
+        CaseParseFidePlayer(fide_id=FidePlayerID(fide_id=78332), exp_id=78332),
         CaseParseFidePlayer(fide_id=None, exp_id=None),
     ],
 )

@@ -18,7 +18,7 @@ def parse_fide_player(fide_player: Union[FidePlayer, FidePlayerID]) -> int:
     if isinstance(fide_player, FidePlayer):
         return fide_player.fide_id
     elif isinstance(fide_player, FidePlayerID):
-        return fide_player.entity_id
+        return fide_player.fide_id
     else:
         raise ValueError("not a valid 'fide_player' type")
 

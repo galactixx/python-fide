@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Tuple, Union
+from typing import Optional, Union
 from urllib.parse import urljoin
 
 

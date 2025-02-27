@@ -1,8 +1,9 @@
 from unittest import mock
+from typing import Any
 
 import pytest
 
-from python_fide import Period, FidePlayerID
+from python_fide import FidePlayerID, Period
 from python_fide.clients_async import AsyncFidePlayerClient
 from tests.common import (
     game_stats_assertion,
@@ -20,10 +21,10 @@ fide_player_client = AsyncFidePlayerClient()
     side_effect=MockedResponse(filename="fide_opponents.json").mock_response,
     autospec=True,
 )
-async def test_async_player_mock_opponents(_) -> None:
+async def test_async_player_mock_opponents(_: Any) -> None:
     """Testing the player opponents functionality."""
     opponents = await fide_player_client.get_opponents(
-        fide_player=FidePlayerID(entity_id=1503014)
+        fide_player=FidePlayerID(fide_id=1503014)
     )
     opponents_assertion(opponents=opponents)
 
@@ -34,10 +35,10 @@ async def test_async_player_mock_opponents(_) -> None:
     side_effect=MockedResponse(filename="fide_rating_chart.json").mock_response,
     autospec=True,
 )
-async def test_async_player_mock_rating_progress_chart(_) -> None:
+async def test_async_player_mock_rating_progress_chart(_: Any) -> None:
     """Testing the player historical ratings functionality."""
     historical_ratings = await fide_player_client.get_rating_progress_chart(
-        period=Period.ONE_YEAR, fide_id=FidePlayerID(entity_id=1503014)
+        period=Period.ONE_YEAR, fide_id=FidePlayerID(fide_id=1503014)
     )
     rating_chart_assertion(historical_ratings=historical_ratings)
 
@@ -48,9 +49,9 @@ async def test_async_player_mock_rating_progress_chart(_) -> None:
     side_effect=MockedResponse(filename="fide_game_stats.json").mock_response,
     autospec=True,
 )
-async def test_async_player_mock_game_stats(_) -> None:
+async def test_async_player_mock_game_stats(_: Any) -> None:
     """Testing the player game statistics functionality."""
     game_stats = await fide_player_client.get_game_stats(
-        fide_id=FidePlayerID(entity_id=1503014)
+        fide_id=FidePlayerID(fide_id=1503014)
     )
     game_stats_assertion(game_stats=game_stats)
